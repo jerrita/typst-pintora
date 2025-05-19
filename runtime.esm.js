@@ -176,6 +176,7 @@ var require_kind_of = __commonJS({
           return "symbol";
         case "Promise":
           return "promise";
+        // Set, Map, WeakSet, WeakMap
         case "WeakMap":
           return "weakmap";
         case "WeakSet":
@@ -184,16 +185,19 @@ var require_kind_of = __commonJS({
           return "map";
         case "Set":
           return "set";
+        // 8-bit typed arrays
         case "Int8Array":
           return "int8array";
         case "Uint8Array":
           return "uint8array";
         case "Uint8ClampedArray":
           return "uint8clampedarray";
+        // 16-bit typed arrays
         case "Int16Array":
           return "int16array";
         case "Uint16Array":
           return "uint16array";
+        // 32-bit typed arrays
         case "Int32Array":
           return "int32array";
         case "Uint32Array":
@@ -210,6 +214,7 @@ var require_kind_of = __commonJS({
       switch (type) {
         case "[object Object]":
           return "object";
+        // iterators
         case "[object Map Iterator]":
           return "mapiterator";
         case "[object Set Iterator]":
@@ -1552,15 +1557,15 @@ var require_moo = __commonJS({
           throw new Error("pop must be 1 (in token '" + g.defaultType + "' of state '" + name + "')");
         }
       }
-      function compileStates(states8, start) {
-        var all = states8.$all ? toRules(states8.$all) : [];
-        delete states8.$all;
-        var keys3 = Object.getOwnPropertyNames(states8);
+      function compileStates(states9, start) {
+        var all = states9.$all ? toRules(states9.$all) : [];
+        delete states9.$all;
+        var keys3 = Object.getOwnPropertyNames(states9);
         if (!start) start = keys3[0];
         var ruleMap = /* @__PURE__ */ Object.create(null);
         for (var i2 = 0; i2 < keys3.length; i2++) {
           var key = keys3[i2];
-          ruleMap[key] = toRules(states8[key]).concat(all);
+          ruleMap[key] = toRules(states9[key]).concat(all);
         }
         for (var i2 = 0; i2 < keys3.length; i2++) {
           var key = keys3[i2];
@@ -1640,9 +1645,9 @@ var require_moo = __commonJS({
         source += "}\n";
         return Function("value", source);
       }
-      var Lexer = function(states8, state) {
+      var Lexer = function(states9, state) {
         this.startState = state;
-        this.states = states8;
+        this.states = states9;
         this.buffer = "";
         this.stack = [];
         this.reset();
@@ -1781,8 +1786,8 @@ var require_moo = __commonJS({
         return token;
       };
       if (typeof Symbol !== "undefined" && Symbol.iterator) {
-        var LexerIterator = function(lexer9) {
-          this.lexer = lexer9;
+        var LexerIterator = function(lexer10) {
+          this.lexer = lexer10;
         };
         LexerIterator.prototype.next = function() {
           var token = this.lexer.next();
@@ -1889,8 +1894,8 @@ var require_nearley = __commonJS({
           this.data = this.rule.postprocess(this.data, this.reference, Parser.fail);
         }
       };
-      function Column(grammar9, index2) {
-        this.grammar = grammar9;
+      function Column(grammar10, index2) {
+        this.grammar = grammar10;
         this.index = index2;
         this.states = [];
         this.wants = {};
@@ -1898,11 +1903,11 @@ var require_nearley = __commonJS({
         this.completed = {};
       }
       Column.prototype.process = function(nextColumn) {
-        var states8 = this.states;
+        var states9 = this.states;
         var wants = this.wants;
         var completed = this.completed;
-        for (var w = 0; w < states8.length; w++) {
-          var state = states8[w];
+        for (var w = 0; w < states9.length; w++) {
+          var state = states9[w];
           if (state.isComplete) {
             state.finish();
             if (state.data !== Parser.fail) {
@@ -1964,7 +1969,7 @@ var require_nearley = __commonJS({
         });
       }
       Grammar.fromCompiled = function(rules, start) {
-        var lexer9 = rules.Lexer;
+        var lexer10 = rules.Lexer;
         var options = rules.ParserOptions;
         if (rules.ParserStart) {
           start = rules.ParserStart;
@@ -1974,7 +1979,7 @@ var require_nearley = __commonJS({
           return new Rule(r.name, r.symbols, r.postprocess);
         });
         var g = new Grammar(rules, start, options);
-        g.lexer = lexer9;
+        g.lexer = lexer10;
         return g;
       };
       function StreamLexer() {
@@ -2029,36 +2034,36 @@ var require_nearley = __commonJS({
       };
       function Parser(rules, start, options) {
         if (rules instanceof Grammar) {
-          var grammar9 = rules;
+          var grammar10 = rules;
           var options = start;
         } else {
-          var grammar9 = Grammar.fromCompiled(rules, start, {});
+          var grammar10 = Grammar.fromCompiled(rules, start, {});
         }
-        this.grammar = grammar9;
+        this.grammar = grammar10;
         this.options = {
           keepHistory: false,
-          lexer: grammar9.lexer || new StreamLexer()
+          lexer: grammar10.lexer || new StreamLexer()
         };
         for (var key in options || {}) {
           this.options[key] = options[key];
         }
         this.lexer = this.options.lexer;
         this.lexerState = void 0;
-        var column = new Column(grammar9, 0);
+        var column = new Column(grammar10, 0);
         var table = this.table = [column];
-        column.wants[grammar9.start] = [];
-        column.predict(grammar9.start);
+        column.wants[grammar10.start] = [];
+        column.predict(grammar10.start);
         column.process();
         this.current = 0;
       }
       Parser.fail = {};
       Parser.prototype.feed = function(chunk) {
-        var lexer9 = this.lexer;
-        lexer9.reset(chunk, this.lexerState);
+        var lexer10 = this.lexer;
+        lexer10.reset(chunk, this.lexerState);
         var token;
         while (true) {
           try {
-            token = lexer9.next();
+            token = lexer10.next();
             if (!token) {
               break;
             }
@@ -2078,7 +2083,7 @@ var require_nearley = __commonJS({
           var nextColumn = new Column(this.grammar, n2);
           this.table.push(nextColumn);
           var literal = token.text !== void 0 ? token.text : token.value;
-          var value = lexer9.constructor === StreamLexer ? token.value : token;
+          var value = lexer10.constructor === StreamLexer ? token.value : token;
           var scannable = column.scannable;
           for (var w = scannable.length; w--; ) {
             var state = scannable[w];
@@ -2107,12 +2112,12 @@ var require_nearley = __commonJS({
             throw err;
           }
           if (this.options.keepHistory) {
-            column.lexerState = lexer9.save();
+            column.lexerState = lexer10.save();
           }
           this.current++;
         }
         if (column) {
-          this.lexerState = lexer9.save();
+          this.lexerState = lexer10.save();
         }
         this.results = this.finish();
         return this;
@@ -2469,6 +2474,7 @@ var require_dayjs_min = __commonJS({
 // aliases/canvas.js
 var require_canvas = __commonJS({
   "aliases/canvas.js"(exports2, module2) {
+    "use strict";
     module2.exports = {};
   }
 });
@@ -3301,9 +3307,9 @@ var require_function_bind = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/hasown@2.0.1/node_modules/hasown/index.js
+// ../../node_modules/.pnpm/hasown@2.0.2/node_modules/hasown/index.js
 var require_hasown = __commonJS({
-  "../../node_modules/.pnpm/hasown@2.0.1/node_modules/hasown/index.js"(exports2, module2) {
+  "../../node_modules/.pnpm/hasown@2.0.2/node_modules/hasown/index.js"(exports2, module2) {
     "use strict";
     var call = Function.prototype.call;
     var $hasOwn = Object.prototype.hasOwnProperty;
@@ -5697,6 +5703,7 @@ var require_url = __commonJS({
 // aliases/url.js
 var require_url2 = __commonJS({
   "aliases/url.js"(exports2, module2) {
+    "use strict";
     var URL = require_url();
     module2.exports = {
       ...URL,
@@ -5707,82 +5714,100 @@ var require_url2 = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/emitter-component@1.1.2/node_modules/emitter-component/index.js
-var require_emitter_component = __commonJS({
-  "../../node_modules/.pnpm/emitter-component@1.1.2/node_modules/emitter-component/index.js"(exports2, module2) {
-    module2.exports = Emitter;
-    function Emitter(obj) {
-      if (obj) return mixin2(obj);
-    }
-    function mixin2(obj) {
-      for (var key in Emitter.prototype) {
-        obj[key] = Emitter.prototype[key];
+// ../../node_modules/.pnpm/component-emitter@2.0.0/node_modules/component-emitter/index.js
+var require_component_emitter = __commonJS({
+  "../../node_modules/.pnpm/component-emitter@2.0.0/node_modules/component-emitter/index.js"(exports2, module2) {
+    function Emitter(object) {
+      if (object) {
+        return mixin2(object);
       }
-      return obj;
+      this._callbacks = /* @__PURE__ */ new Map();
     }
-    Emitter.prototype.on = Emitter.prototype.addEventListener = function(event, fn) {
-      this._callbacks = this._callbacks || {};
-      (this._callbacks[event] = this._callbacks[event] || []).push(fn);
+    function mixin2(object) {
+      Object.assign(object, Emitter.prototype);
+      object._callbacks = /* @__PURE__ */ new Map();
+      return object;
+    }
+    Emitter.prototype.on = function(event, listener) {
+      const callbacks = this._callbacks.get(event) ?? [];
+      callbacks.push(listener);
+      this._callbacks.set(event, callbacks);
       return this;
     };
-    Emitter.prototype.once = function(event, fn) {
-      var self2 = this;
-      this._callbacks = this._callbacks || {};
-      function on() {
-        self2.off(event, on);
-        fn.apply(this, arguments);
-      }
-      on.fn = fn;
+    Emitter.prototype.once = function(event, listener) {
+      const on = (...arguments_) => {
+        this.off(event, on);
+        listener.apply(this, arguments_);
+      };
+      on.fn = listener;
       this.on(event, on);
       return this;
     };
-    Emitter.prototype.off = Emitter.prototype.removeListener = Emitter.prototype.removeAllListeners = Emitter.prototype.removeEventListener = function(event, fn) {
-      this._callbacks = this._callbacks || {};
-      if (0 == arguments.length) {
-        this._callbacks = {};
+    Emitter.prototype.off = function(event, listener) {
+      if (event === void 0 && listener === void 0) {
+        this._callbacks.clear();
         return this;
       }
-      var callbacks = this._callbacks[event];
-      if (!callbacks) return this;
-      if (1 == arguments.length) {
-        delete this._callbacks[event];
+      if (listener === void 0) {
+        this._callbacks.delete(event);
         return this;
       }
-      var cb;
-      for (var i2 = 0; i2 < callbacks.length; i2++) {
-        cb = callbacks[i2];
-        if (cb === fn || cb.fn === fn) {
-          callbacks.splice(i2, 1);
-          break;
+      const callbacks = this._callbacks.get(event);
+      if (callbacks) {
+        for (const [index2, callback] of callbacks.entries()) {
+          if (callback === listener || callback.fn === listener) {
+            callbacks.splice(index2, 1);
+            break;
+          }
+        }
+        if (callbacks.length === 0) {
+          this._callbacks.delete(event);
+        } else {
+          this._callbacks.set(event, callbacks);
         }
       }
       return this;
     };
-    Emitter.prototype.emit = function(event) {
-      this._callbacks = this._callbacks || {};
-      var args = [].slice.call(arguments, 1), callbacks = this._callbacks[event];
+    Emitter.prototype.emit = function(event, ...arguments_) {
+      const callbacks = this._callbacks.get(event);
       if (callbacks) {
-        callbacks = callbacks.slice(0);
-        for (var i2 = 0, len2 = callbacks.length; i2 < len2; ++i2) {
-          callbacks[i2].apply(this, args);
+        const callbacksCopy = [...callbacks];
+        for (const callback of callbacksCopy) {
+          callback.apply(this, arguments_);
         }
       }
       return this;
     };
     Emitter.prototype.listeners = function(event) {
-      this._callbacks = this._callbacks || {};
-      return this._callbacks[event] || [];
+      return this._callbacks.get(event) ?? [];
+    };
+    Emitter.prototype.listenerCount = function(event) {
+      if (event) {
+        return this.listeners(event).length;
+      }
+      let totalCount = 0;
+      for (const callbacks of this._callbacks.values()) {
+        totalCount += callbacks.length;
+      }
+      return totalCount;
     };
     Emitter.prototype.hasListeners = function(event) {
-      return !!this.listeners(event).length;
+      return this.listenerCount(event) > 0;
     };
+    Emitter.prototype.addEventListener = Emitter.prototype.on;
+    Emitter.prototype.removeListener = Emitter.prototype.off;
+    Emitter.prototype.removeEventListener = Emitter.prototype.off;
+    Emitter.prototype.removeAllListeners = Emitter.prototype.off;
+    if (typeof module2 !== "undefined") {
+      module2.exports = Emitter;
+    }
   }
 });
 
-// ../../node_modules/.pnpm/stream@0.0.2/node_modules/stream/index.js
+// ../../node_modules/.pnpm/stream@0.0.3/node_modules/stream/index.js
 var require_stream = __commonJS({
-  "../../node_modules/.pnpm/stream@0.0.2/node_modules/stream/index.js"(exports2, module2) {
-    var Emitter = require_emitter_component();
+  "../../node_modules/.pnpm/stream@0.0.3/node_modules/stream/index.js"(exports2, module2) {
+    var Emitter = require_component_emitter();
     function Stream() {
       Emitter.call(this);
     }
@@ -7971,30 +7996,30 @@ var require_sax = __commonJS({
         if (!(this instanceof SAXParser)) {
           return new SAXParser(strict, opt);
         }
-        var parser = this;
-        clearBuffers(parser);
-        parser.q = parser.c = "";
-        parser.bufferCheckPosition = sax2.MAX_BUFFER_LENGTH;
-        parser.opt = opt || {};
-        parser.opt.lowercase = parser.opt.lowercase || parser.opt.lowercasetags;
-        parser.looseCase = parser.opt.lowercase ? "toLowerCase" : "toUpperCase";
-        parser.tags = [];
-        parser.closed = parser.closedRoot = parser.sawRoot = false;
-        parser.tag = parser.error = null;
-        parser.strict = !!strict;
-        parser.noscript = !!(strict || parser.opt.noscript);
-        parser.state = S.BEGIN;
-        parser.strictEntities = parser.opt.strictEntities;
-        parser.ENTITIES = parser.strictEntities ? Object.create(sax2.XML_ENTITIES) : Object.create(sax2.ENTITIES);
-        parser.attribList = [];
-        if (parser.opt.xmlns) {
-          parser.ns = Object.create(rootNS);
+        var parser2 = this;
+        clearBuffers(parser2);
+        parser2.q = parser2.c = "";
+        parser2.bufferCheckPosition = sax2.MAX_BUFFER_LENGTH;
+        parser2.opt = opt || {};
+        parser2.opt.lowercase = parser2.opt.lowercase || parser2.opt.lowercasetags;
+        parser2.looseCase = parser2.opt.lowercase ? "toLowerCase" : "toUpperCase";
+        parser2.tags = [];
+        parser2.closed = parser2.closedRoot = parser2.sawRoot = false;
+        parser2.tag = parser2.error = null;
+        parser2.strict = !!strict;
+        parser2.noscript = !!(strict || parser2.opt.noscript);
+        parser2.state = S.BEGIN;
+        parser2.strictEntities = parser2.opt.strictEntities;
+        parser2.ENTITIES = parser2.strictEntities ? Object.create(sax2.XML_ENTITIES) : Object.create(sax2.ENTITIES);
+        parser2.attribList = [];
+        if (parser2.opt.xmlns) {
+          parser2.ns = Object.create(rootNS);
         }
-        parser.trackPosition = parser.opt.position !== false;
-        if (parser.trackPosition) {
-          parser.position = parser.line = parser.column = 0;
+        parser2.trackPosition = parser2.opt.position !== false;
+        if (parser2.trackPosition) {
+          parser2.position = parser2.line = parser2.column = 0;
         }
-        emit(parser, "onready");
+        emit(parser2, "onready");
       }
       if (!Object.create) {
         Object.create = function(o) {
@@ -8012,47 +8037,47 @@ var require_sax = __commonJS({
           return a;
         };
       }
-      function checkBufferLength(parser) {
+      function checkBufferLength(parser2) {
         var maxAllowed = Math.max(sax2.MAX_BUFFER_LENGTH, 10);
         var maxActual = 0;
         for (var i2 = 0, l = buffers.length; i2 < l; i2++) {
-          var len2 = parser[buffers[i2]].length;
+          var len2 = parser2[buffers[i2]].length;
           if (len2 > maxAllowed) {
             switch (buffers[i2]) {
               case "textNode":
-                closeText(parser);
+                closeText(parser2);
                 break;
               case "cdata":
-                emitNode(parser, "oncdata", parser.cdata);
-                parser.cdata = "";
+                emitNode(parser2, "oncdata", parser2.cdata);
+                parser2.cdata = "";
                 break;
               case "script":
-                emitNode(parser, "onscript", parser.script);
-                parser.script = "";
+                emitNode(parser2, "onscript", parser2.script);
+                parser2.script = "";
                 break;
               default:
-                error(parser, "Max buffer length exceeded: " + buffers[i2]);
+                error(parser2, "Max buffer length exceeded: " + buffers[i2]);
             }
           }
           maxActual = Math.max(maxActual, len2);
         }
         var m = sax2.MAX_BUFFER_LENGTH - maxActual;
-        parser.bufferCheckPosition = m + parser.position;
+        parser2.bufferCheckPosition = m + parser2.position;
       }
-      function clearBuffers(parser) {
+      function clearBuffers(parser2) {
         for (var i2 = 0, l = buffers.length; i2 < l; i2++) {
-          parser[buffers[i2]] = "";
+          parser2[buffers[i2]] = "";
         }
       }
-      function flushBuffers(parser) {
-        closeText(parser);
-        if (parser.cdata !== "") {
-          emitNode(parser, "oncdata", parser.cdata);
-          parser.cdata = "";
+      function flushBuffers(parser2) {
+        closeText(parser2);
+        if (parser2.cdata !== "") {
+          emitNode(parser2, "oncdata", parser2.cdata);
+          parser2.cdata = "";
         }
-        if (parser.script !== "") {
-          emitNode(parser, "onscript", parser.script);
-          parser.script = "";
+        if (parser2.script !== "") {
+          emitNode(parser2, "onscript", parser2.script);
+          parser2.script = "";
         }
       }
       SAXParser.prototype = {
@@ -8524,62 +8549,62 @@ var require_sax = __commonJS({
         sax2.STATE[sax2.STATE[s]] = s;
       }
       S = sax2.STATE;
-      function emit(parser, event, data) {
-        parser[event] && parser[event](data);
+      function emit(parser2, event, data) {
+        parser2[event] && parser2[event](data);
       }
-      function emitNode(parser, nodeType, data) {
-        if (parser.textNode) closeText(parser);
-        emit(parser, nodeType, data);
+      function emitNode(parser2, nodeType, data) {
+        if (parser2.textNode) closeText(parser2);
+        emit(parser2, nodeType, data);
       }
-      function closeText(parser) {
-        parser.textNode = textopts(parser.opt, parser.textNode);
-        if (parser.textNode) emit(parser, "ontext", parser.textNode);
-        parser.textNode = "";
+      function closeText(parser2) {
+        parser2.textNode = textopts(parser2.opt, parser2.textNode);
+        if (parser2.textNode) emit(parser2, "ontext", parser2.textNode);
+        parser2.textNode = "";
       }
       function textopts(opt, text) {
         if (opt.trim) text = text.trim();
         if (opt.normalize) text = text.replace(/\s+/g, " ");
         return text;
       }
-      function error(parser, er) {
-        closeText(parser);
-        if (parser.trackPosition) {
-          er += "\nLine: " + parser.line + "\nColumn: " + parser.column + "\nChar: " + parser.c;
+      function error(parser2, er) {
+        closeText(parser2);
+        if (parser2.trackPosition) {
+          er += "\nLine: " + parser2.line + "\nColumn: " + parser2.column + "\nChar: " + parser2.c;
         }
         er = new Error(er);
-        parser.error = er;
-        emit(parser, "onerror", er);
-        return parser;
+        parser2.error = er;
+        emit(parser2, "onerror", er);
+        return parser2;
       }
-      function end(parser) {
-        if (parser.sawRoot && !parser.closedRoot) strictFail(parser, "Unclosed root tag");
-        if (parser.state !== S.BEGIN && parser.state !== S.BEGIN_WHITESPACE && parser.state !== S.TEXT) {
-          error(parser, "Unexpected end");
+      function end(parser2) {
+        if (parser2.sawRoot && !parser2.closedRoot) strictFail(parser2, "Unclosed root tag");
+        if (parser2.state !== S.BEGIN && parser2.state !== S.BEGIN_WHITESPACE && parser2.state !== S.TEXT) {
+          error(parser2, "Unexpected end");
         }
-        closeText(parser);
-        parser.c = "";
-        parser.closed = true;
-        emit(parser, "onend");
-        SAXParser.call(parser, parser.strict, parser.opt);
-        return parser;
+        closeText(parser2);
+        parser2.c = "";
+        parser2.closed = true;
+        emit(parser2, "onend");
+        SAXParser.call(parser2, parser2.strict, parser2.opt);
+        return parser2;
       }
-      function strictFail(parser, message) {
-        if (typeof parser !== "object" || !(parser instanceof SAXParser)) {
+      function strictFail(parser2, message) {
+        if (typeof parser2 !== "object" || !(parser2 instanceof SAXParser)) {
           throw new Error("bad call to strictFail");
         }
-        if (parser.strict) {
-          error(parser, message);
+        if (parser2.strict) {
+          error(parser2, message);
         }
       }
-      function newTag(parser) {
-        if (!parser.strict) parser.tagName = parser.tagName[parser.looseCase]();
-        var parent = parser.tags[parser.tags.length - 1] || parser;
-        var tag2 = parser.tag = { name: parser.tagName, attributes: {} };
-        if (parser.opt.xmlns) {
+      function newTag(parser2) {
+        if (!parser2.strict) parser2.tagName = parser2.tagName[parser2.looseCase]();
+        var parent = parser2.tags[parser2.tags.length - 1] || parser2;
+        var tag2 = parser2.tag = { name: parser2.tagName, attributes: {} };
+        if (parser2.opt.xmlns) {
           tag2.ns = parent.ns;
         }
-        parser.attribList.length = 0;
-        emitNode(parser, "onopentagstart", tag2);
+        parser2.attribList.length = 0;
+        emitNode(parser2, "onopentagstart", tag2);
       }
       function qname(name, attribute) {
         var i2 = name.indexOf(":");
@@ -8592,70 +8617,70 @@ var require_sax = __commonJS({
         }
         return { prefix, local };
       }
-      function attrib(parser) {
-        if (!parser.strict) {
-          parser.attribName = parser.attribName[parser.looseCase]();
+      function attrib(parser2) {
+        if (!parser2.strict) {
+          parser2.attribName = parser2.attribName[parser2.looseCase]();
         }
-        if (parser.attribList.indexOf(parser.attribName) !== -1 || parser.tag.attributes.hasOwnProperty(parser.attribName)) {
-          parser.attribName = parser.attribValue = "";
+        if (parser2.attribList.indexOf(parser2.attribName) !== -1 || parser2.tag.attributes.hasOwnProperty(parser2.attribName)) {
+          parser2.attribName = parser2.attribValue = "";
           return;
         }
-        if (parser.opt.xmlns) {
-          var qn = qname(parser.attribName, true);
+        if (parser2.opt.xmlns) {
+          var qn = qname(parser2.attribName, true);
           var prefix = qn.prefix;
           var local = qn.local;
           if (prefix === "xmlns") {
-            if (local === "xml" && parser.attribValue !== XML_NAMESPACE) {
+            if (local === "xml" && parser2.attribValue !== XML_NAMESPACE) {
               strictFail(
-                parser,
-                "xml: prefix must be bound to " + XML_NAMESPACE + "\nActual: " + parser.attribValue
+                parser2,
+                "xml: prefix must be bound to " + XML_NAMESPACE + "\nActual: " + parser2.attribValue
               );
-            } else if (local === "xmlns" && parser.attribValue !== XMLNS_NAMESPACE) {
+            } else if (local === "xmlns" && parser2.attribValue !== XMLNS_NAMESPACE) {
               strictFail(
-                parser,
-                "xmlns: prefix must be bound to " + XMLNS_NAMESPACE + "\nActual: " + parser.attribValue
+                parser2,
+                "xmlns: prefix must be bound to " + XMLNS_NAMESPACE + "\nActual: " + parser2.attribValue
               );
             } else {
-              var tag2 = parser.tag;
-              var parent = parser.tags[parser.tags.length - 1] || parser;
+              var tag2 = parser2.tag;
+              var parent = parser2.tags[parser2.tags.length - 1] || parser2;
               if (tag2.ns === parent.ns) {
                 tag2.ns = Object.create(parent.ns);
               }
-              tag2.ns[local] = parser.attribValue;
+              tag2.ns[local] = parser2.attribValue;
             }
           }
-          parser.attribList.push([parser.attribName, parser.attribValue]);
+          parser2.attribList.push([parser2.attribName, parser2.attribValue]);
         } else {
-          parser.tag.attributes[parser.attribName] = parser.attribValue;
-          emitNode(parser, "onattribute", {
-            name: parser.attribName,
-            value: parser.attribValue
+          parser2.tag.attributes[parser2.attribName] = parser2.attribValue;
+          emitNode(parser2, "onattribute", {
+            name: parser2.attribName,
+            value: parser2.attribValue
           });
         }
-        parser.attribName = parser.attribValue = "";
+        parser2.attribName = parser2.attribValue = "";
       }
-      function openTag(parser, selfClosing) {
-        if (parser.opt.xmlns) {
-          var tag2 = parser.tag;
-          var qn = qname(parser.tagName);
+      function openTag(parser2, selfClosing) {
+        if (parser2.opt.xmlns) {
+          var tag2 = parser2.tag;
+          var qn = qname(parser2.tagName);
           tag2.prefix = qn.prefix;
           tag2.local = qn.local;
           tag2.uri = tag2.ns[qn.prefix] || "";
           if (tag2.prefix && !tag2.uri) {
-            strictFail(parser, "Unbound namespace prefix: " + JSON.stringify(parser.tagName));
+            strictFail(parser2, "Unbound namespace prefix: " + JSON.stringify(parser2.tagName));
             tag2.uri = qn.prefix;
           }
-          var parent = parser.tags[parser.tags.length - 1] || parser;
+          var parent = parser2.tags[parser2.tags.length - 1] || parser2;
           if (tag2.ns && parent.ns !== tag2.ns) {
             Object.keys(tag2.ns).forEach(function(p) {
-              emitNode(parser, "onopennamespace", {
+              emitNode(parser2, "onopennamespace", {
                 prefix: p,
                 uri: tag2.ns[p]
               });
             });
           }
-          for (var i2 = 0, l = parser.attribList.length; i2 < l; i2++) {
-            var nv = parser.attribList[i2];
+          for (var i2 = 0, l = parser2.attribList.length; i2 < l; i2++) {
+            var nv = parser2.attribList[i2];
             var name = nv[0];
             var value = nv[1];
             var qualName = qname(name, true);
@@ -8670,100 +8695,100 @@ var require_sax = __commonJS({
               uri
             };
             if (prefix && prefix !== "xmlns" && !uri) {
-              strictFail(parser, "Unbound namespace prefix: " + JSON.stringify(prefix));
+              strictFail(parser2, "Unbound namespace prefix: " + JSON.stringify(prefix));
               a.uri = prefix;
             }
-            parser.tag.attributes[name] = a;
-            emitNode(parser, "onattribute", a);
+            parser2.tag.attributes[name] = a;
+            emitNode(parser2, "onattribute", a);
           }
-          parser.attribList.length = 0;
+          parser2.attribList.length = 0;
         }
-        parser.tag.isSelfClosing = !!selfClosing;
-        parser.sawRoot = true;
-        parser.tags.push(parser.tag);
-        emitNode(parser, "onopentag", parser.tag);
+        parser2.tag.isSelfClosing = !!selfClosing;
+        parser2.sawRoot = true;
+        parser2.tags.push(parser2.tag);
+        emitNode(parser2, "onopentag", parser2.tag);
         if (!selfClosing) {
-          if (!parser.noscript && parser.tagName.toLowerCase() === "script") {
-            parser.state = S.SCRIPT;
+          if (!parser2.noscript && parser2.tagName.toLowerCase() === "script") {
+            parser2.state = S.SCRIPT;
           } else {
-            parser.state = S.TEXT;
+            parser2.state = S.TEXT;
           }
-          parser.tag = null;
-          parser.tagName = "";
+          parser2.tag = null;
+          parser2.tagName = "";
         }
-        parser.attribName = parser.attribValue = "";
-        parser.attribList.length = 0;
+        parser2.attribName = parser2.attribValue = "";
+        parser2.attribList.length = 0;
       }
-      function closeTag(parser) {
-        if (!parser.tagName) {
-          strictFail(parser, "Weird empty close tag.");
-          parser.textNode += "</>";
-          parser.state = S.TEXT;
+      function closeTag(parser2) {
+        if (!parser2.tagName) {
+          strictFail(parser2, "Weird empty close tag.");
+          parser2.textNode += "</>";
+          parser2.state = S.TEXT;
           return;
         }
-        if (parser.script) {
-          if (parser.tagName !== "script") {
-            parser.script += "</" + parser.tagName + ">";
-            parser.tagName = "";
-            parser.state = S.SCRIPT;
+        if (parser2.script) {
+          if (parser2.tagName !== "script") {
+            parser2.script += "</" + parser2.tagName + ">";
+            parser2.tagName = "";
+            parser2.state = S.SCRIPT;
             return;
           }
-          emitNode(parser, "onscript", parser.script);
-          parser.script = "";
+          emitNode(parser2, "onscript", parser2.script);
+          parser2.script = "";
         }
-        var t = parser.tags.length;
-        var tagName = parser.tagName;
-        if (!parser.strict) {
-          tagName = tagName[parser.looseCase]();
+        var t = parser2.tags.length;
+        var tagName = parser2.tagName;
+        if (!parser2.strict) {
+          tagName = tagName[parser2.looseCase]();
         }
         var closeTo = tagName;
         while (t--) {
-          var close = parser.tags[t];
+          var close = parser2.tags[t];
           if (close.name !== closeTo) {
-            strictFail(parser, "Unexpected close tag");
+            strictFail(parser2, "Unexpected close tag");
           } else {
             break;
           }
         }
         if (t < 0) {
-          strictFail(parser, "Unmatched closing tag: " + parser.tagName);
-          parser.textNode += "</" + parser.tagName + ">";
-          parser.state = S.TEXT;
+          strictFail(parser2, "Unmatched closing tag: " + parser2.tagName);
+          parser2.textNode += "</" + parser2.tagName + ">";
+          parser2.state = S.TEXT;
           return;
         }
-        parser.tagName = tagName;
-        var s2 = parser.tags.length;
+        parser2.tagName = tagName;
+        var s2 = parser2.tags.length;
         while (s2-- > t) {
-          var tag2 = parser.tag = parser.tags.pop();
-          parser.tagName = parser.tag.name;
-          emitNode(parser, "onclosetag", parser.tagName);
+          var tag2 = parser2.tag = parser2.tags.pop();
+          parser2.tagName = parser2.tag.name;
+          emitNode(parser2, "onclosetag", parser2.tagName);
           var x2 = {};
           for (var i2 in tag2.ns) {
             x2[i2] = tag2.ns[i2];
           }
-          var parent = parser.tags[parser.tags.length - 1] || parser;
-          if (parser.opt.xmlns && tag2.ns !== parent.ns) {
+          var parent = parser2.tags[parser2.tags.length - 1] || parser2;
+          if (parser2.opt.xmlns && tag2.ns !== parent.ns) {
             Object.keys(tag2.ns).forEach(function(p) {
               var n2 = tag2.ns[p];
-              emitNode(parser, "onclosenamespace", { prefix: p, uri: n2 });
+              emitNode(parser2, "onclosenamespace", { prefix: p, uri: n2 });
             });
           }
         }
-        if (t === 0) parser.closedRoot = true;
-        parser.tagName = parser.attribValue = parser.attribName = "";
-        parser.attribList.length = 0;
-        parser.state = S.TEXT;
+        if (t === 0) parser2.closedRoot = true;
+        parser2.tagName = parser2.attribValue = parser2.attribName = "";
+        parser2.attribList.length = 0;
+        parser2.state = S.TEXT;
       }
-      function parseEntity(parser) {
-        var entity = parser.entity;
+      function parseEntity(parser2) {
+        var entity = parser2.entity;
         var entityLC = entity.toLowerCase();
         var num;
         var numStr = "";
-        if (parser.ENTITIES[entity]) {
-          return parser.ENTITIES[entity];
+        if (parser2.ENTITIES[entity]) {
+          return parser2.ENTITIES[entity];
         }
-        if (parser.ENTITIES[entityLC]) {
-          return parser.ENTITIES[entityLC];
+        if (parser2.ENTITIES[entityLC]) {
+          return parser2.ENTITIES[entityLC];
         }
         entity = entityLC;
         if (entity.charAt(0) === "#") {
@@ -8779,19 +8804,19 @@ var require_sax = __commonJS({
         }
         entity = entity.replace(/^0+/, "");
         if (isNaN(num) || numStr.toLowerCase() !== entity) {
-          strictFail(parser, "Invalid character entity");
-          return "&" + parser.entity + ";";
+          strictFail(parser2, "Invalid character entity");
+          return "&" + parser2.entity + ";";
         }
         return String.fromCodePoint(num);
       }
-      function beginWhiteSpace(parser, c) {
+      function beginWhiteSpace(parser2, c) {
         if (c === "<") {
-          parser.state = S.OPEN_WAKA;
-          parser.startTagPosition = parser.position;
+          parser2.state = S.OPEN_WAKA;
+          parser2.startTagPosition = parser2.position;
         } else if (!isWhitespace(c)) {
-          strictFail(parser, "Non-whitespace before first tag.");
-          parser.textNode = c;
-          parser.state = S.TEXT;
+          strictFail(parser2, "Non-whitespace before first tag.");
+          parser2.textNode = c;
+          parser2.state = S.TEXT;
         }
       }
       function charAt(chunk, i2) {
@@ -8802,18 +8827,18 @@ var require_sax = __commonJS({
         return result;
       }
       function write(chunk) {
-        var parser = this;
+        var parser2 = this;
         if (this.error) {
           throw this.error;
         }
-        if (parser.closed) {
+        if (parser2.closed) {
           return error(
-            parser,
+            parser2,
             "Cannot write after close. Assign an onready handler."
           );
         }
         if (chunk === null) {
-          return end(parser);
+          return end(parser2);
         }
         if (typeof chunk === "object") {
           chunk = chunk.toString();
@@ -8822,345 +8847,345 @@ var require_sax = __commonJS({
         var c = "";
         while (true) {
           c = charAt(chunk, i2++);
-          parser.c = c;
+          parser2.c = c;
           if (!c) {
             break;
           }
-          if (parser.trackPosition) {
-            parser.position++;
+          if (parser2.trackPosition) {
+            parser2.position++;
             if (c === "\n") {
-              parser.line++;
-              parser.column = 0;
+              parser2.line++;
+              parser2.column = 0;
             } else {
-              parser.column++;
+              parser2.column++;
             }
           }
-          switch (parser.state) {
+          switch (parser2.state) {
             case S.BEGIN:
-              parser.state = S.BEGIN_WHITESPACE;
+              parser2.state = S.BEGIN_WHITESPACE;
               if (c === "\uFEFF") {
                 continue;
               }
-              beginWhiteSpace(parser, c);
+              beginWhiteSpace(parser2, c);
               continue;
             case S.BEGIN_WHITESPACE:
-              beginWhiteSpace(parser, c);
+              beginWhiteSpace(parser2, c);
               continue;
             case S.TEXT:
-              if (parser.sawRoot && !parser.closedRoot) {
+              if (parser2.sawRoot && !parser2.closedRoot) {
                 var starti = i2 - 1;
                 while (c && c !== "<" && c !== "&") {
                   c = charAt(chunk, i2++);
-                  if (c && parser.trackPosition) {
-                    parser.position++;
+                  if (c && parser2.trackPosition) {
+                    parser2.position++;
                     if (c === "\n") {
-                      parser.line++;
-                      parser.column = 0;
+                      parser2.line++;
+                      parser2.column = 0;
                     } else {
-                      parser.column++;
+                      parser2.column++;
                     }
                   }
                 }
-                parser.textNode += chunk.substring(starti, i2 - 1);
+                parser2.textNode += chunk.substring(starti, i2 - 1);
               }
-              if (c === "<" && !(parser.sawRoot && parser.closedRoot && !parser.strict)) {
-                parser.state = S.OPEN_WAKA;
-                parser.startTagPosition = parser.position;
+              if (c === "<" && !(parser2.sawRoot && parser2.closedRoot && !parser2.strict)) {
+                parser2.state = S.OPEN_WAKA;
+                parser2.startTagPosition = parser2.position;
               } else {
-                if (!isWhitespace(c) && (!parser.sawRoot || parser.closedRoot)) {
-                  strictFail(parser, "Text data outside of root node.");
+                if (!isWhitespace(c) && (!parser2.sawRoot || parser2.closedRoot)) {
+                  strictFail(parser2, "Text data outside of root node.");
                 }
                 if (c === "&") {
-                  parser.state = S.TEXT_ENTITY;
+                  parser2.state = S.TEXT_ENTITY;
                 } else {
-                  parser.textNode += c;
+                  parser2.textNode += c;
                 }
               }
               continue;
             case S.SCRIPT:
               if (c === "<") {
-                parser.state = S.SCRIPT_ENDING;
+                parser2.state = S.SCRIPT_ENDING;
               } else {
-                parser.script += c;
+                parser2.script += c;
               }
               continue;
             case S.SCRIPT_ENDING:
               if (c === "/") {
-                parser.state = S.CLOSE_TAG;
+                parser2.state = S.CLOSE_TAG;
               } else {
-                parser.script += "<" + c;
-                parser.state = S.SCRIPT;
+                parser2.script += "<" + c;
+                parser2.state = S.SCRIPT;
               }
               continue;
             case S.OPEN_WAKA:
               if (c === "!") {
-                parser.state = S.SGML_DECL;
-                parser.sgmlDecl = "";
+                parser2.state = S.SGML_DECL;
+                parser2.sgmlDecl = "";
               } else if (isWhitespace(c)) {
               } else if (isMatch(nameStart, c)) {
-                parser.state = S.OPEN_TAG;
-                parser.tagName = c;
+                parser2.state = S.OPEN_TAG;
+                parser2.tagName = c;
               } else if (c === "/") {
-                parser.state = S.CLOSE_TAG;
-                parser.tagName = "";
+                parser2.state = S.CLOSE_TAG;
+                parser2.tagName = "";
               } else if (c === "?") {
-                parser.state = S.PROC_INST;
-                parser.procInstName = parser.procInstBody = "";
+                parser2.state = S.PROC_INST;
+                parser2.procInstName = parser2.procInstBody = "";
               } else {
-                strictFail(parser, "Unencoded <");
-                if (parser.startTagPosition + 1 < parser.position) {
-                  var pad2 = parser.position - parser.startTagPosition;
+                strictFail(parser2, "Unencoded <");
+                if (parser2.startTagPosition + 1 < parser2.position) {
+                  var pad2 = parser2.position - parser2.startTagPosition;
                   c = new Array(pad2).join(" ") + c;
                 }
-                parser.textNode += "<" + c;
-                parser.state = S.TEXT;
+                parser2.textNode += "<" + c;
+                parser2.state = S.TEXT;
               }
               continue;
             case S.SGML_DECL:
-              if ((parser.sgmlDecl + c).toUpperCase() === CDATA) {
-                emitNode(parser, "onopencdata");
-                parser.state = S.CDATA;
-                parser.sgmlDecl = "";
-                parser.cdata = "";
-              } else if (parser.sgmlDecl + c === "--") {
-                parser.state = S.COMMENT;
-                parser.comment = "";
-                parser.sgmlDecl = "";
-              } else if ((parser.sgmlDecl + c).toUpperCase() === DOCTYPE) {
-                parser.state = S.DOCTYPE;
-                if (parser.doctype || parser.sawRoot) {
+              if ((parser2.sgmlDecl + c).toUpperCase() === CDATA) {
+                emitNode(parser2, "onopencdata");
+                parser2.state = S.CDATA;
+                parser2.sgmlDecl = "";
+                parser2.cdata = "";
+              } else if (parser2.sgmlDecl + c === "--") {
+                parser2.state = S.COMMENT;
+                parser2.comment = "";
+                parser2.sgmlDecl = "";
+              } else if ((parser2.sgmlDecl + c).toUpperCase() === DOCTYPE) {
+                parser2.state = S.DOCTYPE;
+                if (parser2.doctype || parser2.sawRoot) {
                   strictFail(
-                    parser,
+                    parser2,
                     "Inappropriately located doctype declaration"
                   );
                 }
-                parser.doctype = "";
-                parser.sgmlDecl = "";
+                parser2.doctype = "";
+                parser2.sgmlDecl = "";
               } else if (c === ">") {
-                emitNode(parser, "onsgmldeclaration", parser.sgmlDecl);
-                parser.sgmlDecl = "";
-                parser.state = S.TEXT;
+                emitNode(parser2, "onsgmldeclaration", parser2.sgmlDecl);
+                parser2.sgmlDecl = "";
+                parser2.state = S.TEXT;
               } else if (isQuote(c)) {
-                parser.state = S.SGML_DECL_QUOTED;
-                parser.sgmlDecl += c;
+                parser2.state = S.SGML_DECL_QUOTED;
+                parser2.sgmlDecl += c;
               } else {
-                parser.sgmlDecl += c;
+                parser2.sgmlDecl += c;
               }
               continue;
             case S.SGML_DECL_QUOTED:
-              if (c === parser.q) {
-                parser.state = S.SGML_DECL;
-                parser.q = "";
+              if (c === parser2.q) {
+                parser2.state = S.SGML_DECL;
+                parser2.q = "";
               }
-              parser.sgmlDecl += c;
+              parser2.sgmlDecl += c;
               continue;
             case S.DOCTYPE:
               if (c === ">") {
-                parser.state = S.TEXT;
-                emitNode(parser, "ondoctype", parser.doctype);
-                parser.doctype = true;
+                parser2.state = S.TEXT;
+                emitNode(parser2, "ondoctype", parser2.doctype);
+                parser2.doctype = true;
               } else {
-                parser.doctype += c;
+                parser2.doctype += c;
                 if (c === "[") {
-                  parser.state = S.DOCTYPE_DTD;
+                  parser2.state = S.DOCTYPE_DTD;
                 } else if (isQuote(c)) {
-                  parser.state = S.DOCTYPE_QUOTED;
-                  parser.q = c;
+                  parser2.state = S.DOCTYPE_QUOTED;
+                  parser2.q = c;
                 }
               }
               continue;
             case S.DOCTYPE_QUOTED:
-              parser.doctype += c;
-              if (c === parser.q) {
-                parser.q = "";
-                parser.state = S.DOCTYPE;
+              parser2.doctype += c;
+              if (c === parser2.q) {
+                parser2.q = "";
+                parser2.state = S.DOCTYPE;
               }
               continue;
             case S.DOCTYPE_DTD:
-              parser.doctype += c;
+              parser2.doctype += c;
               if (c === "]") {
-                parser.state = S.DOCTYPE;
+                parser2.state = S.DOCTYPE;
               } else if (isQuote(c)) {
-                parser.state = S.DOCTYPE_DTD_QUOTED;
-                parser.q = c;
+                parser2.state = S.DOCTYPE_DTD_QUOTED;
+                parser2.q = c;
               }
               continue;
             case S.DOCTYPE_DTD_QUOTED:
-              parser.doctype += c;
-              if (c === parser.q) {
-                parser.state = S.DOCTYPE_DTD;
-                parser.q = "";
+              parser2.doctype += c;
+              if (c === parser2.q) {
+                parser2.state = S.DOCTYPE_DTD;
+                parser2.q = "";
               }
               continue;
             case S.COMMENT:
               if (c === "-") {
-                parser.state = S.COMMENT_ENDING;
+                parser2.state = S.COMMENT_ENDING;
               } else {
-                parser.comment += c;
+                parser2.comment += c;
               }
               continue;
             case S.COMMENT_ENDING:
               if (c === "-") {
-                parser.state = S.COMMENT_ENDED;
-                parser.comment = textopts(parser.opt, parser.comment);
-                if (parser.comment) {
-                  emitNode(parser, "oncomment", parser.comment);
+                parser2.state = S.COMMENT_ENDED;
+                parser2.comment = textopts(parser2.opt, parser2.comment);
+                if (parser2.comment) {
+                  emitNode(parser2, "oncomment", parser2.comment);
                 }
-                parser.comment = "";
+                parser2.comment = "";
               } else {
-                parser.comment += "-" + c;
-                parser.state = S.COMMENT;
+                parser2.comment += "-" + c;
+                parser2.state = S.COMMENT;
               }
               continue;
             case S.COMMENT_ENDED:
               if (c !== ">") {
-                strictFail(parser, "Malformed comment");
-                parser.comment += "--" + c;
-                parser.state = S.COMMENT;
+                strictFail(parser2, "Malformed comment");
+                parser2.comment += "--" + c;
+                parser2.state = S.COMMENT;
               } else {
-                parser.state = S.TEXT;
+                parser2.state = S.TEXT;
               }
               continue;
             case S.CDATA:
               if (c === "]") {
-                parser.state = S.CDATA_ENDING;
+                parser2.state = S.CDATA_ENDING;
               } else {
-                parser.cdata += c;
+                parser2.cdata += c;
               }
               continue;
             case S.CDATA_ENDING:
               if (c === "]") {
-                parser.state = S.CDATA_ENDING_2;
+                parser2.state = S.CDATA_ENDING_2;
               } else {
-                parser.cdata += "]" + c;
-                parser.state = S.CDATA;
+                parser2.cdata += "]" + c;
+                parser2.state = S.CDATA;
               }
               continue;
             case S.CDATA_ENDING_2:
               if (c === ">") {
-                if (parser.cdata) {
-                  emitNode(parser, "oncdata", parser.cdata);
+                if (parser2.cdata) {
+                  emitNode(parser2, "oncdata", parser2.cdata);
                 }
-                emitNode(parser, "onclosecdata");
-                parser.cdata = "";
-                parser.state = S.TEXT;
+                emitNode(parser2, "onclosecdata");
+                parser2.cdata = "";
+                parser2.state = S.TEXT;
               } else if (c === "]") {
-                parser.cdata += "]";
+                parser2.cdata += "]";
               } else {
-                parser.cdata += "]]" + c;
-                parser.state = S.CDATA;
+                parser2.cdata += "]]" + c;
+                parser2.state = S.CDATA;
               }
               continue;
             case S.PROC_INST:
               if (c === "?") {
-                parser.state = S.PROC_INST_ENDING;
+                parser2.state = S.PROC_INST_ENDING;
               } else if (isWhitespace(c)) {
-                parser.state = S.PROC_INST_BODY;
+                parser2.state = S.PROC_INST_BODY;
               } else {
-                parser.procInstName += c;
+                parser2.procInstName += c;
               }
               continue;
             case S.PROC_INST_BODY:
-              if (!parser.procInstBody && isWhitespace(c)) {
+              if (!parser2.procInstBody && isWhitespace(c)) {
                 continue;
               } else if (c === "?") {
-                parser.state = S.PROC_INST_ENDING;
+                parser2.state = S.PROC_INST_ENDING;
               } else {
-                parser.procInstBody += c;
+                parser2.procInstBody += c;
               }
               continue;
             case S.PROC_INST_ENDING:
               if (c === ">") {
-                emitNode(parser, "onprocessinginstruction", {
-                  name: parser.procInstName,
-                  body: parser.procInstBody
+                emitNode(parser2, "onprocessinginstruction", {
+                  name: parser2.procInstName,
+                  body: parser2.procInstBody
                 });
-                parser.procInstName = parser.procInstBody = "";
-                parser.state = S.TEXT;
+                parser2.procInstName = parser2.procInstBody = "";
+                parser2.state = S.TEXT;
               } else {
-                parser.procInstBody += "?" + c;
-                parser.state = S.PROC_INST_BODY;
+                parser2.procInstBody += "?" + c;
+                parser2.state = S.PROC_INST_BODY;
               }
               continue;
             case S.OPEN_TAG:
               if (isMatch(nameBody, c)) {
-                parser.tagName += c;
+                parser2.tagName += c;
               } else {
-                newTag(parser);
+                newTag(parser2);
                 if (c === ">") {
-                  openTag(parser);
+                  openTag(parser2);
                 } else if (c === "/") {
-                  parser.state = S.OPEN_TAG_SLASH;
+                  parser2.state = S.OPEN_TAG_SLASH;
                 } else {
                   if (!isWhitespace(c)) {
-                    strictFail(parser, "Invalid character in tag name");
+                    strictFail(parser2, "Invalid character in tag name");
                   }
-                  parser.state = S.ATTRIB;
+                  parser2.state = S.ATTRIB;
                 }
               }
               continue;
             case S.OPEN_TAG_SLASH:
               if (c === ">") {
-                openTag(parser, true);
-                closeTag(parser);
+                openTag(parser2, true);
+                closeTag(parser2);
               } else {
-                strictFail(parser, "Forward-slash in opening tag not followed by >");
-                parser.state = S.ATTRIB;
+                strictFail(parser2, "Forward-slash in opening tag not followed by >");
+                parser2.state = S.ATTRIB;
               }
               continue;
             case S.ATTRIB:
               if (isWhitespace(c)) {
                 continue;
               } else if (c === ">") {
-                openTag(parser);
+                openTag(parser2);
               } else if (c === "/") {
-                parser.state = S.OPEN_TAG_SLASH;
+                parser2.state = S.OPEN_TAG_SLASH;
               } else if (isMatch(nameStart, c)) {
-                parser.attribName = c;
-                parser.attribValue = "";
-                parser.state = S.ATTRIB_NAME;
+                parser2.attribName = c;
+                parser2.attribValue = "";
+                parser2.state = S.ATTRIB_NAME;
               } else {
-                strictFail(parser, "Invalid attribute name");
+                strictFail(parser2, "Invalid attribute name");
               }
               continue;
             case S.ATTRIB_NAME:
               if (c === "=") {
-                parser.state = S.ATTRIB_VALUE;
+                parser2.state = S.ATTRIB_VALUE;
               } else if (c === ">") {
-                strictFail(parser, "Attribute without value");
-                parser.attribValue = parser.attribName;
-                attrib(parser);
-                openTag(parser);
+                strictFail(parser2, "Attribute without value");
+                parser2.attribValue = parser2.attribName;
+                attrib(parser2);
+                openTag(parser2);
               } else if (isWhitespace(c)) {
-                parser.state = S.ATTRIB_NAME_SAW_WHITE;
+                parser2.state = S.ATTRIB_NAME_SAW_WHITE;
               } else if (isMatch(nameBody, c)) {
-                parser.attribName += c;
+                parser2.attribName += c;
               } else {
-                strictFail(parser, "Invalid attribute name");
+                strictFail(parser2, "Invalid attribute name");
               }
               continue;
             case S.ATTRIB_NAME_SAW_WHITE:
               if (c === "=") {
-                parser.state = S.ATTRIB_VALUE;
+                parser2.state = S.ATTRIB_VALUE;
               } else if (isWhitespace(c)) {
                 continue;
               } else {
-                strictFail(parser, "Attribute without value");
-                parser.tag.attributes[parser.attribName] = "";
-                parser.attribValue = "";
-                emitNode(parser, "onattribute", {
-                  name: parser.attribName,
+                strictFail(parser2, "Attribute without value");
+                parser2.tag.attributes[parser2.attribName] = "";
+                parser2.attribValue = "";
+                emitNode(parser2, "onattribute", {
+                  name: parser2.attribName,
                   value: ""
                 });
-                parser.attribName = "";
+                parser2.attribName = "";
                 if (c === ">") {
-                  openTag(parser);
+                  openTag(parser2);
                 } else if (isMatch(nameStart, c)) {
-                  parser.attribName = c;
-                  parser.state = S.ATTRIB_NAME;
+                  parser2.attribName = c;
+                  parser2.state = S.ATTRIB_NAME;
                 } else {
-                  strictFail(parser, "Invalid attribute name");
-                  parser.state = S.ATTRIB;
+                  strictFail(parser2, "Invalid attribute name");
+                  parser2.state = S.ATTRIB;
                 }
               }
               continue;
@@ -9168,86 +9193,86 @@ var require_sax = __commonJS({
               if (isWhitespace(c)) {
                 continue;
               } else if (isQuote(c)) {
-                parser.q = c;
-                parser.state = S.ATTRIB_VALUE_QUOTED;
+                parser2.q = c;
+                parser2.state = S.ATTRIB_VALUE_QUOTED;
               } else {
-                strictFail(parser, "Unquoted attribute value");
-                parser.state = S.ATTRIB_VALUE_UNQUOTED;
-                parser.attribValue = c;
+                strictFail(parser2, "Unquoted attribute value");
+                parser2.state = S.ATTRIB_VALUE_UNQUOTED;
+                parser2.attribValue = c;
               }
               continue;
             case S.ATTRIB_VALUE_QUOTED:
-              if (c !== parser.q) {
+              if (c !== parser2.q) {
                 if (c === "&") {
-                  parser.state = S.ATTRIB_VALUE_ENTITY_Q;
+                  parser2.state = S.ATTRIB_VALUE_ENTITY_Q;
                 } else {
-                  parser.attribValue += c;
+                  parser2.attribValue += c;
                 }
                 continue;
               }
-              attrib(parser);
-              parser.q = "";
-              parser.state = S.ATTRIB_VALUE_CLOSED;
+              attrib(parser2);
+              parser2.q = "";
+              parser2.state = S.ATTRIB_VALUE_CLOSED;
               continue;
             case S.ATTRIB_VALUE_CLOSED:
               if (isWhitespace(c)) {
-                parser.state = S.ATTRIB;
+                parser2.state = S.ATTRIB;
               } else if (c === ">") {
-                openTag(parser);
+                openTag(parser2);
               } else if (c === "/") {
-                parser.state = S.OPEN_TAG_SLASH;
+                parser2.state = S.OPEN_TAG_SLASH;
               } else if (isMatch(nameStart, c)) {
-                strictFail(parser, "No whitespace between attributes");
-                parser.attribName = c;
-                parser.attribValue = "";
-                parser.state = S.ATTRIB_NAME;
+                strictFail(parser2, "No whitespace between attributes");
+                parser2.attribName = c;
+                parser2.attribValue = "";
+                parser2.state = S.ATTRIB_NAME;
               } else {
-                strictFail(parser, "Invalid attribute name");
+                strictFail(parser2, "Invalid attribute name");
               }
               continue;
             case S.ATTRIB_VALUE_UNQUOTED:
               if (!isAttribEnd(c)) {
                 if (c === "&") {
-                  parser.state = S.ATTRIB_VALUE_ENTITY_U;
+                  parser2.state = S.ATTRIB_VALUE_ENTITY_U;
                 } else {
-                  parser.attribValue += c;
+                  parser2.attribValue += c;
                 }
                 continue;
               }
-              attrib(parser);
+              attrib(parser2);
               if (c === ">") {
-                openTag(parser);
+                openTag(parser2);
               } else {
-                parser.state = S.ATTRIB;
+                parser2.state = S.ATTRIB;
               }
               continue;
             case S.CLOSE_TAG:
-              if (!parser.tagName) {
+              if (!parser2.tagName) {
                 if (isWhitespace(c)) {
                   continue;
                 } else if (notMatch(nameStart, c)) {
-                  if (parser.script) {
-                    parser.script += "</" + c;
-                    parser.state = S.SCRIPT;
+                  if (parser2.script) {
+                    parser2.script += "</" + c;
+                    parser2.state = S.SCRIPT;
                   } else {
-                    strictFail(parser, "Invalid tagname in closing tag.");
+                    strictFail(parser2, "Invalid tagname in closing tag.");
                   }
                 } else {
-                  parser.tagName = c;
+                  parser2.tagName = c;
                 }
               } else if (c === ">") {
-                closeTag(parser);
+                closeTag(parser2);
               } else if (isMatch(nameBody, c)) {
-                parser.tagName += c;
-              } else if (parser.script) {
-                parser.script += "</" + parser.tagName;
-                parser.tagName = "";
-                parser.state = S.SCRIPT;
+                parser2.tagName += c;
+              } else if (parser2.script) {
+                parser2.script += "</" + parser2.tagName;
+                parser2.tagName = "";
+                parser2.state = S.SCRIPT;
               } else {
                 if (!isWhitespace(c)) {
-                  strictFail(parser, "Invalid tagname in closing tag");
+                  strictFail(parser2, "Invalid tagname in closing tag");
                 }
-                parser.state = S.CLOSE_TAG_SAW_WHITE;
+                parser2.state = S.CLOSE_TAG_SAW_WHITE;
               }
               continue;
             case S.CLOSE_TAG_SAW_WHITE:
@@ -9255,9 +9280,9 @@ var require_sax = __commonJS({
                 continue;
               }
               if (c === ">") {
-                closeTag(parser);
+                closeTag(parser2);
               } else {
-                strictFail(parser, "Invalid characters in closing tag");
+                strictFail(parser2, "Invalid characters in closing tag");
               }
               continue;
             case S.TEXT_ENTITY:
@@ -9265,7 +9290,7 @@ var require_sax = __commonJS({
             case S.ATTRIB_VALUE_ENTITY_U:
               var returnState;
               var buffer;
-              switch (parser.state) {
+              switch (parser2.state) {
                 case S.TEXT_ENTITY:
                   returnState = S.TEXT;
                   buffer = "textNode";
@@ -9280,26 +9305,26 @@ var require_sax = __commonJS({
                   break;
               }
               if (c === ";") {
-                parser[buffer] += parseEntity(parser);
-                parser.entity = "";
-                parser.state = returnState;
-              } else if (isMatch(parser.entity.length ? entityBody : entityStart, c)) {
-                parser.entity += c;
+                parser2[buffer] += parseEntity(parser2);
+                parser2.entity = "";
+                parser2.state = returnState;
+              } else if (isMatch(parser2.entity.length ? entityBody : entityStart, c)) {
+                parser2.entity += c;
               } else {
-                strictFail(parser, "Invalid character in entity name");
-                parser[buffer] += "&" + parser.entity + c;
-                parser.entity = "";
-                parser.state = returnState;
+                strictFail(parser2, "Invalid character in entity name");
+                parser2[buffer] += "&" + parser2.entity + c;
+                parser2.entity = "";
+                parser2.state = returnState;
               }
               continue;
             default:
-              throw new Error(parser, "Unknown state: " + parser.state);
+              throw new Error(parser2, "Unknown state: " + parser2.state);
           }
         }
-        if (parser.position >= parser.bufferCheckPosition) {
-          checkBufferLength(parser);
+        if (parser2.position >= parser2.bufferCheckPosition) {
+          checkBufferLength(parser2);
         }
-        return parser;
+        return parser2;
       }
       if (!String.fromCodePoint) {
         (function() {
@@ -9942,150 +9967,247 @@ var require_queue = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/bmp.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/utils.js
+var require_utils2 = __commonJS({
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/utils.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.findBox = exports2.readUInt = exports2.readUInt32LE = exports2.readUInt32BE = exports2.readInt32LE = exports2.readUInt24LE = exports2.readUInt16LE = exports2.readUInt16BE = exports2.readInt16LE = exports2.toHexString = exports2.toUTF8String = void 0;
+    var decoder = new TextDecoder();
+    var toUTF8String = (input, start = 0, end = input.length) => decoder.decode(input.slice(start, end));
+    exports2.toUTF8String = toUTF8String;
+    var toHexString = (input, start = 0, end = input.length) => input.slice(start, end).reduce((memo, i2) => memo + ("0" + i2.toString(16)).slice(-2), "");
+    exports2.toHexString = toHexString;
+    var readInt16LE = (input, offset = 0) => {
+      const val = input[offset] + input[offset + 1] * 2 ** 8;
+      return val | (val & 2 ** 15) * 131070;
+    };
+    exports2.readInt16LE = readInt16LE;
+    var readUInt16BE = (input, offset = 0) => input[offset] * 2 ** 8 + input[offset + 1];
+    exports2.readUInt16BE = readUInt16BE;
+    var readUInt16LE = (input, offset = 0) => input[offset] + input[offset + 1] * 2 ** 8;
+    exports2.readUInt16LE = readUInt16LE;
+    var readUInt24LE = (input, offset = 0) => input[offset] + input[offset + 1] * 2 ** 8 + input[offset + 2] * 2 ** 16;
+    exports2.readUInt24LE = readUInt24LE;
+    var readInt32LE = (input, offset = 0) => input[offset] + input[offset + 1] * 2 ** 8 + input[offset + 2] * 2 ** 16 + (input[offset + 3] << 24);
+    exports2.readInt32LE = readInt32LE;
+    var readUInt32BE = (input, offset = 0) => input[offset] * 2 ** 24 + input[offset + 1] * 2 ** 16 + input[offset + 2] * 2 ** 8 + input[offset + 3];
+    exports2.readUInt32BE = readUInt32BE;
+    var readUInt32LE = (input, offset = 0) => input[offset] + input[offset + 1] * 2 ** 8 + input[offset + 2] * 2 ** 16 + input[offset + 3] * 2 ** 24;
+    exports2.readUInt32LE = readUInt32LE;
+    var methods = {
+      readUInt16BE: exports2.readUInt16BE,
+      readUInt16LE: exports2.readUInt16LE,
+      readUInt32BE: exports2.readUInt32BE,
+      readUInt32LE: exports2.readUInt32LE
+    };
+    function readUInt(input, bits, offset, isBigEndian2) {
+      offset = offset || 0;
+      const endian = isBigEndian2 ? "BE" : "LE";
+      const methodName = "readUInt" + bits + endian;
+      return methods[methodName](input, offset);
+    }
+    exports2.readUInt = readUInt;
+    function readBox(buffer, offset) {
+      if (buffer.length - offset < 4)
+        return;
+      const boxSize = (0, exports2.readUInt32BE)(buffer, offset);
+      if (buffer.length - offset < boxSize)
+        return;
+      return {
+        name: (0, exports2.toUTF8String)(buffer, 4 + offset, 8 + offset),
+        offset,
+        size: boxSize
+      };
+    }
+    function findBox(buffer, boxName, offset) {
+      while (offset < buffer.length) {
+        const box = readBox(buffer, offset);
+        if (!box)
+          break;
+        if (box.name === boxName)
+          return box;
+        offset += box.size;
+      }
+    }
+    exports2.findBox = findBox;
+  }
+});
+
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/bmp.js
 var require_bmp = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/bmp.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/bmp.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.BMP = void 0;
+    var utils_1 = require_utils2();
     exports2.BMP = {
-      validate(buffer) {
-        return "BM" === buffer.toString("ascii", 0, 2);
-      },
-      calculate(buffer) {
-        return {
-          height: Math.abs(buffer.readInt32LE(22)),
-          width: buffer.readUInt32LE(18)
-        };
-      }
+      validate: (input) => (0, utils_1.toUTF8String)(input, 0, 2) === "BM",
+      calculate: (input) => ({
+        height: Math.abs((0, utils_1.readInt32LE)(input, 22)),
+        width: (0, utils_1.readUInt32LE)(input, 18)
+      })
     };
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/ico.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/ico.js
 var require_ico = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/ico.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/ico.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ICO = void 0;
+    var utils_1 = require_utils2();
     var TYPE_ICON = 1;
     var SIZE_HEADER = 2 + 2 + 2;
     var SIZE_IMAGE_ENTRY = 1 + 1 + 1 + 1 + 2 + 2 + 4 + 4;
-    function getSizeFromOffset(buffer, offset) {
-      const value = buffer.readUInt8(offset);
+    function getSizeFromOffset(input, offset) {
+      const value = input[offset];
       return value === 0 ? 256 : value;
     }
-    function getImageSize(buffer, imageIndex) {
+    function getImageSize(input, imageIndex) {
       const offset = SIZE_HEADER + imageIndex * SIZE_IMAGE_ENTRY;
       return {
-        height: getSizeFromOffset(buffer, offset + 1),
-        width: getSizeFromOffset(buffer, offset)
+        height: getSizeFromOffset(input, offset + 1),
+        width: getSizeFromOffset(input, offset)
       };
     }
     exports2.ICO = {
-      validate(buffer) {
-        const reserved = buffer.readUInt16LE(0);
-        const imageCount = buffer.readUInt16LE(4);
-        if (reserved !== 0 || imageCount === 0) {
+      validate(input) {
+        const reserved = (0, utils_1.readUInt16LE)(input, 0);
+        const imageCount = (0, utils_1.readUInt16LE)(input, 4);
+        if (reserved !== 0 || imageCount === 0)
           return false;
-        }
-        const imageType = buffer.readUInt16LE(2);
+        const imageType = (0, utils_1.readUInt16LE)(input, 2);
         return imageType === TYPE_ICON;
       },
-      calculate(buffer) {
-        const nbImages = buffer.readUInt16LE(4);
-        const imageSize = getImageSize(buffer, 0);
-        if (nbImages === 1) {
+      calculate(input) {
+        const nbImages = (0, utils_1.readUInt16LE)(input, 4);
+        const imageSize = getImageSize(input, 0);
+        if (nbImages === 1)
           return imageSize;
-        }
         const imgs = [imageSize];
         for (let imageIndex = 1; imageIndex < nbImages; imageIndex += 1) {
-          imgs.push(getImageSize(buffer, imageIndex));
+          imgs.push(getImageSize(input, imageIndex));
         }
-        const result = {
+        return {
           height: imageSize.height,
           images: imgs,
           width: imageSize.width
         };
-        return result;
       }
     };
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/cur.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/cur.js
 var require_cur = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/cur.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/cur.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CUR = void 0;
     var ico_1 = require_ico();
+    var utils_1 = require_utils2();
     var TYPE_CURSOR = 2;
     exports2.CUR = {
-      validate(buffer) {
-        const reserved = buffer.readUInt16LE(0);
-        const imageCount = buffer.readUInt16LE(4);
-        if (reserved !== 0 || imageCount === 0) {
+      validate(input) {
+        const reserved = (0, utils_1.readUInt16LE)(input, 0);
+        const imageCount = (0, utils_1.readUInt16LE)(input, 4);
+        if (reserved !== 0 || imageCount === 0)
           return false;
-        }
-        const imageType = buffer.readUInt16LE(2);
+        const imageType = (0, utils_1.readUInt16LE)(input, 2);
         return imageType === TYPE_CURSOR;
       },
-      calculate(buffer) {
-        return ico_1.ICO.calculate(buffer);
-      }
+      calculate: (input) => ico_1.ICO.calculate(input)
     };
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/dds.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/dds.js
 var require_dds = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/dds.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/dds.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.DDS = void 0;
+    var utils_1 = require_utils2();
     exports2.DDS = {
-      validate(buffer) {
-        return buffer.readUInt32LE(0) === 542327876;
-      },
-      calculate(buffer) {
-        return {
-          height: buffer.readUInt32LE(12),
-          width: buffer.readUInt32LE(16)
-        };
-      }
+      validate: (input) => (0, utils_1.readUInt32LE)(input, 0) === 542327876,
+      calculate: (input) => ({
+        height: (0, utils_1.readUInt32LE)(input, 12),
+        width: (0, utils_1.readUInt32LE)(input, 16)
+      })
     };
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/gif.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/gif.js
 var require_gif = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/gif.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/gif.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.GIF = void 0;
+    var utils_1 = require_utils2();
     var gifRegexp = /^GIF8[79]a/;
     exports2.GIF = {
+      validate: (input) => gifRegexp.test((0, utils_1.toUTF8String)(input, 0, 6)),
+      calculate: (input) => ({
+        height: (0, utils_1.readUInt16LE)(input, 8),
+        width: (0, utils_1.readUInt16LE)(input, 6)
+      })
+    };
+  }
+});
+
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/heif.js
+var require_heif = __commonJS({
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/heif.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.HEIF = void 0;
+    var utils_1 = require_utils2();
+    var brandMap = {
+      avif: "avif",
+      mif1: "heif",
+      msf1: "heif",
+      // hief-sequence
+      heic: "heic",
+      heix: "heic",
+      hevc: "heic",
+      // heic-sequence
+      hevx: "heic"
+      // heic-sequence
+    };
+    exports2.HEIF = {
       validate(buffer) {
-        const signature = buffer.toString("ascii", 0, 6);
-        return gifRegexp.test(signature);
+        const ftype = (0, utils_1.toUTF8String)(buffer, 4, 8);
+        const brand = (0, utils_1.toUTF8String)(buffer, 8, 12);
+        return "ftyp" === ftype && brand in brandMap;
       },
       calculate(buffer) {
-        return {
-          height: buffer.readUInt16LE(8),
-          width: buffer.readUInt16LE(6)
-        };
+        const metaBox = (0, utils_1.findBox)(buffer, "meta", 0);
+        const iprpBox = metaBox && (0, utils_1.findBox)(buffer, "iprp", metaBox.offset + 12);
+        const ipcoBox = iprpBox && (0, utils_1.findBox)(buffer, "ipco", iprpBox.offset + 8);
+        const ispeBox = ipcoBox && (0, utils_1.findBox)(buffer, "ispe", ipcoBox.offset + 8);
+        if (ispeBox) {
+          return {
+            height: (0, utils_1.readUInt32BE)(buffer, ispeBox.offset + 16),
+            width: (0, utils_1.readUInt32BE)(buffer, ispeBox.offset + 12),
+            type: (0, utils_1.toUTF8String)(buffer, 8, 12)
+          };
+        }
+        throw new TypeError("Invalid HEIF, no size found");
       }
     };
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/icns.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/icns.js
 var require_icns = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/icns.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/icns.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ICNS = void 0;
+    var utils_1 = require_utils2();
     var SIZE_HEADER = 4 + 4;
     var FILE_LENGTH_OFFSET = 4;
     var ENTRY_LENGTH_OFFSET = 4;
@@ -10131,11 +10253,11 @@ var require_icns = __commonJS({
       // . => 1024 x 1024
       ic10: 1024
     };
-    function readImageHeader(buffer, imageOffset) {
+    function readImageHeader(input, imageOffset) {
       const imageLengthOffset = imageOffset + ENTRY_LENGTH_OFFSET;
       return [
-        buffer.toString("ascii", imageOffset, imageLengthOffset),
-        buffer.readUInt32BE(imageLengthOffset)
+        (0, utils_1.toUTF8String)(input, imageOffset, imageLengthOffset),
+        (0, utils_1.readUInt32BE)(input, imageLengthOffset)
       ];
     }
     function getImageSize(type) {
@@ -10143,26 +10265,23 @@ var require_icns = __commonJS({
       return { width: size4, height: size4, type };
     }
     exports2.ICNS = {
-      validate(buffer) {
-        return "icns" === buffer.toString("ascii", 0, 4);
-      },
-      calculate(buffer) {
-        const bufferLength = buffer.length;
-        const fileLength = buffer.readUInt32BE(FILE_LENGTH_OFFSET);
+      validate: (input) => (0, utils_1.toUTF8String)(input, 0, 4) === "icns",
+      calculate(input) {
+        const inputLength = input.length;
+        const fileLength = (0, utils_1.readUInt32BE)(input, FILE_LENGTH_OFFSET);
         let imageOffset = SIZE_HEADER;
-        let imageHeader = readImageHeader(buffer, imageOffset);
+        let imageHeader = readImageHeader(input, imageOffset);
         let imageSize = getImageSize(imageHeader[0]);
         imageOffset += imageHeader[1];
-        if (imageOffset === fileLength) {
+        if (imageOffset === fileLength)
           return imageSize;
-        }
         const result = {
           height: imageSize.height,
           images: [imageSize],
           width: imageSize.width
         };
-        while (imageOffset < fileLength && imageOffset < bufferLength) {
-          imageHeader = readImageHeader(buffer, imageOffset);
+        while (imageOffset < fileLength && imageOffset < inputLength) {
+          imageHeader = readImageHeader(input, imageOffset);
           imageSize = getImageSize(imageHeader[0]);
           imageOffset += imageHeader[1];
           result.images.push(imageSize);
@@ -10173,111 +10292,62 @@ var require_icns = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/j2c.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/j2c.js
 var require_j2c = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/j2c.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/j2c.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.J2C = void 0;
+    var utils_1 = require_utils2();
     exports2.J2C = {
-      validate(buffer) {
-        return buffer.toString("hex", 0, 4) === "ff4fff51";
-      },
-      calculate(buffer) {
-        return {
-          height: buffer.readUInt32BE(12),
-          width: buffer.readUInt32BE(8)
-        };
-      }
+      // TODO: this doesn't seem right. SIZ marker doesn't have to be right after the SOC
+      validate: (input) => (0, utils_1.toHexString)(input, 0, 4) === "ff4fff51",
+      calculate: (input) => ({
+        height: (0, utils_1.readUInt32BE)(input, 12),
+        width: (0, utils_1.readUInt32BE)(input, 8)
+      })
     };
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/jp2.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/jp2.js
 var require_jp2 = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/jp2.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/jp2.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.JP2 = void 0;
-    var BoxTypes = {
-      ftyp: "66747970",
-      ihdr: "69686472",
-      jp2h: "6a703268",
-      jp__: "6a502020",
-      rreq: "72726571",
-      xml_: "786d6c20"
-    };
-    var calculateRREQLength = (box) => {
-      const unit2 = box.readUInt8(0);
-      let offset = 1 + 2 * unit2;
-      const numStdFlags = box.readUInt16BE(offset);
-      const flagsLength = numStdFlags * (2 + unit2);
-      offset = offset + 2 + flagsLength;
-      const numVendorFeatures = box.readUInt16BE(offset);
-      const featuresLength = numVendorFeatures * (16 + unit2);
-      return offset + 2 + featuresLength;
-    };
-    var parseIHDR = (box) => {
-      return {
-        height: box.readUInt32BE(4),
-        width: box.readUInt32BE(8)
-      };
-    };
+    var utils_1 = require_utils2();
     exports2.JP2 = {
-      validate(buffer) {
-        const signature = buffer.toString("hex", 4, 8);
-        const signatureLength = buffer.readUInt32BE(0);
-        if (signature !== BoxTypes.jp__ || signatureLength < 1) {
+      validate(input) {
+        if ((0, utils_1.readUInt32BE)(input, 4) !== 1783636e3 || (0, utils_1.readUInt32BE)(input, 0) < 1)
           return false;
-        }
-        const ftypeBoxStart = signatureLength + 4;
-        const ftypBoxLength = buffer.readUInt32BE(signatureLength);
-        const ftypBox = buffer.slice(ftypeBoxStart, ftypeBoxStart + ftypBoxLength);
-        return ftypBox.toString("hex", 0, 4) === BoxTypes.ftyp;
+        const ftypBox = (0, utils_1.findBox)(input, "ftyp", 0);
+        if (!ftypBox)
+          return false;
+        return (0, utils_1.readUInt32BE)(input, ftypBox.offset + 4) === 1718909296;
       },
-      calculate(buffer) {
-        const signatureLength = buffer.readUInt32BE(0);
-        const ftypBoxLength = buffer.readUInt16BE(signatureLength + 2);
-        let offset = signatureLength + 4 + ftypBoxLength;
-        const nextBoxType = buffer.toString("hex", offset, offset + 4);
-        switch (nextBoxType) {
-          case BoxTypes.rreq:
-            const MAGIC = 4;
-            offset = offset + 4 + MAGIC + calculateRREQLength(buffer.slice(offset + 4));
-            return parseIHDR(buffer.slice(offset + 8, offset + 24));
-          case BoxTypes.jp2h:
-            return parseIHDR(buffer.slice(offset + 8, offset + 24));
-          default:
-            throw new TypeError("Unsupported header found: " + buffer.toString("ascii", offset, offset + 4));
+      calculate(input) {
+        const jp2hBox = (0, utils_1.findBox)(input, "jp2h", 0);
+        const ihdrBox = jp2hBox && (0, utils_1.findBox)(input, "ihdr", jp2hBox.offset + 8);
+        if (ihdrBox) {
+          return {
+            height: (0, utils_1.readUInt32BE)(input, ihdrBox.offset + 8),
+            width: (0, utils_1.readUInt32BE)(input, ihdrBox.offset + 12)
+          };
         }
+        throw new TypeError("Unsupported JPEG 2000 format");
       }
     };
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/readUInt.js
-var require_readUInt = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/readUInt.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.readUInt = void 0;
-    function readUInt(buffer, bits, offset, isBigEndian2) {
-      offset = offset || 0;
-      const endian = isBigEndian2 ? "BE" : "LE";
-      const methodName = "readUInt" + bits + endian;
-      return buffer[methodName].call(buffer, offset);
-    }
-    exports2.readUInt = readUInt;
-  }
-});
-
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/jpg.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/jpg.js
 var require_jpg = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/jpg.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/jpg.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.JPG = void 0;
-    var readUInt_1 = require_readUInt();
+    var utils_1 = require_utils2();
     var EXIF_MARKER = "45786966";
     var APP1_DATA_SIZE_BYTES = 2;
     var EXIF_HEADER_BYTES = 6;
@@ -10286,19 +10356,19 @@ var require_jpg = __commonJS({
     var LITTLE_ENDIAN_BYTE_ALIGN = "4949";
     var IDF_ENTRY_BYTES = 12;
     var NUM_DIRECTORY_ENTRIES_BYTES = 2;
-    function isEXIF(buffer) {
-      return buffer.toString("hex", 2, 6) === EXIF_MARKER;
+    function isEXIF(input) {
+      return (0, utils_1.toHexString)(input, 2, 6) === EXIF_MARKER;
     }
-    function extractSize(buffer, index2) {
+    function extractSize(input, index2) {
       return {
-        height: buffer.readUInt16BE(index2),
-        width: buffer.readUInt16BE(index2 + 2)
+        height: (0, utils_1.readUInt16BE)(input, index2),
+        width: (0, utils_1.readUInt16BE)(input, index2 + 2)
       };
     }
     function extractOrientation(exifBlock, isBigEndian2) {
       const idfOffset = 8;
       const offset = EXIF_HEADER_BYTES + idfOffset;
-      const idfDirectoryEntries = (0, readUInt_1.readUInt)(exifBlock, 16, offset, isBigEndian2);
+      const idfDirectoryEntries = (0, utils_1.readUInt)(exifBlock, 16, offset, isBigEndian2);
       for (let directoryEntryNumber = 0; directoryEntryNumber < idfDirectoryEntries; directoryEntryNumber++) {
         const start = offset + NUM_DIRECTORY_ENTRIES_BYTES + directoryEntryNumber * IDF_ENTRY_BYTES;
         const end = start + IDF_ENTRY_BYTES;
@@ -10306,55 +10376,53 @@ var require_jpg = __commonJS({
           return;
         }
         const block = exifBlock.slice(start, end);
-        const tagNumber = (0, readUInt_1.readUInt)(block, 16, 0, isBigEndian2);
+        const tagNumber = (0, utils_1.readUInt)(block, 16, 0, isBigEndian2);
         if (tagNumber === 274) {
-          const dataFormat = (0, readUInt_1.readUInt)(block, 16, 2, isBigEndian2);
+          const dataFormat = (0, utils_1.readUInt)(block, 16, 2, isBigEndian2);
           if (dataFormat !== 3) {
             return;
           }
-          const numberOfComponents = (0, readUInt_1.readUInt)(block, 32, 4, isBigEndian2);
+          const numberOfComponents = (0, utils_1.readUInt)(block, 32, 4, isBigEndian2);
           if (numberOfComponents !== 1) {
             return;
           }
-          return (0, readUInt_1.readUInt)(block, 16, 8, isBigEndian2);
+          return (0, utils_1.readUInt)(block, 16, 8, isBigEndian2);
         }
       }
     }
-    function validateExifBlock(buffer, index2) {
-      const exifBlock = buffer.slice(APP1_DATA_SIZE_BYTES, index2);
-      const byteAlign = exifBlock.toString("hex", EXIF_HEADER_BYTES, EXIF_HEADER_BYTES + TIFF_BYTE_ALIGN_BYTES);
+    function validateExifBlock(input, index2) {
+      const exifBlock = input.slice(APP1_DATA_SIZE_BYTES, index2);
+      const byteAlign = (0, utils_1.toHexString)(exifBlock, EXIF_HEADER_BYTES, EXIF_HEADER_BYTES + TIFF_BYTE_ALIGN_BYTES);
       const isBigEndian2 = byteAlign === BIG_ENDIAN_BYTE_ALIGN;
       const isLittleEndian = byteAlign === LITTLE_ENDIAN_BYTE_ALIGN;
       if (isBigEndian2 || isLittleEndian) {
         return extractOrientation(exifBlock, isBigEndian2);
       }
     }
-    function validateBuffer(buffer, index2) {
-      if (index2 > buffer.length) {
+    function validateInput(input, index2) {
+      if (index2 > input.length) {
         throw new TypeError("Corrupt JPG, exceeded buffer limits");
-      }
-      if (buffer[index2] !== 255) {
-        throw new TypeError("Invalid JPG, marker table corrupted");
       }
     }
     exports2.JPG = {
-      validate(buffer) {
-        const SOIMarker = buffer.toString("hex", 0, 2);
-        return "ffd8" === SOIMarker;
-      },
-      calculate(buffer) {
-        buffer = buffer.slice(4);
+      validate: (input) => (0, utils_1.toHexString)(input, 0, 2) === "ffd8",
+      calculate(input) {
+        input = input.slice(4);
         let orientation;
         let next;
-        while (buffer.length) {
-          const i2 = buffer.readUInt16BE(0);
-          if (isEXIF(buffer)) {
-            orientation = validateExifBlock(buffer, i2);
+        while (input.length) {
+          const i2 = (0, utils_1.readUInt16BE)(input, 0);
+          if (input[i2] !== 255) {
+            input = input.slice(1);
+            continue;
           }
-          validateBuffer(buffer, i2);
-          next = buffer[i2 + 1];
+          if (isEXIF(input)) {
+            orientation = validateExifBlock(input, i2);
+          }
+          validateInput(input, i2);
+          next = input[i2 + 1];
           if (next === 192 || next === 193 || next === 194) {
-            const size4 = extractSize(buffer, i2 + 5);
+            const size4 = extractSize(input, i2 + 5);
             if (!orientation) {
               return size4;
             }
@@ -10364,7 +10432,7 @@ var require_jpg = __commonJS({
               width: size4.width
             };
           }
-          buffer = buffer.slice(i2 + 2);
+          input = input.slice(i2 + 2);
         }
         throw new TypeError("Invalid JPG, no size found");
       }
@@ -10372,42 +10440,47 @@ var require_jpg = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/ktx.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/ktx.js
 var require_ktx = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/ktx.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/ktx.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.KTX = void 0;
-    var SIGNATURE = "KTX 11";
+    var utils_1 = require_utils2();
     exports2.KTX = {
-      validate(buffer) {
-        return SIGNATURE === buffer.toString("ascii", 1, 7);
+      validate: (input) => {
+        const signature = (0, utils_1.toUTF8String)(input, 1, 7);
+        return ["KTX 11", "KTX 20"].includes(signature);
       },
-      calculate(buffer) {
+      calculate: (input) => {
+        const type = input[5] === 49 ? "ktx" : "ktx2";
+        const offset = type === "ktx" ? 36 : 20;
         return {
-          height: buffer.readUInt32LE(40),
-          width: buffer.readUInt32LE(36)
+          height: (0, utils_1.readUInt32LE)(input, offset + 4),
+          width: (0, utils_1.readUInt32LE)(input, offset),
+          type
         };
       }
     };
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/png.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/png.js
 var require_png = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/png.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/png.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.PNG = void 0;
+    var utils_1 = require_utils2();
     var pngSignature = "PNG\r\n\n";
     var pngImageHeaderChunkName = "IHDR";
     var pngFriedChunkName = "CgBI";
     exports2.PNG = {
-      validate(buffer) {
-        if (pngSignature === buffer.toString("ascii", 1, 8)) {
-          let chunkName = buffer.toString("ascii", 12, 16);
+      validate(input) {
+        if (pngSignature === (0, utils_1.toUTF8String)(input, 1, 8)) {
+          let chunkName = (0, utils_1.toUTF8String)(input, 12, 16);
           if (chunkName === pngFriedChunkName) {
-            chunkName = buffer.toString("ascii", 28, 32);
+            chunkName = (0, utils_1.toUTF8String)(input, 28, 32);
           }
           if (chunkName !== pngImageHeaderChunkName) {
             throw new TypeError("Invalid PNG");
@@ -10416,28 +10489,29 @@ var require_png = __commonJS({
         }
         return false;
       },
-      calculate(buffer) {
-        if (buffer.toString("ascii", 12, 16) === pngFriedChunkName) {
+      calculate(input) {
+        if ((0, utils_1.toUTF8String)(input, 12, 16) === pngFriedChunkName) {
           return {
-            height: buffer.readUInt32BE(36),
-            width: buffer.readUInt32BE(32)
+            height: (0, utils_1.readUInt32BE)(input, 36),
+            width: (0, utils_1.readUInt32BE)(input, 32)
           };
         }
         return {
-          height: buffer.readUInt32BE(20),
-          width: buffer.readUInt32BE(16)
+          height: (0, utils_1.readUInt32BE)(input, 20),
+          width: (0, utils_1.readUInt32BE)(input, 16)
         };
       }
     };
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/pnm.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/pnm.js
 var require_pnm = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/pnm.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/pnm.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.PNM = void 0;
+    var utils_1 = require_utils2();
     var PNMTypes = {
       P1: "pbm/ascii",
       P2: "pgm/ascii",
@@ -10448,7 +10522,6 @@ var require_pnm = __commonJS({
       P7: "pam",
       PF: "pfm"
     };
-    var Signatures = Object.keys(PNMTypes);
     var handlers = {
       default: (lines) => {
         let dimensions = [];
@@ -10495,14 +10568,11 @@ var require_pnm = __commonJS({
       }
     };
     exports2.PNM = {
-      validate(buffer) {
-        const signature = buffer.toString("ascii", 0, 2);
-        return Signatures.includes(signature);
-      },
-      calculate(buffer) {
-        const signature = buffer.toString("ascii", 0, 2);
+      validate: (input) => (0, utils_1.toUTF8String)(input, 0, 2) in PNMTypes,
+      calculate(input) {
+        const signature = (0, utils_1.toUTF8String)(input, 0, 2);
         const type = PNMTypes[signature];
-        const lines = buffer.toString("ascii", 3).split(/[\r\n]+/);
+        const lines = (0, utils_1.toUTF8String)(input, 3).split(/[\r\n]+/);
         const handler = handlers[type] || handlers.default;
         return handler(lines);
       }
@@ -10510,32 +10580,30 @@ var require_pnm = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/psd.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/psd.js
 var require_psd = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/psd.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/psd.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.PSD = void 0;
+    var utils_1 = require_utils2();
     exports2.PSD = {
-      validate(buffer) {
-        return "8BPS" === buffer.toString("ascii", 0, 4);
-      },
-      calculate(buffer) {
-        return {
-          height: buffer.readUInt32BE(14),
-          width: buffer.readUInt32BE(18)
-        };
-      }
+      validate: (input) => (0, utils_1.toUTF8String)(input, 0, 4) === "8BPS",
+      calculate: (input) => ({
+        height: (0, utils_1.readUInt32BE)(input, 14),
+        width: (0, utils_1.readUInt32BE)(input, 18)
+      })
     };
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/svg.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/svg.js
 var require_svg = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/svg.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/svg.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.SVG = void 0;
+    var utils_1 = require_utils2();
     var svgReg = /<svg\s([^>"']|"[^"]*"|'[^']*')*>/;
     var extractorRegExps = {
       height: /\sheight=(['"])([^%]+?)\1/,
@@ -10606,12 +10674,10 @@ var require_svg = __commonJS({
       };
     }
     exports2.SVG = {
-      validate(buffer) {
-        const str3 = String(buffer);
-        return svgReg.test(str3);
-      },
-      calculate(buffer) {
-        const root3 = buffer.toString("utf8").match(extractorRegExps.root);
+      // Scan only the first kilo-byte to speed up the check on larger files
+      validate: (input) => svgReg.test((0, utils_1.toUTF8String)(input, 0, 1e3)),
+      calculate(input) {
+        const root3 = (0, utils_1.toUTF8String)(input).match(extractorRegExps.root);
         if (root3) {
           const attrs = parseAttributes(root3[0]);
           if (attrs.width && attrs.height) {
@@ -10627,64 +10693,65 @@ var require_svg = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/tga.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/tga.js
 var require_tga = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/tga.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/tga.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.TGA = void 0;
+    var utils_1 = require_utils2();
     exports2.TGA = {
-      validate(buffer) {
-        return buffer.readUInt16LE(0) === 0 && buffer.readUInt16LE(4) === 0;
+      validate(input) {
+        return (0, utils_1.readUInt16LE)(input, 0) === 0 && (0, utils_1.readUInt16LE)(input, 4) === 0;
       },
-      calculate(buffer) {
+      calculate(input) {
         return {
-          height: buffer.readUInt16LE(14),
-          width: buffer.readUInt16LE(12)
+          height: (0, utils_1.readUInt16LE)(input, 14),
+          width: (0, utils_1.readUInt16LE)(input, 12)
         };
       }
     };
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/tiff.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/tiff.js
 var require_tiff = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/tiff.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/tiff.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.TIFF = void 0;
     var fs = (init_fs(), __toCommonJS(fs_exports));
-    var readUInt_1 = require_readUInt();
-    function readIFD(buffer, filepath, isBigEndian2) {
-      const ifdOffset = (0, readUInt_1.readUInt)(buffer, 32, 4, isBigEndian2);
+    var utils_1 = require_utils2();
+    function readIFD(input, filepath, isBigEndian2) {
+      const ifdOffset = (0, utils_1.readUInt)(input, 32, 4, isBigEndian2);
       let bufferSize = 1024;
       const fileSize = fs.statSync(filepath).size;
       if (ifdOffset + bufferSize > fileSize) {
         bufferSize = fileSize - ifdOffset - 10;
       }
-      const endBuffer = Buffer.alloc(bufferSize);
+      const endBuffer = new Uint8Array(bufferSize);
       const descriptor = fs.openSync(filepath, "r");
       fs.readSync(descriptor, endBuffer, 0, bufferSize, ifdOffset);
       fs.closeSync(descriptor);
       return endBuffer.slice(2);
     }
-    function readValue(buffer, isBigEndian2) {
-      const low = (0, readUInt_1.readUInt)(buffer, 16, 8, isBigEndian2);
-      const high = (0, readUInt_1.readUInt)(buffer, 16, 10, isBigEndian2);
+    function readValue(input, isBigEndian2) {
+      const low = (0, utils_1.readUInt)(input, 16, 8, isBigEndian2);
+      const high = (0, utils_1.readUInt)(input, 16, 10, isBigEndian2);
       return (high << 16) + low;
     }
-    function nextTag(buffer) {
-      if (buffer.length > 24) {
-        return buffer.slice(12);
+    function nextTag(input) {
+      if (input.length > 24) {
+        return input.slice(12);
       }
     }
-    function extractTags(buffer, isBigEndian2) {
+    function extractTags(input, isBigEndian2) {
       const tags = {};
-      let temp = buffer;
+      let temp = input;
       while (temp && temp.length) {
-        const code = (0, readUInt_1.readUInt)(temp, 16, 0, isBigEndian2);
-        const type = (0, readUInt_1.readUInt)(temp, 16, 2, isBigEndian2);
-        const length3 = (0, readUInt_1.readUInt)(temp, 32, 4, isBigEndian2);
+        const code = (0, utils_1.readUInt)(temp, 16, 0, isBigEndian2);
+        const type = (0, utils_1.readUInt)(temp, 16, 2, isBigEndian2);
+        const length3 = (0, utils_1.readUInt)(temp, 32, 4, isBigEndian2);
         if (code === 0) {
           break;
         } else {
@@ -10696,8 +10763,8 @@ var require_tiff = __commonJS({
       }
       return tags;
     }
-    function determineEndianness(buffer) {
-      const signature = buffer.toString("ascii", 0, 2);
+    function determineEndianness(input) {
+      const signature = (0, utils_1.toUTF8String)(input, 0, 2);
       if ("II" === signature) {
         return "LE";
       } else if ("MM" === signature) {
@@ -10707,20 +10774,19 @@ var require_tiff = __commonJS({
     var signatures = [
       // '492049', // currently not supported
       "49492a00",
+      // Little endian
       "4d4d002a"
       // Big Endian
       // '4d4d002a', // BigTIFF > 4GB. currently not supported
     ];
     exports2.TIFF = {
-      validate(buffer) {
-        return signatures.includes(buffer.toString("hex", 0, 4));
-      },
-      calculate(buffer, filepath) {
+      validate: (input) => signatures.includes((0, utils_1.toHexString)(input, 0, 4)),
+      calculate(input, filepath) {
         if (!filepath) {
           throw new TypeError("Tiff doesn't support buffer");
         }
-        const isBigEndian2 = determineEndianness(buffer) === "BE";
-        const ifdBuffer = readIFD(buffer, filepath, isBigEndian2);
+        const isBigEndian2 = determineEndianness(input) === "BE";
+        const ifdBuffer = readIFD(input, filepath, isBigEndian2);
         const tags = extractTags(ifdBuffer, isBigEndian2);
         const width2 = tags[256];
         const height = tags[257];
@@ -10733,56 +10799,57 @@ var require_tiff = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/webp.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/webp.js
 var require_webp = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types/webp.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/webp.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.WEBP = void 0;
-    function calculateExtended(buffer) {
+    var utils_1 = require_utils2();
+    function calculateExtended(input) {
       return {
-        height: 1 + buffer.readUIntLE(7, 3),
-        width: 1 + buffer.readUIntLE(4, 3)
+        height: 1 + (0, utils_1.readUInt24LE)(input, 7),
+        width: 1 + (0, utils_1.readUInt24LE)(input, 4)
       };
     }
-    function calculateLossless(buffer) {
+    function calculateLossless(input) {
       return {
-        height: 1 + ((buffer[4] & 15) << 10 | buffer[3] << 2 | (buffer[2] & 192) >> 6),
-        width: 1 + ((buffer[2] & 63) << 8 | buffer[1])
+        height: 1 + ((input[4] & 15) << 10 | input[3] << 2 | (input[2] & 192) >> 6),
+        width: 1 + ((input[2] & 63) << 8 | input[1])
       };
     }
-    function calculateLossy(buffer) {
+    function calculateLossy(input) {
       return {
-        height: buffer.readInt16LE(8) & 16383,
-        width: buffer.readInt16LE(6) & 16383
+        height: (0, utils_1.readInt16LE)(input, 8) & 16383,
+        width: (0, utils_1.readInt16LE)(input, 6) & 16383
       };
     }
     exports2.WEBP = {
-      validate(buffer) {
-        const riffHeader = "RIFF" === buffer.toString("ascii", 0, 4);
-        const webpHeader = "WEBP" === buffer.toString("ascii", 8, 12);
-        const vp8Header = "VP8" === buffer.toString("ascii", 12, 15);
+      validate(input) {
+        const riffHeader = "RIFF" === (0, utils_1.toUTF8String)(input, 0, 4);
+        const webpHeader = "WEBP" === (0, utils_1.toUTF8String)(input, 8, 12);
+        const vp8Header = "VP8" === (0, utils_1.toUTF8String)(input, 12, 15);
         return riffHeader && webpHeader && vp8Header;
       },
-      calculate(buffer) {
-        const chunkHeader = buffer.toString("ascii", 12, 16);
-        buffer = buffer.slice(20, 30);
+      calculate(input) {
+        const chunkHeader = (0, utils_1.toUTF8String)(input, 12, 16);
+        input = input.slice(20, 30);
         if (chunkHeader === "VP8X") {
-          const extendedHeader = buffer[0];
+          const extendedHeader = input[0];
           const validStart = (extendedHeader & 192) === 0;
           const validEnd = (extendedHeader & 1) === 0;
           if (validStart && validEnd) {
-            return calculateExtended(buffer);
+            return calculateExtended(input);
           } else {
             throw new TypeError("Invalid WebP");
           }
         }
-        if (chunkHeader === "VP8 " && buffer[0] !== 47) {
-          return calculateLossy(buffer);
+        if (chunkHeader === "VP8 " && input[0] !== 47) {
+          return calculateLossy(input);
         }
-        const signature = buffer.toString("hex", 3, 6);
+        const signature = (0, utils_1.toHexString)(input, 3, 6);
         if (chunkHeader === "VP8L" && signature !== "9d012a") {
-          return calculateLossless(buffer);
+          return calculateLossless(input);
         }
         throw new TypeError("Invalid WebP");
       }
@@ -10790,9 +10857,9 @@ var require_webp = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/index.js
 var require_types = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/types.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/types/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.typeHandlers = void 0;
@@ -10800,6 +10867,7 @@ var require_types = __commonJS({
     var cur_1 = require_cur();
     var dds_1 = require_dds();
     var gif_1 = require_gif();
+    var heif_1 = require_heif();
     var icns_1 = require_icns();
     var ico_1 = require_ico();
     var j2c_1 = require_j2c();
@@ -10818,6 +10886,7 @@ var require_types = __commonJS({
       cur: cur_1.CUR,
       dds: dds_1.DDS,
       gif: gif_1.GIF,
+      heif: heif_1.HEIF,
       icns: icns_1.ICNS,
       ico: ico_1.ICO,
       j2c: j2c_1.J2C,
@@ -10835,14 +10904,14 @@ var require_types = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/detector.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/detector.js
 var require_detector = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/detector.js"(exports2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/detector.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.detector = void 0;
-    var types_1 = require_types();
-    var keys3 = Object.keys(types_1.typeHandlers);
+    var index_1 = require_types();
+    var keys3 = Object.keys(index_1.typeHandlers);
     var firstBytes = {
       56: "psd",
       66: "bmp",
@@ -10855,80 +10924,80 @@ var require_detector = __commonJS({
       137: "png",
       255: "jpg"
     };
-    function detector(buffer) {
-      const byte = buffer[0];
+    function detector(input) {
+      const byte = input[0];
       if (byte in firstBytes) {
         const type = firstBytes[byte];
-        if (type && types_1.typeHandlers[type].validate(buffer)) {
+        if (type && index_1.typeHandlers[type].validate(input)) {
           return type;
         }
       }
-      const finder = (key) => types_1.typeHandlers[key].validate(buffer);
+      const finder = (key) => index_1.typeHandlers[key].validate(input);
       return keys3.find(finder);
     }
     exports2.detector = detector;
   }
 });
 
-// ../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/index.js
+// ../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/index.js
 var require_dist = __commonJS({
-  "../../node_modules/.pnpm/image-size@1.0.2/node_modules/image-size/dist/index.js"(exports2, module2) {
+  "../../node_modules/.pnpm/image-size@1.1.1/node_modules/image-size/dist/index.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.types = exports2.setConcurrency = exports2.disableTypes = exports2.disableFS = exports2.imageSize = void 0;
     var fs = (init_fs(), __toCommonJS(fs_exports));
     var path4 = require_path_browserify();
     var queue_1 = require_queue();
-    var types_1 = require_types();
+    var index_1 = require_types();
     var detector_1 = require_detector();
-    var MaxBufferSize = 512 * 1024;
+    var MaxInputSize = 512 * 1024;
     var queue = new queue_1.default({ concurrency: 100, autostart: true });
     var globalOptions = {
       disabledFS: false,
       disabledTypes: []
     };
-    function lookup(buffer, filepath) {
-      const type = (0, detector_1.detector)(buffer);
+    function lookup(input, filepath) {
+      const type = (0, detector_1.detector)(input);
       if (typeof type !== "undefined") {
         if (globalOptions.disabledTypes.indexOf(type) > -1) {
           throw new TypeError("disabled file type: " + type);
         }
-        if (type in types_1.typeHandlers) {
-          const size4 = types_1.typeHandlers[type].calculate(buffer, filepath);
+        if (type in index_1.typeHandlers) {
+          const size4 = index_1.typeHandlers[type].calculate(input, filepath);
           if (size4 !== void 0) {
-            size4.type = type;
+            size4.type = size4.type ?? type;
             return size4;
           }
         }
       }
       throw new TypeError("unsupported file type: " + type + " (file: " + filepath + ")");
     }
-    async function asyncFileToBuffer(filepath) {
+    async function readFileAsync(filepath) {
       const handle = await fs.promises.open(filepath, "r");
       try {
         const { size: size4 } = await handle.stat();
         if (size4 <= 0) {
           throw new Error("Empty file");
         }
-        const bufferSize = Math.min(size4, MaxBufferSize);
-        const buffer = Buffer.alloc(bufferSize);
-        await handle.read(buffer, 0, bufferSize, 0);
-        return buffer;
+        const inputSize = Math.min(size4, MaxInputSize);
+        const input = new Uint8Array(inputSize);
+        await handle.read(input, 0, inputSize, 0);
+        return input;
       } finally {
         await handle.close();
       }
     }
-    function syncFileToBuffer(filepath) {
+    function readFileSync(filepath) {
       const descriptor = fs.openSync(filepath, "r");
       try {
         const { size: size4 } = fs.fstatSync(descriptor);
         if (size4 <= 0) {
           throw new Error("Empty file");
         }
-        const bufferSize = Math.min(size4, MaxBufferSize);
-        const buffer = Buffer.alloc(bufferSize);
-        fs.readSync(descriptor, buffer, 0, bufferSize, 0);
-        return buffer;
+        const inputSize = Math.min(size4, MaxInputSize);
+        const input = new Uint8Array(inputSize);
+        fs.readSync(descriptor, input, 0, inputSize, 0);
+        return input;
       } finally {
         fs.closeSync(descriptor);
       }
@@ -10936,18 +11005,18 @@ var require_dist = __commonJS({
     module2.exports = exports2 = imageSize;
     exports2.default = imageSize;
     function imageSize(input, callback) {
-      if (Buffer.isBuffer(input)) {
+      if (input instanceof Uint8Array) {
         return lookup(input);
       }
       if (typeof input !== "string" || globalOptions.disabledFS) {
-        throw new TypeError("invalid invocation. input should be a Buffer");
+        throw new TypeError("invalid invocation. input should be a Uint8Array");
       }
       const filepath = path4.resolve(input);
       if (typeof callback === "function") {
-        queue.push(() => asyncFileToBuffer(filepath).then((buffer) => process.nextTick(callback, null, lookup(buffer, filepath))).catch(callback));
+        queue.push(() => readFileAsync(filepath).then((input2) => process.nextTick(callback, null, lookup(input2, filepath))).catch(callback));
       } else {
-        const buffer = syncFileToBuffer(filepath);
-        return lookup(buffer, filepath);
+        const input2 = readFileSync(filepath);
+        return lookup(input2, filepath);
       }
     }
     exports2.imageSize = imageSize;
@@ -10963,7 +11032,7 @@ var require_dist = __commonJS({
       queue.concurrency = c;
     };
     exports2.setConcurrency = setConcurrency;
-    exports2.types = Object.keys(types_1.typeHandlers);
+    exports2.types = Object.keys(index_1.typeHandlers);
   }
 });
 
@@ -14941,234 +15010,6 @@ var require_decompress = __commonJS({
   }
 });
 
-// ../pintora-core/lib/logger.js
-var logger = {
-  debug: (...args) => {
-  },
-  info: (...args) => {
-  },
-  warn: (...args) => {
-  },
-  error: (...args) => {
-  },
-  fatal: (...args) => {
-  }
-};
-
-// ../../node_modules/.pnpm/@antv+event-emitter@0.1.3/node_modules/@antv/event-emitter/esm/index.js
-var WILDCARD = "*";
-var EventEmitter = (
-  /** @class */
-  function() {
-    function EventEmitter2() {
-      this._events = {};
-    }
-    EventEmitter2.prototype.on = function(evt, callback, once) {
-      if (!this._events[evt]) {
-        this._events[evt] = [];
-      }
-      this._events[evt].push({
-        callback,
-        once: !!once
-      });
-      return this;
-    };
-    EventEmitter2.prototype.once = function(evt, callback) {
-      return this.on(evt, callback, true);
-    };
-    EventEmitter2.prototype.emit = function(evt) {
-      var _this = this;
-      var args = [];
-      for (var _i = 1; _i < arguments.length; _i++) {
-        args[_i - 1] = arguments[_i];
-      }
-      var events = this._events[evt] || [];
-      var wildcardEvents = this._events[WILDCARD] || [];
-      var doEmit = function(es) {
-        var length3 = es.length;
-        for (var i2 = 0; i2 < length3; i2++) {
-          if (!es[i2]) {
-            continue;
-          }
-          var _a = es[i2], callback = _a.callback, once = _a.once;
-          if (once) {
-            es.splice(i2, 1);
-            if (es.length === 0) {
-              delete _this._events[evt];
-            }
-            length3--;
-            i2--;
-          }
-          callback.apply(_this, args);
-        }
-      };
-      doEmit(events);
-      doEmit(wildcardEvents);
-    };
-    EventEmitter2.prototype.off = function(evt, callback) {
-      if (!evt) {
-        this._events = {};
-      } else {
-        if (!callback) {
-          delete this._events[evt];
-        } else {
-          var events = this._events[evt] || [];
-          var length_1 = events.length;
-          for (var i2 = 0; i2 < length_1; i2++) {
-            if (events[i2].callback === callback) {
-              events.splice(i2, 1);
-              length_1--;
-              i2--;
-            }
-          }
-          if (events.length === 0) {
-            delete this._events[evt];
-          }
-        }
-      }
-      return this;
-    };
-    EventEmitter2.prototype.getEvents = function() {
-      return this._events;
-    };
-    return EventEmitter2;
-  }()
-);
-var esm_default = EventEmitter;
-
-// ../pintora-core/lib/diagram-event.js
-var DiagramEventManager = class {
-  constructor() {
-    this.recognizers = [];
-    this.emitter = new esm_default();
-  }
-  addRecognizer(recognizer) {
-    if (!this.recognizers.includes(recognizer)) {
-      this.recognizers.push(recognizer);
-    }
-    return () => {
-      const index2 = this.recognizers.indexOf(recognizer);
-      if (index2 > -1)
-        this.recognizers.splice(index2, 1);
-    };
-  }
-  recognizeGraphicEvent(e, ir) {
-    const events = [];
-    for (const recognizer of this.recognizers) {
-      const result = recognizer.recognize(e, ir);
-      if (result)
-        events.push(result);
-    }
-    return events;
-  }
-  feedGraphicEvent(e, ir) {
-    const dEvents = this.recognizeGraphicEvent(e, ir);
-    for (const dEvent of dEvents) {
-      this.emitter.emit(dEvent.type, dEvent);
-    }
-    return dEvents;
-  }
-  wireCurrentEventsToRenderer(renderer, diagramIR) {
-    for (const [eventName, listeners] of Object.entries(this.emitter.getEvents())) {
-      for (const l of listeners) {
-        const handler = l.callback;
-        this.wireDiagramEventToRenderer(renderer, eventName, handler, diagramIR);
-      }
-    }
-  }
-  wireDiagramEventToRenderer(renderer, eventName, handler, diagramIR) {
-    return renderer.on(eventName, (graphicEvent) => {
-      const dEvents = diagramEventManager.feedGraphicEvent(graphicEvent, diagramIR);
-      for (const dEvent of dEvents) {
-        handler(dEvent);
-      }
-    });
-  }
-  on(evt, handler) {
-    const { emitter } = this;
-    emitter.on(evt, handler);
-    return function dispose() {
-      emitter.off(evt, handler);
-    };
-  }
-  once(evt, handler) {
-    const { emitter } = this;
-    emitter.once(evt, handler);
-    return function dispose() {
-      emitter.off(evt, handler);
-    };
-  }
-  /**
-   * Remove event listeners
-   * @param evt - event name, if not passed, all event listeners will be removed
-   */
-  removeListeners(evt) {
-    this.emitter.off(evt);
-  }
-  /**
-   * A type predicate function to narrow DiagramEventItem data type
-   * @example
-   * ```
-   * if (matchEventItem(item, 'er', 'entity')) { // do something with item.data }
-   * ```
-   */
-  matchEventItem(item, diagram, type) {
-    return item.diagram === diagram && item.type === type;
-  }
-};
-var diagramEventManager = new DiagramEventManager();
-var DiagramEvent = class {
-  constructor(graphicEvent, mark, item) {
-    this.graphicEvent = graphicEvent;
-    this.mark = mark;
-    this.item = item;
-  }
-  get type() {
-    return this.graphicEvent.type;
-  }
-};
-function diagramEventMakerFactory(diagram) {
-  return (e, mark, id9, type, data) => {
-    return new DiagramEvent(e, mark, {
-      diagram,
-      type,
-      id: id9,
-      data
-    });
-  };
-}
-
-// ../pintora-core/lib/diagram-registry.js
-var DiagramRegistry = class {
-  constructor() {
-    this.diagrams = {};
-  }
-  registerDiagram(name, diagram) {
-    if (this.diagrams[name]) {
-      logger.warn(`[pintora] duplicate diagram: ${name}`);
-    } else {
-      if (diagram.eventRecognizer) {
-        diagramEventManager.addRecognizer(diagram.eventRecognizer);
-      }
-    }
-    this.diagrams[name] = diagram;
-  }
-  detectDiagram(text) {
-    let diagram = this.diagrams["sequenceDiagram"];
-    for (const d of Object.values(this.diagrams)) {
-      if (d.pattern.test(text)) {
-        diagram = d;
-        break;
-      }
-    }
-    return diagram;
-  }
-  getDiagram(name) {
-    return this.diagrams[name];
-  }
-};
-var diagramRegistry = new DiagramRegistry();
-
 // ../pintora-core/lib/config.js
 var import_deepmerge = __toESM(require_cjs());
 var import_clone_deep = __toESM(require_clone_deep());
@@ -15392,6 +15233,422 @@ var configApi = {
   }
 };
 var config_default = configApi;
+
+// ../pintora-core/lib/config-engine.js
+var config_engine_exports = {};
+__export(config_engine_exports, {
+  interpreteConfigs: () => interpreteConfigs
+});
+
+// ../pintora-core/lib/util/color.js
+var import_tinycolor2 = __toESM(require_tinycolor());
+var HEX_PATTERN = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
+function parseColor(input) {
+  let isValid = false;
+  let color2 = input;
+  if (HEX_PATTERN.test(input)) {
+    color2 = input;
+    isValid = true;
+  } else {
+    color2 = input.replace("#", "");
+  }
+  return {
+    color: color2,
+    isValid
+  };
+}
+
+// ../pintora-core/lib/config-engine.js
+var sizeEvaluator = ({ value }) => {
+  const parsed = parseInt(value);
+  if (isNaN(parsed))
+    return { valid: false };
+  return { value: parsed, valid: true };
+};
+var configValueEvaluators = {
+  color({ value }) {
+    const parsed = parseColor(value);
+    return { value: parsed.color, valid: true };
+  },
+  size: sizeEvaluator,
+  fontSize: sizeEvaluator,
+  fontWeight({ value }) {
+    const num = parseInt(value);
+    if (isNaN(num)) {
+      return { valid: true, value };
+    } else {
+      return { valid: true, value: num };
+    }
+  },
+  fontStyle({ value }) {
+    return { value, valid: true };
+  },
+  string({ value }) {
+    return { value, valid: true };
+  },
+  boolean({ value }) {
+    return { value: value === "true", valid: true };
+  },
+  layoutDirection({ value }) {
+    return { value, valid: true };
+  }
+};
+function interpreteConfigs(ruleMap, params) {
+  const out = {};
+  params.forEach((param) => {
+    const meta = ruleMap[param.key];
+    if (!meta)
+      return;
+    const valueTypes = Array.isArray(meta.valueType) ? meta.valueType : [meta.valueType];
+    for (const valueType of valueTypes) {
+      const evaluator = configValueEvaluators[valueType];
+      if (!evaluator)
+        continue;
+      const result = evaluator(param);
+      if (result.valid) {
+        out[param.key] = result.value;
+        return;
+      }
+    }
+  });
+  return out;
+}
+
+// ../../node_modules/.pnpm/@antv+event-emitter@0.1.3/node_modules/@antv/event-emitter/esm/index.js
+var WILDCARD = "*";
+var EventEmitter = (
+  /** @class */
+  function() {
+    function EventEmitter2() {
+      this._events = {};
+    }
+    EventEmitter2.prototype.on = function(evt, callback, once) {
+      if (!this._events[evt]) {
+        this._events[evt] = [];
+      }
+      this._events[evt].push({
+        callback,
+        once: !!once
+      });
+      return this;
+    };
+    EventEmitter2.prototype.once = function(evt, callback) {
+      return this.on(evt, callback, true);
+    };
+    EventEmitter2.prototype.emit = function(evt) {
+      var _this = this;
+      var args = [];
+      for (var _i = 1; _i < arguments.length; _i++) {
+        args[_i - 1] = arguments[_i];
+      }
+      var events = this._events[evt] || [];
+      var wildcardEvents = this._events[WILDCARD] || [];
+      var doEmit = function(es) {
+        var length3 = es.length;
+        for (var i2 = 0; i2 < length3; i2++) {
+          if (!es[i2]) {
+            continue;
+          }
+          var _a = es[i2], callback = _a.callback, once = _a.once;
+          if (once) {
+            es.splice(i2, 1);
+            if (es.length === 0) {
+              delete _this._events[evt];
+            }
+            length3--;
+            i2--;
+          }
+          callback.apply(_this, args);
+        }
+      };
+      doEmit(events);
+      doEmit(wildcardEvents);
+    };
+    EventEmitter2.prototype.off = function(evt, callback) {
+      if (!evt) {
+        this._events = {};
+      } else {
+        if (!callback) {
+          delete this._events[evt];
+        } else {
+          var events = this._events[evt] || [];
+          var length_1 = events.length;
+          for (var i2 = 0; i2 < length_1; i2++) {
+            if (events[i2].callback === callback) {
+              events.splice(i2, 1);
+              length_1--;
+              i2--;
+            }
+          }
+          if (events.length === 0) {
+            delete this._events[evt];
+          }
+        }
+      }
+      return this;
+    };
+    EventEmitter2.prototype.getEvents = function() {
+      return this._events;
+    };
+    return EventEmitter2;
+  }()
+);
+var esm_default = EventEmitter;
+
+// ../pintora-core/lib/diagram-event.js
+var DiagramEventManager = class {
+  constructor() {
+    this.recognizers = [];
+    this.emitter = new esm_default();
+  }
+  addRecognizer(recognizer) {
+    if (!this.recognizers.includes(recognizer)) {
+      this.recognizers.push(recognizer);
+    }
+    return () => {
+      const index2 = this.recognizers.indexOf(recognizer);
+      if (index2 > -1)
+        this.recognizers.splice(index2, 1);
+    };
+  }
+  recognizeGraphicEvent(e, ir) {
+    const events = [];
+    for (const recognizer of this.recognizers) {
+      const result = recognizer.recognize(e, ir);
+      if (result)
+        events.push(result);
+    }
+    return events;
+  }
+  feedGraphicEvent(e, ir) {
+    const dEvents = this.recognizeGraphicEvent(e, ir);
+    for (const dEvent of dEvents) {
+      this.emitter.emit(dEvent.type, dEvent);
+    }
+    return dEvents;
+  }
+  wireCurrentEventsToRenderer(renderer, diagramIR) {
+    for (const [eventName, listeners] of Object.entries(this.emitter.getEvents())) {
+      for (const l of listeners) {
+        const handler = l.callback;
+        this.wireDiagramEventToRenderer(renderer, eventName, handler, diagramIR);
+      }
+    }
+  }
+  wireDiagramEventToRenderer(renderer, eventName, handler, diagramIR) {
+    return renderer.on(eventName, (graphicEvent) => {
+      const dEvents = diagramEventManager.feedGraphicEvent(graphicEvent, diagramIR);
+      for (const dEvent of dEvents) {
+        handler(dEvent);
+      }
+    });
+  }
+  on(evt, handler) {
+    const { emitter } = this;
+    emitter.on(evt, handler);
+    return function dispose() {
+      emitter.off(evt, handler);
+    };
+  }
+  once(evt, handler) {
+    const { emitter } = this;
+    emitter.once(evt, handler);
+    return function dispose() {
+      emitter.off(evt, handler);
+    };
+  }
+  /**
+   * Remove event listeners
+   * @param evt - event name, if not passed, all event listeners will be removed
+   */
+  removeListeners(evt) {
+    this.emitter.off(evt);
+  }
+  /**
+   * A type predicate function to narrow DiagramEventItem data type
+   * @example
+   * ```
+   * if (matchEventItem(item, 'er', 'entity')) { // do something with item.data }
+   * ```
+   */
+  matchEventItem(item, diagram, type) {
+    return item.diagram === diagram && item.type === type;
+  }
+};
+var diagramEventManager = new DiagramEventManager();
+var DiagramEvent = class {
+  constructor(graphicEvent, mark, item) {
+    this.graphicEvent = graphicEvent;
+    this.mark = mark;
+    this.item = item;
+  }
+  get type() {
+    return this.graphicEvent.type;
+  }
+};
+function diagramEventMakerFactory(diagram) {
+  return (e, mark, id10, type, data) => {
+    return new DiagramEvent(e, mark, {
+      diagram,
+      type,
+      id: id10,
+      data
+    });
+  };
+}
+
+// ../pintora-core/lib/logger.js
+var logger = {
+  debug: (...args) => {
+  },
+  info: (...args) => {
+  },
+  warn: (...args) => {
+  },
+  error: (...args) => {
+  },
+  fatal: (...args) => {
+  }
+};
+
+// ../pintora-core/lib/diagram-registry.js
+var DiagramRegistry = class {
+  constructor() {
+    this.diagrams = {};
+  }
+  registerDiagram(name, diagram) {
+    if (this.diagrams[name]) {
+      logger.warn(`[pintora] duplicate diagram: ${name}`);
+    } else {
+      if (diagram.eventRecognizer) {
+        diagramEventManager.addRecognizer(diagram.eventRecognizer);
+      }
+    }
+    this.diagrams[name] = diagram;
+  }
+  detectDiagram(text) {
+    let diagram = this.diagrams["sequenceDiagram"];
+    for (const d of Object.values(this.diagrams)) {
+      if (d.pattern.test(text)) {
+        diagram = d;
+        break;
+      }
+    }
+    return diagram;
+  }
+  getDiagram(name) {
+    return this.diagrams[name];
+  }
+};
+var diagramRegistry = new DiagramRegistry();
+
+// ../pintora-core/lib/pre.js
+var PreprocessExtractor = class {
+  parse(text) {
+    const lines = text.split("\n");
+    const state = {
+      preStartLine: null,
+      preEndLine: null,
+      isInPre: false,
+      hasPreBlock: false
+    };
+    for (let i2 = 0; i2 < lines.length; i2++) {
+      const trimmed = lines[i2].trim();
+      if (state.isInPre) {
+        if (trimmed.startsWith("@endpre")) {
+          state.isInPre = false;
+          state.hasPreBlock = true;
+          state.preEndLine = i2;
+        }
+      } else {
+        if (trimmed.startsWith("@pre")) {
+          state.isInPre = true;
+          state.preStartLine = i2;
+        }
+      }
+    }
+    let preContent = null;
+    let content = text;
+    if (state.hasPreBlock && state.preEndLine) {
+      preContent = lines.slice(state.preStartLine + 1, state.preEndLine).join("\n");
+      content = lines.slice(state.preEndLine + 1).join("\n");
+    }
+    return {
+      hasPreBlock: state.hasPreBlock,
+      preContent,
+      content
+    };
+  }
+};
+var preprocessExtractor = new PreprocessExtractor();
+
+// ../pintora-core/lib/util/mark.js
+function makeMark(type, attrs, other) {
+  return {
+    type,
+    ...other || {},
+    attrs
+  };
+}
+function cloneMark(mark) {
+  const newMark = {
+    ...mark,
+    attrs: { ...mark.attrs }
+  };
+  if ("children" in mark) {
+    newMark.children = mark.children.map((child) => cloneMark(child));
+  }
+  return newMark;
+}
+
+// ../pintora-core/lib/symbol-registry.js
+var SymbolRegistry = class {
+  constructor() {
+    this.symbols = {};
+  }
+  register(name, sym) {
+    if (this.symbols[name]) {
+      logger.warn(`[pintora] duplicate symbol: ${name}`);
+    }
+    this.symbols[name] = sym;
+  }
+  get(name) {
+    return this.symbols[name];
+  }
+  getSymbols() {
+    return this.symbols;
+  }
+  /**
+   * Create and instantiate a symbol mark
+   */
+  create(name, opts) {
+    const { attrs, contentArea } = opts;
+    const def = this.symbols[name];
+    if (!def)
+      return null;
+    try {
+      let sym = null;
+      if (def.type === "factory") {
+        const _position = contentArea || { x: 0, y: 0, width: 100, height: 100 };
+        const mode = opts.mode || "icon";
+        sym = def.factory(_position, { mode });
+      } else if (def.type === "prototype") {
+        sym = {
+          ...def.symbol,
+          mark: cloneMark(def.symbol.mark)
+        };
+      }
+      if (sym && def.styleMark) {
+        def.styleMark(sym.mark, def, attrs);
+      }
+      return sym;
+    } catch (error) {
+      console.error("[symbolRegistry] error in create", error);
+      return null;
+    }
+  }
+};
+var symbolRegistry = new SymbolRegistry();
 
 // ../pintora-core/lib/util/util.js
 function safeAssign(base, ...attrList) {
@@ -15773,14 +16030,14 @@ function fromQuat(out, q) {
   var z2 = z + z;
   var xx = x2 * x22;
   var yx = y2 * x22;
-  var yy6 = y2 * y22;
+  var yy3 = y2 * y22;
   var zx = z * x22;
   var zy = z * y22;
   var zz = z * z2;
   var wx = w * x22;
   var wy = w * y22;
   var wz = w * z2;
-  out[0] = 1 - yy6 - zz;
+  out[0] = 1 - yy3 - zz;
   out[3] = yx - wz;
   out[6] = zx + wy;
   out[1] = yx + wz;
@@ -15788,7 +16045,7 @@ function fromQuat(out, q) {
   out[7] = zy - wx;
   out[2] = zx - wy;
   out[5] = zy + wx;
-  out[8] = 1 - xx - yy6;
+  out[8] = 1 - xx - yy3;
   return out;
 }
 function normalFromMat4(out, a) {
@@ -16418,159 +16675,30 @@ function decodeCodeInUrl(input) {
   return unescape(atob(decodeURIComponent(input)));
 }
 
-// ../pintora-core/lib/util/mark.js
-function makeMark(type, attrs, other) {
-  return {
-    type,
-    ...other || {},
-    attrs
-  };
-}
-function cloneMark(mark) {
-  const newMark = {
-    ...mark,
-    attrs: { ...mark.attrs }
-  };
-  if ("children" in mark) {
-    newMark.children = mark.children.map((child) => cloneMark(child));
-  }
-  return newMark;
-}
-
-// ../pintora-core/lib/util/color.js
-var import_tinycolor2 = __toESM(require_tinycolor());
-var HEX_PATTERN = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
-function parseColor(input) {
-  let isValid = false;
-  let color2 = input;
-  if (HEX_PATTERN.test(input)) {
-    color2 = input;
-    isValid = true;
-  } else {
-    color2 = input.replace("#", "");
-  }
-  return {
-    color: color2,
-    isValid
-  };
-}
-
 // ../pintora-core/lib/util/artist.js
 function makeArtist(opts) {
   const artist4 = opts;
   return artist4;
 }
 
-// ../pintora-core/lib/symbol-registry.js
-var SymbolRegistry = class {
-  constructor() {
-    this.symbols = {};
-  }
-  register(name, sym) {
-    if (this.symbols[name]) {
-      logger.warn(`[pintora] duplicate symbol: ${name}`);
-    }
-    this.symbols[name] = sym;
-  }
-  get(name) {
-    return this.symbols[name];
-  }
-  getSymbols() {
-    return this.symbols;
-  }
-  /**
-   * Create and instantiate a symbol mark
-   */
-  create(name, opts) {
-    const { attrs, contentArea } = opts;
-    const def = this.symbols[name];
-    if (!def)
-      return null;
-    try {
-      let sym = null;
-      if (def.type === "factory") {
-        const _position = contentArea || { x: 0, y: 0, width: 100, height: 100 };
-        const mode = opts.mode || "icon";
-        sym = def.factory(_position, { mode });
-      } else if (def.type === "prototype") {
-        sym = {
-          ...def.symbol,
-          mark: cloneMark(def.symbol.mark)
-        };
-      }
-      if (sym && def.styleMark) {
-        def.styleMark(sym.mark, def, attrs);
-      }
-      return sym;
-    } catch (error) {
-      console.error("[symbolRegistry] error in create", error);
-      return null;
-    }
-  }
-};
-var symbolRegistry = new SymbolRegistry();
-
-// ../pintora-core/lib/config-engine.js
-var config_engine_exports = {};
-__export(config_engine_exports, {
-  interpreteConfigs: () => interpreteConfigs
-});
-var sizeEvaluator = ({ value }) => {
-  const parsed = parseInt(value);
-  if (isNaN(parsed))
-    return { valid: false };
-  return { value: parsed, valid: true };
-};
-var configValueEvaluators = {
-  color({ value }) {
-    const parsed = parseColor(value);
-    return { value: parsed.color, valid: true };
-  },
-  size: sizeEvaluator,
-  fontSize: sizeEvaluator,
-  string({ value }) {
-    return { value, valid: true };
-  },
-  boolean({ value }) {
-    return { value: value === "true", valid: true };
-  },
-  layoutDirection({ value }) {
-    return { value, valid: true };
-  }
-};
-function interpreteConfigs(ruleMap, params) {
-  const out = {};
-  params.forEach((param) => {
-    const meta = ruleMap[param.key];
-    if (!meta)
-      return;
-    const valueTypes = Array.isArray(meta.valueType) ? meta.valueType : [meta.valueType];
-    for (const valueType of valueTypes) {
-      const evaluator = configValueEvaluators[valueType];
-      if (!evaluator)
-        continue;
-      const result = evaluator(param);
-      if (result.valid) {
-        out[param.key] = result.value;
-        return;
-      }
-    }
-  });
-  return out;
-}
-
 // ../pintora-core/lib/index.js
 function parseAndDraw(text, opts) {
   const { onError, config: config2 } = opts;
-  const diagram = diagramRegistry.detectDiagram(text);
+  const preResult = preprocessExtractor.parse(text);
+  const textToParse = preResult.content;
+  const diagram = diagramRegistry.detectDiagram(textToParse);
   if (!diagram) {
-    const errMessage = `[pintora] no diagram detected with input: ${text.slice(0, 30)}`;
+    const errMessage = `[pintora] no diagram detected with input: ${textToParse.slice(0, 30)}`;
     logger.warn(errMessage);
-    onError && onError(new Error(errMessage));
+    if (onError) {
+      onError(new Error(errMessage));
+    }
     return;
   }
   diagram.clear();
-  const diagramIR = diagram.parser.parse(text);
+  const diagramIR = diagram.parser.parse(textToParse, {
+    preContent: preResult.hasPreBlock && preResult.preContent ? preResult.preContent : void 0
+  });
   let configForArtist = void 0;
   if (config2 && diagram.configKey && config2[diagram.configKey]) {
     configForArtist = config2[diagram.configKey];
@@ -16596,6 +16724,25 @@ var BaseDb = class {
     this.configParams = [];
     this.overrideConfig = {};
     this.title = "";
+    this.styleRules = [];
+    this.bindRules = [];
+  }
+  init(ir) {
+    if ("title" in ir) {
+      this.title = ir.title;
+    }
+    if ("configParams" in ir) {
+      this.configParams = [...ir.configParams];
+    }
+    if ("overrideConfig" in ir) {
+      Object.assign(this.overrideConfig, ir.overrideConfig);
+    }
+    if ("styleRules" in ir) {
+      this.styleRules = ir.styleRules;
+    }
+    if ("bindRules" in ir) {
+      this.bindRules = ir.bindRules;
+    }
   }
   addOverrideConfig(action) {
     if ("error" in action) {
@@ -16608,13 +16755,17 @@ var BaseDb = class {
     return {
       configParams: this.configParams,
       overrideConfig: this.overrideConfig,
-      title: this.title
+      title: this.title,
+      styleRules: this.styleRules,
+      bindRules: this.bindRules
     };
   }
   clear() {
     this.configParams = [];
     this.overrideConfig = {};
     this.title = "";
+    this.styleRules = [];
+    this.bindRules = [];
   }
 };
 
@@ -16710,13 +16861,36 @@ function toFixed(num, digits = 2) {
 }
 
 // ../pintora-diagrams/lib/util/text.js
-function getTextDimensionsInPresicion(text, fontConfig, precision = 2) {
-  const { width: width2, height } = calculateTextDimensions(text, fontConfig);
+function getTextDimensionsInPresicion(text, fontConfig2, precision = 2) {
+  const { width: width2, height } = calculateTextDimensions(text, fontConfig2);
   return {
     width: toFixed(width2, precision),
     height: toFixed(height, precision)
   };
 }
+
+// ../pintora-diagrams/lib/util/style-engine/parser.js
+var STYLE_ACTION_HANDLERS = {
+  style(action) {
+    const rules = [];
+    action.rules.forEach((rule) => {
+      rules.push({
+        selector: rule.selector,
+        attrs: rule.attrs.reduce((previous, current) => {
+          previous[current.key] = current.value;
+          return previous;
+        }, {})
+      });
+    });
+    this.styleRules.push(...rules);
+  },
+  bindClass(action) {
+    this.bindRules.push({
+      nodes: action.nodes,
+      className: action.className
+    });
+  }
+};
 
 // ../pintora-diagrams/lib/sequence/db.js
 var LINETYPE;
@@ -16782,26 +16956,26 @@ var SequenceDB = class extends BaseDb {
   addActor(param) {
     const { actor: name, classifier } = param;
     let { description } = param;
-    const id9 = name;
-    const old = this.actors[id9];
+    const id10 = name;
+    const old = this.actors[id10];
     if (old && name === old.name && description == null)
       return;
-    this.actorOrder.add(id9);
+    this.actorOrder.add(id10);
     if (description == null || description.text == null) {
       description = { text: name, wrap: false };
     }
-    this.actors[id9] = {
+    this.actors[id10] = {
       name,
       description: description.text,
       wrap: description.wrap === void 0 && this.wrapEnabled || !!description.wrap,
       prevActorId: this.prevActorId,
       classifier,
-      itemId: `actor-${id9}`
+      itemId: `actor-${id10}`
     };
     if (this.prevActorId && this.actors[this.prevActorId]) {
-      this.actors[this.prevActorId].nextActorId = id9;
+      this.actors[this.prevActorId].nextActorId = id10;
     }
-    this.prevActorId = id9;
+    this.prevActorId = id10;
   }
   addSignal(from, to, message = { text: "", wrap: false }, messageType) {
     if (typeof from === "string") {
@@ -16917,8 +17091,8 @@ var SequenceDB = class extends BaseDb {
       this.participantBoxes[participantBox.id] = participantBox;
     }
   }
-  getActor(id9) {
-    return this.actors[id9];
+  getActor(id10) {
+    return this.actors[id10];
   }
   getActorKeys() {
     return Object.keys(this.actors);
@@ -16948,6 +17122,7 @@ var SequenceDB = class extends BaseDb {
   getDiagramIR() {
     this.prepareBeforeGetIR();
     return {
+      ...this.getBaseDiagramIR(),
       messages: this.messages,
       notes: this.notes,
       actors: this.actors,
@@ -16988,6 +17163,12 @@ var SequenceDB = class extends BaseDb {
         case "groupEnd":
           this.addGroupEnd(param.groupType);
           break;
+        // case 'rectStart':
+        //   addSignal(undefined, undefined, param.color, param.signalType)
+        //   break
+        // case 'rectEnd':
+        //   addSignal(undefined, undefined, undefined, param.signalType)
+        //   break
         case "addBox":
           this.addBox(param);
           break;
@@ -17002,6 +17183,9 @@ var SequenceDB = class extends BaseDb {
           break;
         case "overrideConfig":
           this.addOverrideConfig(param);
+          break;
+        case "bindClass":
+          STYLE_ACTION_HANDLERS.bindClass.call(this, param);
           break;
       }
     }
@@ -17275,6 +17459,28 @@ function makeTitleMark(title, titleFont, attrs) {
     titleSize
   };
 }
+var DiagramTitleMaker = class {
+  constructor(opts) {
+    this.opts = opts;
+  }
+  appendTitleMark(rootMark) {
+    const { title, titleFont, fill, className } = this.opts;
+    let titleSize = void 0;
+    let titleMark = void 0;
+    if (title) {
+      const titleResult = makeTitleMark(title, titleFont, { fill });
+      titleSize = titleResult.titleSize;
+      titleMark = titleResult.mark;
+      titleMark.class = className;
+      rootMark.children.push(titleMark);
+      titleSize.height += titleFont.fontSize;
+    }
+    return {
+      titleSize,
+      titleMark
+    };
+  }
+};
 function makeEmptyGroup() {
   return makeMark("group", { x: 0, y: 0 }, { children: [] });
 }
@@ -17698,8 +17904,33 @@ function getParamRulesFromConfig(config2) {
   return out;
 }
 
+// ../pintora-diagrams/lib/util/font-config.js
+var defaultFontConfig = {
+  fontFamily: DEFAULT_FONT_FAMILY,
+  fontSize: 14,
+  fontWeight: "normal",
+  fontStyle: "normal"
+};
+function getFontConfigRules() {
+  return {
+    fontFamily: { valueType: "string" },
+    fontSize: { valueType: "size" },
+    fontWeight: { valueType: "fontWeight" },
+    fontStyle: { valueType: "string" }
+  };
+}
+function getFontConfig(conf5, opts = {}) {
+  return {
+    fontFamily: opts.fontFamily || conf5.fontFamily,
+    fontSize: opts.fontSize || conf5.fontSize,
+    fontWeight: opts.fontWeight || conf5.fontWeight,
+    fontStyle: opts.fontStyle || conf5.fontStyle
+  };
+}
+
 // ../pintora-diagrams/lib/sequence/config.js
 var defaultConfig = {
+  ...defaultFontConfig,
   noteWidth: 80,
   noteHeight: 50,
   noteMargin: 10,
@@ -17737,31 +17968,8 @@ var defaultConfig = {
   useMaxWidth: false
 };
 var SEQUENCE_PARAM_DIRECTIVE_RULES = {
-  noteMargin: { valueType: "size" },
-  boxMargin: { valueType: "size" },
-  activationWidth: { valueType: "size" },
-  diagramMarginX: { valueType: "size" },
-  diagramMarginY: { valueType: "size" },
-  boxTextMargin: { valueType: "size" },
-  messageFontSize: { valueType: "fontSize" },
-  messageFontFamily: { valueType: "string" },
-  messageTextColor: { valueType: "color" },
-  wrapPadding: { valueType: "size" },
-  labelBoxWidth: { valueType: "size" },
-  labelBoxHeight: { valueType: "size" },
-  loopLineColor: { valueType: "color" },
-  actorWidth: { valueType: "size" },
-  actorHeight: { valueType: "size" },
-  actorMargin: { valueType: "size" },
-  actorBackground: { valueType: "color" },
-  actorBorderColor: { valueType: "color" },
-  actorTextColor: { valueType: "color" },
-  actorLineColor: { valueType: "color" },
-  participantBorderColor: { valueType: "color" },
-  noteTextColor: { valueType: "color" },
-  activationBackground: { valueType: "color" },
-  dividerTextColor: { valueType: "color" },
-  useMaxWidth: { valueType: "boolean" }
+  ...getParamRulesFromConfig(defaultConfig),
+  ...getFontConfigRules()
 };
 var configKey = "sequence";
 var configurator = makeConfigurator({
@@ -17793,6 +18001,115 @@ var configurator = makeConfigurator({
 });
 var getConf = configurator.getConfig;
 
+// ../pintora-diagrams/lib/util/style-engine/index.js
+var TEXT_MARK_STYLE_MAP = {
+  fontFamily: "fontFamily",
+  fontWeight: "fontWeight",
+  fontStyle: "fontStyle",
+  textColor: "fill",
+  opacity: "opacity"
+};
+var RECT_MARK_STYLE_MAP = {
+  backgroundColor: "fill",
+  borderColor: "stroke",
+  opacity: "opacity"
+};
+var StyleEngine = class {
+  apply(rootMark, opts) {
+    const rules = opts.styleRules;
+    const bindRules = opts.bindRules;
+    if (!rules)
+      return rootMark;
+    const actions = {};
+    const classRules = rules.filter((rule) => rule.selector.type === "class");
+    const idRules = rules.filter((rule) => rule.selector.type === "id");
+    const bindRulesGroupById = (bindRules || []).reduce((acc, bindRule) => {
+      for (const nodeId of bindRule.nodes) {
+        if (!acc[nodeId]) {
+          acc[nodeId] = [];
+        }
+        acc[nodeId].push(bindRule.className);
+      }
+      return acc;
+    }, {});
+    traverseMark(rootMark, {
+      default: (mark) => {
+        if (mark.itemId && bindRulesGroupById[mark.itemId]) {
+          mark.class = (mark.class ? mark.class + " " : "") + bindRulesGroupById[mark.itemId].join(" ");
+        }
+        if (classRules.length && mark.class) {
+          const classes = mark.class.split(" ");
+          classes.forEach((className) => {
+            const rule = classRules.find((rule2) => rule2.selector.target === className);
+            if (rule) {
+              this.applyRuleToMark(mark, rule);
+            }
+          });
+        }
+        if (idRules.length && mark.itemId) {
+          const rule = idRules.find((rule2) => rule2.selector.target === mark.itemId);
+          if (rule) {
+            this.applyRuleToMark(mark, rule);
+          }
+        }
+      }
+    }, actions);
+    return rootMark;
+  }
+  applyRuleToMark(mark, rule) {
+    traverseMark(mark, {
+      text(mark2) {
+        for (const [styleKey, value] of Object.entries(rule.attrs)) {
+          if (styleKey in TEXT_MARK_STYLE_MAP) {
+            mark2.attrs[TEXT_MARK_STYLE_MAP[styleKey]] = value;
+          }
+        }
+      },
+      rect(mark2) {
+        for (const [styleKey, value] of Object.entries(rule.attrs)) {
+          if (styleKey in RECT_MARK_STYLE_MAP) {
+            mark2.attrs[RECT_MARK_STYLE_MAP[styleKey]] = value;
+          }
+        }
+      }
+    }, {});
+  }
+};
+var styleEngine = new StyleEngine();
+function traverseMark(mark, visitors, actions) {
+  const visitor = visitors[mark.type] || visitors.default;
+  let visitorEnter;
+  let visitorExit;
+  if (visitor) {
+    if (typeof visitor === "function") {
+      visitorEnter = visitor;
+    } else {
+      visitorEnter = visitor.enter;
+      visitorExit = visitor.exit;
+    }
+  }
+  if (visitorEnter) {
+    visitorEnter(mark, actions);
+  }
+  if (mark.type === "group" && mark.children) {
+    mark.children.forEach((child) => {
+      traverseMark(child, visitors, actions);
+    });
+  }
+  if (visitorExit) {
+    visitorExit(mark, actions);
+  }
+}
+
+// ../pintora-diagrams/lib/util/base-artist.js
+var BaseArtist = class {
+  draw(ir, config2, opts) {
+    const gir = this.customDraw(ir, config2, opts);
+    styleEngine.apply(gir.mark, ir);
+    return gir;
+  }
+};
+
 // ../pintora-diagrams/lib/sequence/artist.js
 var conf;
 var theme;
@@ -17807,8 +18124,8 @@ var GROUP_LABEL_MAP = {
   [LINETYPE.PAR_START]: "par"
 };
 var SHOW_NUMBER_CIRCLE_RADIUS = 8;
-var sequenceArtist = {
-  draw(ir, config2, opts) {
+var SequenceArtist = class extends BaseArtist {
+  customDraw(ir, config2, opts) {
     var _a;
     conf = getConf(ir, config2);
     theme = conf.themeConfig.themeVariables;
@@ -17840,7 +18157,7 @@ var sequenceArtist = {
     const loopWidths = calculateLoopBounds(messages);
     const activationGroup = makeMark("group", {}, {
       children: [],
-      class: "activations"
+      class: "sequence__activations"
     });
     rootMark.children.push(activationGroup);
     function activeEnd(msg, verticalPos) {
@@ -17978,6 +18295,7 @@ var sequenceArtist = {
     return graphicsIR;
   }
 };
+var sequenceArtist = new SequenceArtist();
 var BumpType;
 (function(BumpType2) {
   BumpType2[BumpType2["Box"] = 1] = "Box";
@@ -18141,22 +18459,22 @@ var Model = class {
   initBoxInfos(ir) {
     let maxTitleHeight = 0;
     for (const actorBox of Object.values(ir.participantBoxes)) {
-      const id9 = actorBox.id;
-      let boxInfo = this.boxInfos.get(id9);
-      if (id9) {
+      const id10 = actorBox.id;
+      let boxInfo = this.boxInfos.get(id10);
+      if (id10) {
         if (!boxInfo) {
-          const fontConfig = boxFont(conf);
+          const fontConfig2 = boxFont(conf);
           boxInfo = {
             width: 0,
             actorMarks: [],
             bounds: makeBounds(),
-            textDims: getTextDimensionsInPresicion(actorBox.text || "", fontConfig),
+            textDims: getTextDimensionsInPresicion(actorBox.text || "", fontConfig2),
             participantBox: actorBox
           };
           if (actorBox.text) {
             maxTitleHeight = Math.max(maxTitleHeight, boxInfo.textDims.height);
           }
-          this.boxInfos.set(id9, boxInfo);
+          this.boxInfos.set(id10, boxInfo);
         }
       }
     }
@@ -18215,6 +18533,7 @@ function adjustLoopSizeForWrap(loopWidths, msg, preMargin, postMargin, addLoopFn
 }
 var messageFont = (cnf) => {
   return {
+    ...getFontConfig(conf),
     fontFamily: cnf.messageFontFamily,
     fontSize: cnf.messageFontSize,
     fontWeight: cnf.messageFontWeight
@@ -18224,8 +18543,7 @@ var actorFont = messageFont;
 var noteFont = messageFont;
 var boxFont = (cnf) => {
   return {
-    fontFamily: cnf.messageFontFamily,
-    fontSize: cnf.messageFontSize,
+    ...messageFont(conf),
     fontWeight: cnf.boxFontWeight || cnf.messageFontWeight
   };
 };
@@ -18236,22 +18554,22 @@ var drawMessage = function(msgModel) {
   model.bumpVerticalPos(conf.boxMargin);
   const { startx, stopx, starty, text, fromBound, type, sequenceIndex, itemId } = msgModel;
   const linesCount = splitBreaks(text).length;
-  const textDims = calculateTextDimensions(text, messageFont(conf));
+  const messageFontConfig = messageFont(conf);
+  const textDims = calculateTextDimensions(text, messageFontConfig);
   const lineHeight = textDims.height / linesCount;
   model.bumpVerticalPos(lineHeight);
   const tAttrs = {
     text: "",
     textAlign: "center",
     textBaseline: "top",
-    fill: conf.messageTextColor
+    fill: conf.messageTextColor,
+    ...messageFontConfig
   };
   tAttrs.x = fromBound + msgModel.width / 2;
   tAttrs.y = starty + conf.boxMargin;
   tAttrs.width = msgModel.width;
   tAttrs.text = text;
-  tAttrs.fontFamily = conf.messageFontFamily;
-  tAttrs.fontSize = conf.messageFontSize;
-  tAttrs.fontWeight = conf.messageFontWeight;
+  safeAssign(tAttrs, messageFontConfig);
   let totalOffset = textDims.height;
   let lineStarty;
   const lineAttrs = {
@@ -18272,7 +18590,7 @@ var drawMessage = function(msgModel) {
       x2: stopx,
       y2: lineEndy
     });
-    lineMark = makeMark("path", lineAttrs, { class: "message__line", itemId });
+    lineMark = makeMark("path", lineAttrs, { class: "sequence__message__line", itemId });
     safeAssign(tAttrs, {
       x: startx
     });
@@ -18291,7 +18609,7 @@ var drawMessage = function(msgModel) {
     lineMark = {
       type: "line",
       attrs: lineAttrs,
-      class: "message__line",
+      class: "sequence__message__line",
       itemId
     };
     model.insert(startx, lineStarty - 10, stopx, lineStarty);
@@ -18335,7 +18653,7 @@ var drawMessage = function(msgModel) {
       textBaseline: "middle",
       fill: conf.actorBackground,
       fontWeight: "bold"
-    }, { class: "sequence-number" });
+    }, { class: "sequence__number" });
     const circleColor = conf.actorBorderColor;
     const circleMark = makeMark("marker", {
       symbol: "circle",
@@ -18356,7 +18674,7 @@ var drawMessage = function(msgModel) {
   return {
     mark: {
       type: "group",
-      class: "message",
+      class: "sequence__message",
       itemId,
       children: compact([
         lineMark,
@@ -18364,7 +18682,7 @@ var drawMessage = function(msgModel) {
         {
           type: "text",
           attrs: tAttrs,
-          class: "message__text"
+          class: "sequence__message__text"
         },
         numberMark
       ])
@@ -18373,7 +18691,8 @@ var drawMessage = function(msgModel) {
 };
 var drawNoteTo = function(noteModel, container) {
   model.bumpVerticalPos(conf.boxMargin);
-  const textDims = calculateTextDimensions(noteModel.text, noteFont(conf));
+  const noteFontConfig = noteFont(conf);
+  const textDims = calculateTextDimensions(noteModel.text, noteFontConfig);
   const textHeight = textDims.height;
   noteModel.height = textHeight + 2 * conf.noteMargin;
   noteModel.starty = model.verticalPos;
@@ -18407,7 +18726,7 @@ var drawNoteTo = function(noteModel, container) {
   model.insert(noteModel.startx, noteModel.starty, noteModel.stopx, noteModel.stopy);
   const mark = {
     type: "group",
-    class: "note",
+    class: "note sequence__note",
     children: [noteRect, textMark]
   };
   container.children.push(mark);
@@ -18439,7 +18758,7 @@ var drawActors = function(rootMark, ir, opts) {
     const participantBox = boxInfo === null || boxInfo === void 0 ? void 0 : boxInfo.participantBox;
     const actorMark = {
       type: "group",
-      class: "actor",
+      class: "sequence__actor",
       children: [],
       itemId: actor.itemId
     };
@@ -18513,7 +18832,7 @@ var drawActors = function(rootMark, ir, opts) {
     if (!isMirror) {
       lineMark = {
         type: "line",
-        class: "actor__line",
+        class: "sequence__actor__line",
         attrs: {
           x1: actorCenter.x,
           x2: actorCenter.x,
@@ -18575,7 +18894,7 @@ function drawParticipantBoxes(context) {
     });
     boxesGroup.children.push(rect);
     if (participantBox.text) {
-      const fontConfig = boxFont(conf5);
+      const fontConfig2 = boxFont(conf5);
       const textMark = makeMark("text", {
         text: participantBox.text,
         x: startx + width2 / 2,
@@ -18583,7 +18902,7 @@ function drawParticipantBoxes(context) {
         textBaseline: "top",
         textAlign: "center",
         fill: conf5.actorTextColor,
-        ...fontConfig,
+        ...fontConfig2,
         fontWeight: "bold"
       });
       boxesGroup.children.push(textMark);
@@ -18602,7 +18921,7 @@ function drawActivationTo(mark, data) {
   });
   const rect = {
     type: "rect",
-    class: "activation",
+    class: "sequence__activation",
     attrs: rectAttrs
   };
   mark.children.push(rect);
@@ -18774,8 +19093,8 @@ function calcLoopMinWidths(messages) {
   messages.forEach((msg) => {
     switch (msg.type) {
       case LINETYPE.LOOP_START:
-      case LINETYPE.ALT_START:
       case LINETYPE.OPT_START:
+      case LINETYPE.ALT_START:
       case LINETYPE.PAR_START:
         if (!msg.id)
           msg.id = makeid(10);
@@ -18799,8 +19118,8 @@ var calculateLoopBounds = function(messages) {
       msg.id = makeid(10);
     switch (msg.type) {
       case LINETYPE.LOOP_START:
-      case LINETYPE.ALT_START:
       case LINETYPE.OPT_START:
+      case LINETYPE.ALT_START:
       case LINETYPE.PAR_START:
         const minWidth = model.loopMinWidths[msg.id] || 0;
         stack.push({
@@ -18938,12 +19257,27 @@ function makeNth(n2) {
     return d[n2];
   };
 }
+function flatten(list) {
+  const output = [];
+  function walk(item) {
+    if (Array.isArray(item)) {
+      item.forEach(walk);
+    } else {
+      output.push(item);
+    }
+    return output;
+  }
+  return walk(list);
+}
+var BIND_REGEXPS = {
+  BIND_CLASS: /@bindClass/
+};
 
 // ../pintora-diagrams/lib/sequence/parser/sequenceDiagram.js
 function id(d) {
   return d[0];
 }
-var COLOR = /#[a-zA-Z0-9]+/;
+var _COLOR = /#[a-zA-Z0-9]+/;
 var PARAM_DIRECTIVE = /@param/;
 var CONFIG_DIRECTIVE2 = /@config/;
 var L_PAREN = /\(/;
@@ -18967,6 +19301,7 @@ function handleConfigOpenCloseStatement(d) {
   }
 }
 var COMMENT_LINE = /%%.*/;
+var BIND_CLASS = /@bindClass/;
 var _PLACEMENT = [
   { match: /left\sof/, type: () => "LEFT_OF" },
   { match: /right\sof/, type: () => "RIGHT_OF" },
@@ -18992,8 +19327,6 @@ var lexer = moo.states({
     DOTTED_CROSS: /\-\-x/,
     SOLID_POINT: /\-[\)]/,
     DOTTED_POINT: /\-\-[\)]/,
-    PLUS: /\+/,
-    MINUS: /-/,
     COMMA: /,/,
     COLON: { match: /:/, push: "line" },
     L_SQ_BRACKET: { match: /\[/ },
@@ -19005,14 +19338,15 @@ var lexer = moo.states({
     _PLACEMENT,
     COLOR: /#[a-zA-Z0-9]+/,
     COMMENT_LINE: COMMENT_LINE_REGEXP,
-    WORD: { match: VALID_TEXT_REGEXP, fallback: true }
+    ...BIND_REGEXPS,
+    VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
   },
   line: {
-    REST_OF_LINE: { match: /[^#\n;]+/, pop: 1 }
+    REST_OF_LINE: { match: /[^\n;]+/, pop: 1 }
   },
   configStatement: {
     ...configLexerconfigStatementState,
-    WORD: { match: VALID_TEXT_REGEXP, fallback: true }
+    VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
   },
   noteState: {
     _PLACEMENT,
@@ -19022,7 +19356,7 @@ var lexer = moo.states({
     },
     NL: MOO_NEWLINE,
     COMMA: /,/,
-    WORD: { match: VALID_TEXT_REGEXP, fallback: true }
+    VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
   }
 });
 var yy;
@@ -19043,7 +19377,7 @@ var grammar = {
       return null;
     } },
     { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id },
-    { "name": "color", "symbols": [COLOR], "postprocess": (d) => tv(d[0]) },
+    { "name": "color", "symbols": [_COLOR], "postprocess": (d) => tv(d[0]) },
     {
       "name": "paramStatement",
       "symbols": [PARAM_DIRECTIVE, "__", "paramPart"],
@@ -19083,6 +19417,33 @@ var grammar = {
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": ["configOpenCloseStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE2, L_PAREN, "configOpenCloseStatement$ebnf$1", R_PAREN], "postprocess": handleConfigOpenCloseStatement },
     { "name": "comment", "symbols": [COMMENT_LINE], "postprocess": (d) => null },
+    { "name": "bindClassStatement$ebnf$1", "symbols": [lexer.has("WS") ? { type: "WS" } : WS] },
+    { "name": "bindClassStatement$ebnf$1", "symbols": ["bindClassStatement$ebnf$1", lexer.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "bindClassStatement$ebnf$2", "symbols": [lexer.has("WS") ? { type: "WS" } : WS] },
+    { "name": "bindClassStatement$ebnf$2", "symbols": ["bindClassStatement$ebnf$2", lexer.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "bindClassStatement$ebnf$3", "symbols": [] },
+    { "name": "bindClassStatement$ebnf$3", "symbols": ["bindClassStatement$ebnf$3", lexer.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "bindClassStatement",
+      "symbols": [lexer.has("BIND_CLASS") ? { type: "BIND_CLASS" } : BIND_CLASS, "bindClassStatement$ebnf$1", "nodeList", "bindClassStatement$ebnf$2", lexer.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "bindClassStatement$ebnf$3", lexer.has("NL") ? { type: "NL" } : NL],
+      "postprocess": (d) => ({
+        type: "bindClass",
+        nodes: d[2],
+        className: tv(d[4])
+      })
+    },
+    { "name": "nodeList", "symbols": [lexer.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => [tv(d[0])] },
+    { "name": "nodeList$ebnf$1", "symbols": [] },
+    { "name": "nodeList$ebnf$1", "symbols": ["nodeList$ebnf$1", lexer.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "nodeList",
+      "symbols": ["nodeList", lexer.has("COMMA") ? { type: "COMMA" } : COMMA, "nodeList$ebnf$1", lexer.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT],
+      "postprocess": (d) => {
+        const list = d[0];
+        list.push(tv(d[3]));
+        return list;
+      }
+    },
     { "name": "start", "symbols": ["__", "start"], "postprocess": (d) => d[1] },
     {
       "name": "start",
@@ -19214,10 +19575,10 @@ var grammar = {
         return result;
       }
     },
-    { "name": "statement$ebnf$8$subexpression$1", "symbols": [lexer.has("WORD") ? { type: "WORD" } : WORD] },
+    { "name": "statement$ebnf$8$subexpression$1", "symbols": [lexer.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
     { "name": "statement$ebnf$8$subexpression$1", "symbols": [lexer.has("WS") ? { type: "WS" } : WS] },
     { "name": "statement$ebnf$8", "symbols": ["statement$ebnf$8$subexpression$1"] },
-    { "name": "statement$ebnf$8$subexpression$2", "symbols": [lexer.has("WORD") ? { type: "WORD" } : WORD] },
+    { "name": "statement$ebnf$8$subexpression$2", "symbols": [lexer.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
     { "name": "statement$ebnf$8$subexpression$2", "symbols": [lexer.has("WS") ? { type: "WS" } : WS] },
     { "name": "statement$ebnf$8", "symbols": ["statement$ebnf$8", "statement$ebnf$8$subexpression$2"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
@@ -19231,10 +19592,11 @@ var grammar = {
     { "name": "statement", "symbols": ["paramStatement", lexer.has("NL") ? { type: "NL" } : NL] },
     { "name": "statement", "symbols": ["configOpenCloseStatement", lexer.has("NL") ? { type: "NL" } : NL] },
     { "name": "statement", "symbols": ["comment", lexer.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["bindClassStatement"] },
     { "name": "participantWord", "symbols": [{ "literal": "participant" }] },
     {
       "name": "classifiableActor",
-      "symbols": [lexer.has("L_SQ_BRACKET") ? { type: "L_SQ_BRACKET" } : L_SQ_BRACKET, lexer.has("L_AN_BRACKET") ? { type: "L_AN_BRACKET" } : L_AN_BRACKET, lexer.has("WORD") ? { type: "WORD" } : WORD, lexer.has("R_AN_BRACKET") ? { type: "R_AN_BRACKET" } : R_AN_BRACKET, "__", "actor", { "literal": "]" }],
+      "symbols": [lexer.has("L_SQ_BRACKET") ? { type: "L_SQ_BRACKET" } : L_SQ_BRACKET, lexer.has("L_AN_BRACKET") ? { type: "L_AN_BRACKET" } : L_AN_BRACKET, lexer.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer.has("R_AN_BRACKET") ? { type: "R_AN_BRACKET" } : R_AN_BRACKET, "__", "actor", { "literal": "]" }],
       "postprocess": function(d) {
         const actor = d[5];
         actor.classifier = tv(d[2]);
@@ -19268,10 +19630,10 @@ var grammar = {
         return d[2];
       }
     },
-    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer.has("WORD") ? { type: "WORD" } : WORD] },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
     { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer.has("WS") ? { type: "WS" } : WS] },
     { "name": "words$ebnf$1", "symbols": ["words$ebnf$1$subexpression$1"] },
-    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer.has("WORD") ? { type: "WORD" } : WORD] },
+    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
     { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer.has("WS") ? { type: "WS" } : WS] },
     { "name": "words$ebnf$1", "symbols": ["words$ebnf$1", "words$ebnf$1$subexpression$2"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
@@ -19289,42 +19651,29 @@ var grammar = {
     { "name": "signaltype", "symbols": [lexer.has("DOTTED_CROSS") ? { type: "DOTTED_CROSS" } : DOTTED_CROSS], "postprocess": (d) => yy.LINETYPE.DOTTED_CROSS },
     { "name": "signaltype", "symbols": [lexer.has("SOLID_POINT") ? { type: "SOLID_POINT" } : SOLID_POINT], "postprocess": (d) => yy.LINETYPE.SOLID_POINT },
     { "name": "signaltype", "symbols": [lexer.has("DOTTED_POINT") ? { type: "DOTTED_POINT" } : DOTTED_POINT], "postprocess": (d) => yy.LINETYPE.DOTTED_POINT },
-    { "name": "signal$subexpression$1", "symbols": [lexer.has("PLUS") ? { type: "PLUS" } : PLUS] },
-    { "name": "signal$subexpression$1", "symbols": [lexer.has("MINUS") ? { type: "MINUS" } : MINUS] },
-    {
-      "name": "signal",
-      "symbols": ["actor", "signaltype", "signal$subexpression$1", "actor", "textWithColon"],
-      "postprocess": function(d) {
-        const toActor = d[3];
-        const fromActor = d[0];
-        const activeMark = d[2][0];
-        let activeAction;
-        if (activeMark.type === "MINUS") {
-          activeAction = { type: "activeEnd", signalType: yy.LINETYPE.ACTIVE_END, actor: fromActor };
-        } else {
-          activeAction = { type: "activeStart", signalType: yy.LINETYPE.ACTIVE_START, actor: toActor };
-        }
-        return [
-          fromActor,
-          toActor,
-          { type: "addSignal", from: fromActor.actor, to: toActor.actor, signalType: d[1], msg: d[4] },
-          activeAction
-        ];
-      }
-    },
     {
       "name": "signal",
       "symbols": ["actor", "signaltype", "actor", "textWithColon"],
       "postprocess": function(d) {
+        const fromActor = d[0];
         const toActor = d[2];
+        let activeAction;
+        if (toActor.actor[0] === "+") {
+          activeAction = { type: "activeStart", signalType: yy.LINETYPE.ACTIVE_START, actor: toActor };
+          toActor.actor = toActor.actor.slice(1);
+        } else if (toActor.actor[0] === "-") {
+          activeAction = { type: "activeEnd", signalType: yy.LINETYPE.ACTIVE_END, actor: fromActor };
+          toActor.actor = toActor.actor.slice(1);
+        }
         return [
           d[0],
           toActor,
-          { type: "addSignal", from: d[0].actor, to: toActor.actor, signalType: d[1], msg: d[3] }
+          { type: "addSignal", from: fromActor.actor, to: toActor.actor, signalType: d[1], msg: d[3] },
+          activeAction
         ];
       }
     },
-    { "name": "actor", "symbols": [lexer.has("WORD") ? { type: "WORD" } : WORD], "postprocess": (d) => {
+    { "name": "actor", "symbols": [lexer.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => {
       return { type: "addActor", actor: tv(d[0]) };
     } },
     {
@@ -19335,7 +19684,7 @@ var grammar = {
       }
     },
     { "name": "multilineNoteText$ebnf$1", "symbols": [] },
-    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer.has("WORD") ? { type: "WORD" } : WORD] },
+    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
     { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer.has("COMMA") ? { type: "COMMA" } : COMMA] },
     { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer.has("NL") ? { type: "NL" } : NL] },
     { "name": "multilineNoteText$ebnf$1", "symbols": ["multilineNoteText$ebnf$1", "multilineNoteText$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
@@ -19436,9 +19785,9 @@ var sequenceDiagram_default = grammar;
 
 // ../pintora-diagrams/lib/util/parser-util.js
 var import_nearley = __toESM(require_nearley());
-function genParserWithRules(grammar9, opts = {}) {
+function genParserWithRules(grammar10, opts = {}) {
   return function parse9(text) {
-    const parser = new import_nearley.default.Parser(import_nearley.default.Grammar.fromCompiled(grammar9));
+    const parser2 = new import_nearley.default.Parser(import_nearley.default.Grammar.fromCompiled(grammar10));
     if (opts.prepare)
       opts.prepare();
     let preparedText = text;
@@ -19446,8 +19795,8 @@ function genParserWithRules(grammar9, opts = {}) {
       return line.length > 0;
     }).join("\n");
     const textToParse = preparedText[preparedText.length - 1] !== "\n" ? preparedText + "\n" : preparedText;
-    parser.feed(textToParse);
-    let results = compact(parser.results);
+    parser2.feed(textToParse);
+    let results = compact(parser2.results);
     if (opts.dedupeAmbigousResults) {
       if (Array.isArray(results[0])) {
         results = results[0];
@@ -19516,15 +19865,287 @@ var eventRecognizer = new BaseEventRecognizer().addPatternRecognizerRule(ACTOR_I
   return createSequenceDiagramEvent(e, m, m.itemId, "message", message);
 });
 
+// ../pintora-diagrams/lib/util/preproccesor/parser/preproccesor.js
+var moo2 = __toESM(require_moo());
+function id2(d) {
+  return d[0];
+}
+var _COLOR2 = /#[a-zA-Z0-9]+/;
+var PARAM_DIRECTIVE2 = /@param/;
+var CONFIG_DIRECTIVE3 = /@config/;
+var L_PAREN2 = /\(/;
+var R_PAREN2 = /\)/;
+function getTokenValue2(token) {
+  if (token && "value" in token)
+    return token.value;
+  return token;
+}
+function handleConfigOpenCloseStatement2(d) {
+  const text = d[2].map((v) => {
+    if (v.type)
+      return getTokenValue2(v);
+    return v;
+  }).join("");
+  try {
+    const v = JSON.parse(text);
+    return { type: "overrideConfig", value: v };
+  } catch (error) {
+    return { type: "overrideConfig", error };
+  }
+}
+var COMMENT_LINE2 = /%%.*/;
+var COMMON_TOKEN_RULES = {
+  VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
+};
+var lexer2 = moo2.states({
+  main: {
+    NL: MOO_NEWLINE,
+    WS: { match: / +/, lineBreaks: false },
+    QUOTED_WORD: QUOTED_WORD_REGEXP,
+    SEMICOLON: /;/,
+    COLON: /:/,
+    ACTIVITY_DIAGRAM: /activityDiagram/,
+    L_PAREN: L_PAREN_REGEXP,
+    R_PAREN: R_PAREN_REGEXP,
+    L_BRACKET: { match: /\{/ },
+    R_BRACKET: { match: /\}/ },
+    COMMENT_LINE: COMMENT_LINE_REGEXP,
+    ...configLexerMainState,
+    VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
+  },
+  configStatement: {
+    ...configLexerconfigStatementState,
+    ...COMMON_TOKEN_RULES
+  }
+});
+var grammar2 = {
+  Lexer: lexer2,
+  ParserRules: [
+    { "name": "_$ebnf$1", "symbols": [] },
+    { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", "wschar"], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "_", "symbols": ["_$ebnf$1"], "postprocess": function(d) {
+      return null;
+    } },
+    { "name": "__$ebnf$1", "symbols": ["wschar"] },
+    { "name": "__$ebnf$1", "symbols": ["__$ebnf$1", "wschar"], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "__", "symbols": ["__$ebnf$1"], "postprocess": function(d) {
+      return null;
+    } },
+    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id2 },
+    { "name": "color", "symbols": [_COLOR2], "postprocess": (d) => tv(d[0]) },
+    {
+      "name": "paramStatement",
+      "symbols": [PARAM_DIRECTIVE2, "__", "paramPart"],
+      "postprocess": function(d) {
+        return d[2];
+      }
+    },
+    { "name": "paramStatement$ebnf$1", "symbols": [] },
+    { "name": "paramStatement$ebnf$1$subexpression$1", "symbols": [/[\n]/, "_", "paramPart"] },
+    { "name": "paramStatement$ebnf$1", "symbols": ["paramStatement$ebnf$1", "paramStatement$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "paramStatement",
+      "symbols": [PARAM_DIRECTIVE2, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
+      "postprocess": function(d) {
+        const params = [];
+        d[4].forEach((seg) => {
+          params.push(seg[2]);
+        });
+        return params;
+      }
+    },
+    { "name": "paramPart$ebnf$1", "symbols": [/[a-zA-Z0-9]/] },
+    { "name": "paramPart$ebnf$1", "symbols": ["paramPart$ebnf$1", /[a-zA-Z0-9]/], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "paramPart$ebnf$2", "symbols": [/[^ \n]/] },
+    { "name": "paramPart$ebnf$2", "symbols": ["paramPart$ebnf$2", /[^ \n]/], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "paramPart", "symbols": ["paramPart$ebnf$1", "__", "paramPart$ebnf$2"], "postprocess": function(d) {
+      const key = d[0].map((v) => tv(v)).join("");
+      let value = d[2];
+      if (typeof value !== "string")
+        value = value.map((v) => tv(v)).join("");
+      return { type: "addParam", key, value };
+    } },
+    { "name": "configStatement$ebnf$1", "symbols": [/[^\)]/] },
+    { "name": "configStatement$ebnf$1", "symbols": ["configStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE3, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement2 },
+    { "name": "configOpenCloseStatement$ebnf$1", "symbols": [/[^\)]/] },
+    { "name": "configOpenCloseStatement$ebnf$1", "symbols": ["configOpenCloseStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE3, L_PAREN2, "configOpenCloseStatement$ebnf$1", R_PAREN2], "postprocess": handleConfigOpenCloseStatement2 },
+    { "name": "comment", "symbols": [COMMENT_LINE2], "postprocess": (d) => null },
+    { "name": "styleStatement$ebnf$1", "symbols": [] },
+    { "name": "styleStatement$ebnf$1", "symbols": ["styleStatement$ebnf$1", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "styleStatement$ebnf$2", "symbols": [] },
+    { "name": "styleStatement$ebnf$2", "symbols": ["styleStatement$ebnf$2", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "styleStatement", "symbols": [{ "literal": "@style" }, "styleStatement$ebnf$1", lexer2.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "__", "styleRules", "__", lexer2.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET, "styleStatement$ebnf$2", lexer2.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => ({ type: "style", rules: d[4] }) },
+    { "name": "styleRules", "symbols": [], "postprocess": null },
+    {
+      "name": "styleRules",
+      "symbols": ["styleRules", "__", "styleRule"],
+      "postprocess": (d) => {
+        const rules = d[0] || [];
+        if (d[2])
+          rules.push(d[2]);
+        return rules;
+      }
+    },
+    { "name": "styleRule$ebnf$1", "symbols": [] },
+    { "name": "styleRule$ebnf$1", "symbols": ["styleRule$ebnf$1", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "styleRule$ebnf$2", "symbols": [] },
+    { "name": "styleRule$ebnf$2", "symbols": ["styleRule$ebnf$2", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "styleRule",
+      "symbols": ["selector", "styleRule$ebnf$1", lexer2.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "__", "styleAttrs", "__", lexer2.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET, "styleRule$ebnf$2"],
+      "postprocess": (d) => ({
+        type: "styleRule",
+        selector: d[0],
+        attrs: d[4]
+      })
+    },
+    { "name": "selector", "symbols": [lexer2.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": function(d) {
+      const v = tv(d[0]);
+      if (v[0] === "#") {
+        return { type: "id", target: v.slice(1) };
+      } else if (v[0] === ".") {
+        return { type: "class", target: v.slice(1) };
+      }
+    } },
+    { "name": "styleAttrs", "symbols": [], "postprocess": null },
+    {
+      "name": "styleAttrs",
+      "symbols": ["styleAttrs", "styleAttr"],
+      "postprocess": (d) => {
+        const attrs = d[0] || [];
+        if (d[1])
+          attrs.push(d[1]);
+        return attrs;
+      }
+    },
+    { "name": "styleAttr$ebnf$1", "symbols": [] },
+    { "name": "styleAttr$ebnf$1", "symbols": ["styleAttr$ebnf$1", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "styleAttr$ebnf$2", "symbols": [] },
+    { "name": "styleAttr$ebnf$2", "symbols": ["styleAttr$ebnf$2", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "styleAttr$ebnf$3", "symbols": [] },
+    { "name": "styleAttr$ebnf$3", "symbols": ["styleAttr$ebnf$3", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "styleAttr",
+      "symbols": [lexer2.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "styleAttr$ebnf$1", lexer2.has("COLON") ? { type: "COLON" } : COLON, "styleAttr$ebnf$2", "attrValue", "styleAttr$ebnf$3", lexer2.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON, "__"],
+      "postprocess": (d) => ({
+        type: "attr",
+        key: tv(d[0]),
+        value: d[4]
+      })
+    },
+    { "name": "attrValue", "symbols": [lexer2.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => tv(d[0]) },
+    { "name": "attrValue", "symbols": [lexer2.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD], "postprocess": (d) => tv(d[0]) },
+    { "name": "start", "symbols": ["__", "start"], "postprocess": (d) => d[1] },
+    {
+      "name": "start",
+      "symbols": ["document"],
+      "postprocess": function(d) {
+        return d[0];
+      }
+    },
+    { "name": "document", "symbols": [] },
+    {
+      "name": "document",
+      "symbols": ["document", "line"],
+      "postprocess": (d) => {
+        const r = d[0].concat(d[1]);
+        return r;
+      }
+    },
+    { "name": "line$ebnf$1", "symbols": [] },
+    { "name": "line$ebnf$1", "symbols": ["line$ebnf$1", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "line", "symbols": ["line$ebnf$1", "statement"], "postprocess": (d) => {
+      return d[1];
+    } },
+    { "name": "line$ebnf$2", "symbols": [] },
+    { "name": "line$ebnf$2", "symbols": ["line$ebnf$2", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "line", "symbols": ["line$ebnf$2", lexer2.has("NL") ? { type: "NL" } : NL], "postprocess": null },
+    { "name": "statement", "symbols": ["titleStatement"] },
+    { "name": "statement", "symbols": ["paramStatement", "_", lexer2.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["configStatement", "_", lexer2.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["styleStatement", "_"] },
+    { "name": "statement", "symbols": ["comment", "_", lexer2.has("NL") ? { type: "NL" } : NL], "postprocess": null },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer2.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer2.has("WS") ? { type: "WS" } : WS] },
+    { "name": "words$ebnf$1", "symbols": ["words$ebnf$1$subexpression$1"] },
+    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer2.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer2.has("WS") ? { type: "WS" } : WS] },
+    { "name": "words$ebnf$1", "symbols": ["words$ebnf$1", "words$ebnf$1$subexpression$2"], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "words",
+      "symbols": ["words$ebnf$1"],
+      "postprocess": function(d) {
+        return d[0].map((o) => tv(o[0])).join("");
+      }
+    },
+    { "name": "titleStatement", "symbols": [{ "literal": "@title" }, "words", lexer2.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => ({ type: "setTitle", text: d[1].trim() }) }
+  ],
+  ParserStart: "start",
+  ParserOptions: { skipUnmatchSymbols: [lexer2.has("WS") ? { type: "WS" } : WS] }
+};
+var preproccesor_default = grammar2;
+
+// ../pintora-diagrams/lib/util/preproccesor/index.js
+var parseFn = genParserWithRules(preproccesor_default, {
+  dedupeAmbigousResults: true
+});
+var Preproccessor = class extends BaseDb {
+  constructor() {
+    super(...arguments);
+    this.ACTION_HANDLERS = {
+      addParam(action) {
+        this.configParams.push(action);
+      },
+      setTitle(action) {
+        this.title = action.text;
+      },
+      overrideConfig(action) {
+        this.addOverrideConfig(action);
+      },
+      ...STYLE_ACTION_HANDLERS
+    };
+  }
+  parse(text) {
+    const actions = parseFn(text);
+    this.apply(actions);
+  }
+  apply(action) {
+    if (!action)
+      return;
+    if (Array.isArray(action)) {
+      action.forEach((a) => this.apply(a));
+      return;
+    }
+    if (action.type in this.ACTION_HANDLERS) {
+      this.ACTION_HANDLERS[action.type].call(this, action);
+    }
+  }
+};
+var ParserWithPreprocessor = class {
+  constructor(opts) {
+    this.opts = opts;
+  }
+  parse(text, context) {
+    if (context.preContent) {
+      const preprocessor = new Preproccessor();
+      preprocessor.parse(context.preContent);
+      const preDiagramIR = preprocessor.getBaseDiagramIR();
+      this.opts.db.init(preDiagramIR);
+    }
+    this.opts.parse(text, context);
+    return this.opts.db.getDiagramIR();
+  }
+};
+
 // ../pintora-diagrams/lib/sequence/index.js
 var sequenceDiagram = {
   pattern: /^\s*sequenceDiagram/,
-  parser: {
-    parse(text) {
-      parse(text);
-      return db.getDiagramIR();
-    }
-  },
+  parser: new ParserWithPreprocessor({
+    db,
+    parse
+  }),
   artist: artist_default,
   configKey: "sequence",
   eventRecognizer,
@@ -19550,2487 +20171,99 @@ var Identification;
 var ErDb = class extends BaseDb {
   constructor() {
     super(...arguments);
-    this.Cardinality = Cardinality;
-    this.Identification = Identification;
     this.entities = {};
     this.relationships = [];
     this.inheritances = [];
+    this.idCounter = makeIdCounter();
   }
-  addEntity(name) {
-    if (!this.entities[name]) {
-      this.entities[name] = { attributes: [], itemId: `entity-${name}` };
+  makeId() {
+    return this.idCounter.next();
+  }
+  addEntity(e) {
+    if (this.entities[e.name]) {
+      this.entities[e.name].attributes.push(...e.attributes);
+      return;
     }
-    return this.entities[name];
-  }
-  addRelationship(entityA, roleA, entityB, relSpec) {
-    const itemId = `relationship-${entityA}-${entityB}`;
-    const rel = {
-      entityA,
-      roleA,
-      entityB,
-      relSpec,
-      itemId
+    const itemId = `entity-${e.name}`;
+    const entity = {
+      itemId,
+      name: e.name,
+      attributes: e.attributes || []
     };
-    this.relationships.push(rel);
+    this.entities[e.name] = entity;
+    return entity;
   }
-  addInheritance(sup, sub3) {
-    this.inheritances.push({ sup, sub: sub3 });
+  apply(part) {
+    if (!part)
+      return;
+    if (Array.isArray(part)) {
+      return part.map((p) => this.apply(p));
+    }
+    switch (part.type) {
+      case "addEntity": {
+        const entity = this.addEntity(part);
+        return entity;
+      }
+      case "addRelationship": {
+        this.addEntity({ name: part.entityA, attributes: [] });
+        this.addEntity({ name: part.entityB, attributes: [] });
+        const itemId = `relationship-${part.entityA}-${part.entityB}`;
+        const relationship = {
+          itemId,
+          entityA: part.entityA,
+          entityB: part.entityB,
+          roleA: part.roleA,
+          relSpec: part.relSpec
+        };
+        this.relationships.push(relationship);
+        return relationship;
+      }
+      case "addInheritance": {
+        this.addEntity({ name: part.sup, attributes: [] });
+        this.addEntity({ name: part.sub, attributes: [] });
+        const inheritance = {
+          sup: part.sup,
+          sub: part.sub
+        };
+        this.inheritances.push(inheritance);
+        return inheritance;
+      }
+      case "setTitle": {
+        this.title = part.text;
+        return null;
+      }
+      case "addParam": {
+        this.configParams.push(part);
+        break;
+      }
+      case "overrideConfig": {
+        this.addOverrideConfig(part);
+        break;
+      }
+      case "bindClass": {
+        STYLE_ACTION_HANDLERS.bindClass.call(this, part);
+        return null;
+      }
+    }
   }
   getDiagramIR() {
     return {
-      ...super.getBaseDiagramIR(),
+      ...this.getBaseDiagramIR(),
       entities: this.entities,
       relationships: this.relationships,
       inheritances: this.inheritances
     };
-  }
-  addTitle(title) {
-    this.title = title;
-  }
-  addAttributes(name, attributes) {
-    const entity = this.addEntity(name);
-    entity.attributes.push(...attributes);
-  }
-  addParam(styleParam) {
-    this.configParams.push(styleParam);
   }
   clear() {
     super.clear();
     this.entities = {};
     this.relationships = [];
     this.inheritances = [];
-    this.configParams = [];
-    this.title = "";
+    this.idCounter = makeIdCounter();
   }
 };
 var db2 = new ErDb();
 var db_default2 = db2;
-
-// ../pintora-diagrams/lib/er/config.js
-var defaultConfig2 = {
-  diagramPadding: 15,
-  layoutDirection: "TB",
-  ranksep: 100,
-  edgesep: 80,
-  edgeType: "polyline",
-  useMaxWidth: false,
-  minEntityWidth: 80,
-  minEntityHeight: 50,
-  entityPaddingX: 15,
-  entityPaddingY: 15,
-  borderRadius: 2,
-  stroke: PALETTE.normalDark,
-  fill: PALETTE.orange,
-  edgeColor: PALETTE.normalDark,
-  attributeFill: "#fffbf9",
-  textColor: PALETTE.normalDark,
-  labelBackground: PALETTE.white,
-  fontSize: 14,
-  fontFamily: DEFAULT_FONT_FAMILY
-};
-var ER_PARAM_DIRECTIVE_RULES = {
-  ...getParamRulesFromConfig(defaultConfig2),
-  useMaxWidth: { valueType: "boolean" },
-  layoutDirection: { valueType: "string" },
-  borderRadius: { valueType: "size" },
-  stroke: { valueType: "color" },
-  fill: { valueType: "color" },
-  edgeColor: { valueType: "color" },
-  attributeFill: { valueType: "color" },
-  textColor: { valueType: "color" },
-  labelBackground: { valueType: "color" },
-  fontSize: { valueType: "size" },
-  fontFamily: { valueType: "string" }
-};
-var configKey2 = "er";
-var configurator2 = makeConfigurator({
-  defaultConfig: defaultConfig2,
-  configKey: configKey2,
-  getConfigFromParamDirectives(configParams) {
-    return interpreteConfigs(ER_PARAM_DIRECTIVE_RULES, configParams);
-  },
-  getConfigFromTheme(t, conf5) {
-    return {
-      stroke: t.primaryBorderColor,
-      fill: t.primaryColor,
-      // fill: 'transparent', // for debugging markers
-      edgeColor: t.primaryLineColor,
-      textColor: t.textColor,
-      labelBackground: t.canvasBackground || t.background1,
-      attributeFill: t.lightestBackground || conf5.attributeFill
-    };
-  }
-});
-var getConf2 = configurator2.getConfig;
-
-// ../../node_modules/.pnpm/@pintora+graphlib@2.2.2/node_modules/@pintora/graphlib/dist/graphlib.esm.js
-var objectProto$d = Object.prototype;
-var hasOwnProperty$a = objectProto$d.hasOwnProperty;
-function baseHas(object, key) {
-  return object != null && hasOwnProperty$a.call(object, key);
-}
-var isArray = Array.isArray;
-var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
-var freeSelf = typeof self == "object" && self && self.Object === Object && self;
-var root = freeGlobal || freeSelf || Function("return this")();
-var Symbol2 = root.Symbol;
-var objectProto$c = Object.prototype;
-var hasOwnProperty$9 = objectProto$c.hasOwnProperty;
-var nativeObjectToString$1 = objectProto$c.toString;
-var symToStringTag$1 = Symbol2 ? Symbol2.toStringTag : void 0;
-function getRawTag(value) {
-  var isOwn = hasOwnProperty$9.call(value, symToStringTag$1), tag2 = value[symToStringTag$1];
-  try {
-    value[symToStringTag$1] = void 0;
-    var unmasked = true;
-  } catch (e) {
-  }
-  var result = nativeObjectToString$1.call(value);
-  if (unmasked) {
-    if (isOwn) {
-      value[symToStringTag$1] = tag2;
-    } else {
-      delete value[symToStringTag$1];
-    }
-  }
-  return result;
-}
-var objectProto$b = Object.prototype;
-var nativeObjectToString = objectProto$b.toString;
-function objectToString(value) {
-  return nativeObjectToString.call(value);
-}
-var nullTag = "[object Null]";
-var undefinedTag = "[object Undefined]";
-var symToStringTag = Symbol2 ? Symbol2.toStringTag : void 0;
-function baseGetTag(value) {
-  if (value == null) {
-    return value === void 0 ? undefinedTag : nullTag;
-  }
-  return symToStringTag && symToStringTag in Object(value) ? getRawTag(value) : objectToString(value);
-}
-function isObjectLike(value) {
-  return value != null && typeof value == "object";
-}
-var symbolTag$1 = "[object Symbol]";
-function isSymbol(value) {
-  return typeof value == "symbol" || isObjectLike(value) && baseGetTag(value) == symbolTag$1;
-}
-var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
-var reIsPlainProp = /^\w*$/;
-function isKey(value, object) {
-  if (isArray(value)) {
-    return false;
-  }
-  var type = typeof value;
-  if (type == "number" || type == "symbol" || type == "boolean" || value == null || isSymbol(value)) {
-    return true;
-  }
-  return reIsPlainProp.test(value) || !reIsDeepProp.test(value) || object != null && value in Object(object);
-}
-function isObject(value) {
-  var type = typeof value;
-  return value != null && (type == "object" || type == "function");
-}
-var asyncTag = "[object AsyncFunction]";
-var funcTag$1 = "[object Function]";
-var genTag = "[object GeneratorFunction]";
-var proxyTag = "[object Proxy]";
-function isFunction(value) {
-  if (!isObject(value)) {
-    return false;
-  }
-  var tag2 = baseGetTag(value);
-  return tag2 == funcTag$1 || tag2 == genTag || tag2 == asyncTag || tag2 == proxyTag;
-}
-var coreJsData = root["__core-js_shared__"];
-var maskSrcKey = function() {
-  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || "");
-  return uid ? "Symbol(src)_1." + uid : "";
-}();
-function isMasked(func) {
-  return !!maskSrcKey && maskSrcKey in func;
-}
-var funcProto$1 = Function.prototype;
-var funcToString$1 = funcProto$1.toString;
-function toSource(func) {
-  if (func != null) {
-    try {
-      return funcToString$1.call(func);
-    } catch (e) {
-    }
-    try {
-      return func + "";
-    } catch (e) {
-    }
-  }
-  return "";
-}
-var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
-var reIsHostCtor = /^\[object .+?Constructor\]$/;
-var funcProto = Function.prototype;
-var objectProto$a = Object.prototype;
-var funcToString = funcProto.toString;
-var hasOwnProperty$8 = objectProto$a.hasOwnProperty;
-var reIsNative = RegExp(
-  "^" + funcToString.call(hasOwnProperty$8).replace(reRegExpChar, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"
-);
-function baseIsNative(value) {
-  if (!isObject(value) || isMasked(value)) {
-    return false;
-  }
-  var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
-  return pattern.test(toSource(value));
-}
-function getValue(object, key) {
-  return object == null ? void 0 : object[key];
-}
-function getNative(object, key) {
-  var value = getValue(object, key);
-  return baseIsNative(value) ? value : void 0;
-}
-var nativeCreate = getNative(Object, "create");
-function hashClear() {
-  this.__data__ = nativeCreate ? nativeCreate(null) : {};
-  this.size = 0;
-}
-function hashDelete(key) {
-  var result = this.has(key) && delete this.__data__[key];
-  this.size -= result ? 1 : 0;
-  return result;
-}
-var HASH_UNDEFINED$2 = "__lodash_hash_undefined__";
-var objectProto$9 = Object.prototype;
-var hasOwnProperty$7 = objectProto$9.hasOwnProperty;
-function hashGet(key) {
-  var data = this.__data__;
-  if (nativeCreate) {
-    var result = data[key];
-    return result === HASH_UNDEFINED$2 ? void 0 : result;
-  }
-  return hasOwnProperty$7.call(data, key) ? data[key] : void 0;
-}
-var objectProto$8 = Object.prototype;
-var hasOwnProperty$6 = objectProto$8.hasOwnProperty;
-function hashHas(key) {
-  var data = this.__data__;
-  return nativeCreate ? data[key] !== void 0 : hasOwnProperty$6.call(data, key);
-}
-var HASH_UNDEFINED$1 = "__lodash_hash_undefined__";
-function hashSet(key, value) {
-  var data = this.__data__;
-  this.size += this.has(key) ? 0 : 1;
-  data[key] = nativeCreate && value === void 0 ? HASH_UNDEFINED$1 : value;
-  return this;
-}
-function Hash(entries) {
-  var index2 = -1, length3 = entries == null ? 0 : entries.length;
-  this.clear();
-  while (++index2 < length3) {
-    var entry = entries[index2];
-    this.set(entry[0], entry[1]);
-  }
-}
-Hash.prototype.clear = hashClear;
-Hash.prototype["delete"] = hashDelete;
-Hash.prototype.get = hashGet;
-Hash.prototype.has = hashHas;
-Hash.prototype.set = hashSet;
-function listCacheClear() {
-  this.__data__ = [];
-  this.size = 0;
-}
-function eq(value, other) {
-  return value === other || value !== value && other !== other;
-}
-function assocIndexOf(array, key) {
-  var length3 = array.length;
-  while (length3--) {
-    if (eq(array[length3][0], key)) {
-      return length3;
-    }
-  }
-  return -1;
-}
-var arrayProto = Array.prototype;
-var splice = arrayProto.splice;
-function listCacheDelete(key) {
-  var data = this.__data__, index2 = assocIndexOf(data, key);
-  if (index2 < 0) {
-    return false;
-  }
-  var lastIndex = data.length - 1;
-  if (index2 == lastIndex) {
-    data.pop();
-  } else {
-    splice.call(data, index2, 1);
-  }
-  --this.size;
-  return true;
-}
-function listCacheGet(key) {
-  var data = this.__data__, index2 = assocIndexOf(data, key);
-  return index2 < 0 ? void 0 : data[index2][1];
-}
-function listCacheHas(key) {
-  return assocIndexOf(this.__data__, key) > -1;
-}
-function listCacheSet(key, value) {
-  var data = this.__data__, index2 = assocIndexOf(data, key);
-  if (index2 < 0) {
-    ++this.size;
-    data.push([key, value]);
-  } else {
-    data[index2][1] = value;
-  }
-  return this;
-}
-function ListCache(entries) {
-  var index2 = -1, length3 = entries == null ? 0 : entries.length;
-  this.clear();
-  while (++index2 < length3) {
-    var entry = entries[index2];
-    this.set(entry[0], entry[1]);
-  }
-}
-ListCache.prototype.clear = listCacheClear;
-ListCache.prototype["delete"] = listCacheDelete;
-ListCache.prototype.get = listCacheGet;
-ListCache.prototype.has = listCacheHas;
-ListCache.prototype.set = listCacheSet;
-var Map2 = getNative(root, "Map");
-function mapCacheClear() {
-  this.size = 0;
-  this.__data__ = {
-    "hash": new Hash(),
-    "map": new (Map2 || ListCache)(),
-    "string": new Hash()
-  };
-}
-function isKeyable(value) {
-  var type = typeof value;
-  return type == "string" || type == "number" || type == "symbol" || type == "boolean" ? value !== "__proto__" : value === null;
-}
-function getMapData(map4, key) {
-  var data = map4.__data__;
-  return isKeyable(key) ? data[typeof key == "string" ? "string" : "hash"] : data.map;
-}
-function mapCacheDelete(key) {
-  var result = getMapData(this, key)["delete"](key);
-  this.size -= result ? 1 : 0;
-  return result;
-}
-function mapCacheGet(key) {
-  return getMapData(this, key).get(key);
-}
-function mapCacheHas(key) {
-  return getMapData(this, key).has(key);
-}
-function mapCacheSet(key, value) {
-  var data = getMapData(this, key), size4 = data.size;
-  data.set(key, value);
-  this.size += data.size == size4 ? 0 : 1;
-  return this;
-}
-function MapCache(entries) {
-  var index2 = -1, length3 = entries == null ? 0 : entries.length;
-  this.clear();
-  while (++index2 < length3) {
-    var entry = entries[index2];
-    this.set(entry[0], entry[1]);
-  }
-}
-MapCache.prototype.clear = mapCacheClear;
-MapCache.prototype["delete"] = mapCacheDelete;
-MapCache.prototype.get = mapCacheGet;
-MapCache.prototype.has = mapCacheHas;
-MapCache.prototype.set = mapCacheSet;
-var FUNC_ERROR_TEXT = "Expected a function";
-function memoize(func, resolver) {
-  if (typeof func != "function" || resolver != null && typeof resolver != "function") {
-    throw new TypeError(FUNC_ERROR_TEXT);
-  }
-  var memoized = function() {
-    var args = arguments, key = resolver ? resolver.apply(this, args) : args[0], cache2 = memoized.cache;
-    if (cache2.has(key)) {
-      return cache2.get(key);
-    }
-    var result = func.apply(this, args);
-    memoized.cache = cache2.set(key, result) || cache2;
-    return result;
-  };
-  memoized.cache = new (memoize.Cache || MapCache)();
-  return memoized;
-}
-memoize.Cache = MapCache;
-var MAX_MEMOIZE_SIZE = 500;
-function memoizeCapped(func) {
-  var result = memoize(func, function(key) {
-    if (cache2.size === MAX_MEMOIZE_SIZE) {
-      cache2.clear();
-    }
-    return key;
-  });
-  var cache2 = result.cache;
-  return result;
-}
-var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
-var reEscapeChar = /\\(\\)?/g;
-var stringToPath = memoizeCapped(function(string) {
-  var result = [];
-  if (string.charCodeAt(0) === 46) {
-    result.push("");
-  }
-  string.replace(rePropName, function(match, number4, quote, subString) {
-    result.push(quote ? subString.replace(reEscapeChar, "$1") : number4 || match);
-  });
-  return result;
-});
-function arrayMap(array, iteratee) {
-  var index2 = -1, length3 = array == null ? 0 : array.length, result = Array(length3);
-  while (++index2 < length3) {
-    result[index2] = iteratee(array[index2], index2, array);
-  }
-  return result;
-}
-var INFINITY$2 = 1 / 0;
-var symbolProto$1 = Symbol2 ? Symbol2.prototype : void 0;
-var symbolToString = symbolProto$1 ? symbolProto$1.toString : void 0;
-function baseToString(value) {
-  if (typeof value == "string") {
-    return value;
-  }
-  if (isArray(value)) {
-    return arrayMap(value, baseToString) + "";
-  }
-  if (isSymbol(value)) {
-    return symbolToString ? symbolToString.call(value) : "";
-  }
-  var result = value + "";
-  return result == "0" && 1 / value == -INFINITY$2 ? "-0" : result;
-}
-function toString(value) {
-  return value == null ? "" : baseToString(value);
-}
-function castPath(value, object) {
-  if (isArray(value)) {
-    return value;
-  }
-  return isKey(value, object) ? [value] : stringToPath(toString(value));
-}
-var argsTag$2 = "[object Arguments]";
-function baseIsArguments(value) {
-  return isObjectLike(value) && baseGetTag(value) == argsTag$2;
-}
-var objectProto$7 = Object.prototype;
-var hasOwnProperty$5 = objectProto$7.hasOwnProperty;
-var propertyIsEnumerable$1 = objectProto$7.propertyIsEnumerable;
-var isArguments = baseIsArguments(/* @__PURE__ */ function() {
-  return arguments;
-}()) ? baseIsArguments : function(value) {
-  return isObjectLike(value) && hasOwnProperty$5.call(value, "callee") && !propertyIsEnumerable$1.call(value, "callee");
-};
-var MAX_SAFE_INTEGER$1 = 9007199254740991;
-var reIsUint = /^(?:0|[1-9]\d*)$/;
-function isIndex(value, length3) {
-  var type = typeof value;
-  length3 = length3 == null ? MAX_SAFE_INTEGER$1 : length3;
-  return !!length3 && (type == "number" || type != "symbol" && reIsUint.test(value)) && (value > -1 && value % 1 == 0 && value < length3);
-}
-var MAX_SAFE_INTEGER = 9007199254740991;
-function isLength(value) {
-  return typeof value == "number" && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-}
-var INFINITY$1 = 1 / 0;
-function toKey(value) {
-  if (typeof value == "string" || isSymbol(value)) {
-    return value;
-  }
-  var result = value + "";
-  return result == "0" && 1 / value == -INFINITY$1 ? "-0" : result;
-}
-function hasPath(object, path4, hasFunc) {
-  path4 = castPath(path4, object);
-  var index2 = -1, length3 = path4.length, result = false;
-  while (++index2 < length3) {
-    var key = toKey(path4[index2]);
-    if (!(result = object != null && hasFunc(object, key))) {
-      break;
-    }
-    object = object[key];
-  }
-  if (result || ++index2 != length3) {
-    return result;
-  }
-  length3 = object == null ? 0 : object.length;
-  return !!length3 && isLength(length3) && isIndex(key, length3) && (isArray(object) || isArguments(object));
-}
-function has(object, path4) {
-  return object != null && hasPath(object, path4, baseHas);
-}
-function arrayEach(array, iteratee) {
-  var index2 = -1, length3 = array == null ? 0 : array.length;
-  while (++index2 < length3) {
-    if (iteratee(array[index2], index2, array) === false) {
-      break;
-    }
-  }
-  return array;
-}
-function createBaseFor(fromRight) {
-  return function(object, iteratee, keysFunc) {
-    var index2 = -1, iterable = Object(object), props = keysFunc(object), length3 = props.length;
-    while (length3--) {
-      var key = props[fromRight ? length3 : ++index2];
-      if (iteratee(iterable[key], key, iterable) === false) {
-        break;
-      }
-    }
-    return object;
-  };
-}
-var baseFor = createBaseFor();
-function baseTimes(n2, iteratee) {
-  var index2 = -1, result = Array(n2);
-  while (++index2 < n2) {
-    result[index2] = iteratee(index2);
-  }
-  return result;
-}
-function stubFalse() {
-  return false;
-}
-var freeExports$1 = typeof exports == "object" && exports && !exports.nodeType && exports;
-var freeModule$1 = freeExports$1 && typeof module == "object" && module && !module.nodeType && module;
-var moduleExports$1 = freeModule$1 && freeModule$1.exports === freeExports$1;
-var Buffer2 = moduleExports$1 ? root.Buffer : void 0;
-var nativeIsBuffer = Buffer2 ? Buffer2.isBuffer : void 0;
-var isBuffer = nativeIsBuffer || stubFalse;
-var argsTag$1 = "[object Arguments]";
-var arrayTag$1 = "[object Array]";
-var boolTag$1 = "[object Boolean]";
-var dateTag$1 = "[object Date]";
-var errorTag$1 = "[object Error]";
-var funcTag = "[object Function]";
-var mapTag$4 = "[object Map]";
-var numberTag$1 = "[object Number]";
-var objectTag$2 = "[object Object]";
-var regexpTag$1 = "[object RegExp]";
-var setTag$4 = "[object Set]";
-var stringTag$2 = "[object String]";
-var weakMapTag$1 = "[object WeakMap]";
-var arrayBufferTag$1 = "[object ArrayBuffer]";
-var dataViewTag$2 = "[object DataView]";
-var float32Tag = "[object Float32Array]";
-var float64Tag = "[object Float64Array]";
-var int8Tag = "[object Int8Array]";
-var int16Tag = "[object Int16Array]";
-var int32Tag = "[object Int32Array]";
-var uint8Tag = "[object Uint8Array]";
-var uint8ClampedTag = "[object Uint8ClampedArray]";
-var uint16Tag = "[object Uint16Array]";
-var uint32Tag = "[object Uint32Array]";
-var typedArrayTags = {};
-typedArrayTags[float32Tag] = typedArrayTags[float64Tag] = typedArrayTags[int8Tag] = typedArrayTags[int16Tag] = typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] = typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] = typedArrayTags[uint32Tag] = true;
-typedArrayTags[argsTag$1] = typedArrayTags[arrayTag$1] = typedArrayTags[arrayBufferTag$1] = typedArrayTags[boolTag$1] = typedArrayTags[dataViewTag$2] = typedArrayTags[dateTag$1] = typedArrayTags[errorTag$1] = typedArrayTags[funcTag] = typedArrayTags[mapTag$4] = typedArrayTags[numberTag$1] = typedArrayTags[objectTag$2] = typedArrayTags[regexpTag$1] = typedArrayTags[setTag$4] = typedArrayTags[stringTag$2] = typedArrayTags[weakMapTag$1] = false;
-function baseIsTypedArray(value) {
-  return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
-}
-function baseUnary(func) {
-  return function(value) {
-    return func(value);
-  };
-}
-var freeExports = typeof exports == "object" && exports && !exports.nodeType && exports;
-var freeModule = freeExports && typeof module == "object" && module && !module.nodeType && module;
-var moduleExports = freeModule && freeModule.exports === freeExports;
-var freeProcess = moduleExports && freeGlobal.process;
-var nodeUtil = function() {
-  try {
-    var types = freeModule && freeModule.require && freeModule.require("util").types;
-    if (types) {
-      return types;
-    }
-    return freeProcess && freeProcess.binding && freeProcess.binding("util");
-  } catch (e) {
-  }
-}();
-var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
-var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
-var objectProto$6 = Object.prototype;
-var hasOwnProperty$4 = objectProto$6.hasOwnProperty;
-function arrayLikeKeys(value, inherited) {
-  var isArr = isArray(value), isArg = !isArr && isArguments(value), isBuff = !isArr && !isArg && isBuffer(value), isType2 = !isArr && !isArg && !isBuff && isTypedArray(value), skipIndexes = isArr || isArg || isBuff || isType2, result = skipIndexes ? baseTimes(value.length, String) : [], length3 = result.length;
-  for (var key in value) {
-    if ((inherited || hasOwnProperty$4.call(value, key)) && !(skipIndexes && // Safari 9 has enumerable `arguments.length` in strict mode.
-    (key == "length" || // Node.js 0.10 has enumerable non-index properties on buffers.
-    isBuff && (key == "offset" || key == "parent") || // PhantomJS 2 has enumerable non-index properties on typed arrays.
-    isType2 && (key == "buffer" || key == "byteLength" || key == "byteOffset") || // Skip index properties.
-    isIndex(key, length3)))) {
-      result.push(key);
-    }
-  }
-  return result;
-}
-var objectProto$5 = Object.prototype;
-function isPrototype(value) {
-  var Ctor = value && value.constructor, proto = typeof Ctor == "function" && Ctor.prototype || objectProto$5;
-  return value === proto;
-}
-function overArg(func, transform7) {
-  return function(arg) {
-    return func(transform7(arg));
-  };
-}
-var nativeKeys = overArg(Object.keys, Object);
-var objectProto$4 = Object.prototype;
-var hasOwnProperty$3 = objectProto$4.hasOwnProperty;
-function baseKeys(object) {
-  if (!isPrototype(object)) {
-    return nativeKeys(object);
-  }
-  var result = [];
-  for (var key in Object(object)) {
-    if (hasOwnProperty$3.call(object, key) && key != "constructor") {
-      result.push(key);
-    }
-  }
-  return result;
-}
-function isArrayLike(value) {
-  return value != null && isLength(value.length) && !isFunction(value);
-}
-function keys(object) {
-  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
-}
-function baseForOwn(object, iteratee) {
-  return object && baseFor(object, iteratee, keys);
-}
-function createBaseEach(eachFunc, fromRight) {
-  return function(collection, iteratee) {
-    if (collection == null) {
-      return collection;
-    }
-    if (!isArrayLike(collection)) {
-      return eachFunc(collection, iteratee);
-    }
-    var length3 = collection.length, index2 = fromRight ? length3 : -1, iterable = Object(collection);
-    while (fromRight ? index2-- : ++index2 < length3) {
-      if (iteratee(iterable[index2], index2, iterable) === false) {
-        break;
-      }
-    }
-    return collection;
-  };
-}
-var baseEach = createBaseEach(baseForOwn);
-function identity2(value) {
-  return value;
-}
-function castFunction(value) {
-  return typeof value == "function" ? value : identity2;
-}
-function forEach2(collection, iteratee) {
-  var func = isArray(collection) ? arrayEach : baseEach;
-  return func(collection, castFunction(iteratee));
-}
-var DataView2 = getNative(root, "DataView");
-var Promise$1 = getNative(root, "Promise");
-var Set2 = getNative(root, "Set");
-var WeakMap2 = getNative(root, "WeakMap");
-var mapTag$3 = "[object Map]";
-var objectTag$1 = "[object Object]";
-var promiseTag = "[object Promise]";
-var setTag$3 = "[object Set]";
-var weakMapTag = "[object WeakMap]";
-var dataViewTag$1 = "[object DataView]";
-var dataViewCtorString = toSource(DataView2);
-var mapCtorString = toSource(Map2);
-var promiseCtorString = toSource(Promise$1);
-var setCtorString = toSource(Set2);
-var weakMapCtorString = toSource(WeakMap2);
-var getTag = baseGetTag;
-if (DataView2 && getTag(new DataView2(new ArrayBuffer(1))) != dataViewTag$1 || Map2 && getTag(new Map2()) != mapTag$3 || Promise$1 && getTag(Promise$1.resolve()) != promiseTag || Set2 && getTag(new Set2()) != setTag$3 || WeakMap2 && getTag(new WeakMap2()) != weakMapTag) {
-  getTag = function(value) {
-    var result = baseGetTag(value), Ctor = result == objectTag$1 ? value.constructor : void 0, ctorString = Ctor ? toSource(Ctor) : "";
-    if (ctorString) {
-      switch (ctorString) {
-        case dataViewCtorString:
-          return dataViewTag$1;
-        case mapCtorString:
-          return mapTag$3;
-        case promiseCtorString:
-          return promiseTag;
-        case setCtorString:
-          return setTag$3;
-        case weakMapCtorString:
-          return weakMapTag;
-      }
-    }
-    return result;
-  };
-}
-var getTag$1 = getTag;
-var stringTag$1 = "[object String]";
-function isString(value) {
-  return typeof value == "string" || !isArray(value) && isObjectLike(value) && baseGetTag(value) == stringTag$1;
-}
-function baseProperty(key) {
-  return function(object) {
-    return object == null ? void 0 : object[key];
-  };
-}
-var asciiSize = baseProperty("length");
-var rsAstralRange$1 = "\\ud800-\\udfff";
-var rsComboMarksRange$1 = "\\u0300-\\u036f";
-var reComboHalfMarksRange$1 = "\\ufe20-\\ufe2f";
-var rsComboSymbolsRange$1 = "\\u20d0-\\u20ff";
-var rsComboRange$1 = rsComboMarksRange$1 + reComboHalfMarksRange$1 + rsComboSymbolsRange$1;
-var rsVarRange$1 = "\\ufe0e\\ufe0f";
-var rsZWJ$1 = "\\u200d";
-var reHasUnicode = RegExp("[" + rsZWJ$1 + rsAstralRange$1 + rsComboRange$1 + rsVarRange$1 + "]");
-function hasUnicode(string) {
-  return reHasUnicode.test(string);
-}
-var rsAstralRange = "\\ud800-\\udfff";
-var rsComboMarksRange = "\\u0300-\\u036f";
-var reComboHalfMarksRange = "\\ufe20-\\ufe2f";
-var rsComboSymbolsRange = "\\u20d0-\\u20ff";
-var rsComboRange = rsComboMarksRange + reComboHalfMarksRange + rsComboSymbolsRange;
-var rsVarRange = "\\ufe0e\\ufe0f";
-var rsAstral = "[" + rsAstralRange + "]";
-var rsCombo = "[" + rsComboRange + "]";
-var rsFitz = "\\ud83c[\\udffb-\\udfff]";
-var rsModifier = "(?:" + rsCombo + "|" + rsFitz + ")";
-var rsNonAstral = "[^" + rsAstralRange + "]";
-var rsRegional = "(?:\\ud83c[\\udde6-\\uddff]){2}";
-var rsSurrPair = "[\\ud800-\\udbff][\\udc00-\\udfff]";
-var rsZWJ = "\\u200d";
-var reOptMod = rsModifier + "?";
-var rsOptVar = "[" + rsVarRange + "]?";
-var rsOptJoin = "(?:" + rsZWJ + "(?:" + [rsNonAstral, rsRegional, rsSurrPair].join("|") + ")" + rsOptVar + reOptMod + ")*";
-var rsSeq = rsOptVar + reOptMod + rsOptJoin;
-var rsSymbol = "(?:" + [rsNonAstral + rsCombo + "?", rsCombo, rsRegional, rsSurrPair, rsAstral].join("|") + ")";
-var reUnicode = RegExp(rsFitz + "(?=" + rsFitz + ")|" + rsSymbol + rsSeq, "g");
-function unicodeSize(string) {
-  var result = reUnicode.lastIndex = 0;
-  while (reUnicode.test(string)) {
-    ++result;
-  }
-  return result;
-}
-function stringSize(string) {
-  return hasUnicode(string) ? unicodeSize(string) : asciiSize(string);
-}
-var mapTag$2 = "[object Map]";
-var setTag$2 = "[object Set]";
-function size(collection) {
-  if (collection == null) {
-    return 0;
-  }
-  if (isArrayLike(collection)) {
-    return isString(collection) ? stringSize(collection) : collection.length;
-  }
-  var tag2 = getTag$1(collection);
-  if (tag2 == mapTag$2 || tag2 == setTag$2) {
-    return collection.size;
-  }
-  return baseKeys(collection).length;
-}
-function constant(value) {
-  return function() {
-    return value;
-  };
-}
-function arrayFilter(array, predicate) {
-  var index2 = -1, length3 = array == null ? 0 : array.length, resIndex = 0, result = [];
-  while (++index2 < length3) {
-    var value = array[index2];
-    if (predicate(value, index2, array)) {
-      result[resIndex++] = value;
-    }
-  }
-  return result;
-}
-function baseFilter(collection, predicate) {
-  var result = [];
-  baseEach(collection, function(value, index2, collection2) {
-    if (predicate(value, index2, collection2)) {
-      result.push(value);
-    }
-  });
-  return result;
-}
-function stackClear() {
-  this.__data__ = new ListCache();
-  this.size = 0;
-}
-function stackDelete(key) {
-  var data = this.__data__, result = data["delete"](key);
-  this.size = data.size;
-  return result;
-}
-function stackGet(key) {
-  return this.__data__.get(key);
-}
-function stackHas(key) {
-  return this.__data__.has(key);
-}
-var LARGE_ARRAY_SIZE$1 = 200;
-function stackSet(key, value) {
-  var data = this.__data__;
-  if (data instanceof ListCache) {
-    var pairs = data.__data__;
-    if (!Map2 || pairs.length < LARGE_ARRAY_SIZE$1 - 1) {
-      pairs.push([key, value]);
-      this.size = ++data.size;
-      return this;
-    }
-    data = this.__data__ = new MapCache(pairs);
-  }
-  data.set(key, value);
-  this.size = data.size;
-  return this;
-}
-function Stack(entries) {
-  var data = this.__data__ = new ListCache(entries);
-  this.size = data.size;
-}
-Stack.prototype.clear = stackClear;
-Stack.prototype["delete"] = stackDelete;
-Stack.prototype.get = stackGet;
-Stack.prototype.has = stackHas;
-Stack.prototype.set = stackSet;
-var HASH_UNDEFINED = "__lodash_hash_undefined__";
-function setCacheAdd(value) {
-  this.__data__.set(value, HASH_UNDEFINED);
-  return this;
-}
-function setCacheHas(value) {
-  return this.__data__.has(value);
-}
-function SetCache(values4) {
-  var index2 = -1, length3 = values4 == null ? 0 : values4.length;
-  this.__data__ = new MapCache();
-  while (++index2 < length3) {
-    this.add(values4[index2]);
-  }
-}
-SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
-SetCache.prototype.has = setCacheHas;
-function arraySome(array, predicate) {
-  var index2 = -1, length3 = array == null ? 0 : array.length;
-  while (++index2 < length3) {
-    if (predicate(array[index2], index2, array)) {
-      return true;
-    }
-  }
-  return false;
-}
-function cacheHas(cache2, key) {
-  return cache2.has(key);
-}
-var COMPARE_PARTIAL_FLAG$5 = 1;
-var COMPARE_UNORDERED_FLAG$3 = 2;
-function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
-  var isPartial = bitmask & COMPARE_PARTIAL_FLAG$5, arrLength = array.length, othLength = other.length;
-  if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
-    return false;
-  }
-  var arrStacked = stack.get(array);
-  var othStacked = stack.get(other);
-  if (arrStacked && othStacked) {
-    return arrStacked == other && othStacked == array;
-  }
-  var index2 = -1, result = true, seen = bitmask & COMPARE_UNORDERED_FLAG$3 ? new SetCache() : void 0;
-  stack.set(array, other);
-  stack.set(other, array);
-  while (++index2 < arrLength) {
-    var arrValue = array[index2], othValue = other[index2];
-    if (customizer) {
-      var compared = isPartial ? customizer(othValue, arrValue, index2, other, array, stack) : customizer(arrValue, othValue, index2, array, other, stack);
-    }
-    if (compared !== void 0) {
-      if (compared) {
-        continue;
-      }
-      result = false;
-      break;
-    }
-    if (seen) {
-      if (!arraySome(other, function(othValue2, othIndex) {
-        if (!cacheHas(seen, othIndex) && (arrValue === othValue2 || equalFunc(arrValue, othValue2, bitmask, customizer, stack))) {
-          return seen.push(othIndex);
-        }
-      })) {
-        result = false;
-        break;
-      }
-    } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {
-      result = false;
-      break;
-    }
-  }
-  stack["delete"](array);
-  stack["delete"](other);
-  return result;
-}
-var Uint8Array2 = root.Uint8Array;
-function mapToArray(map4) {
-  var index2 = -1, result = Array(map4.size);
-  map4.forEach(function(value, key) {
-    result[++index2] = [key, value];
-  });
-  return result;
-}
-function setToArray(set3) {
-  var index2 = -1, result = Array(set3.size);
-  set3.forEach(function(value) {
-    result[++index2] = value;
-  });
-  return result;
-}
-var COMPARE_PARTIAL_FLAG$4 = 1;
-var COMPARE_UNORDERED_FLAG$2 = 2;
-var boolTag = "[object Boolean]";
-var dateTag = "[object Date]";
-var errorTag = "[object Error]";
-var mapTag$1 = "[object Map]";
-var numberTag = "[object Number]";
-var regexpTag = "[object RegExp]";
-var setTag$1 = "[object Set]";
-var stringTag = "[object String]";
-var symbolTag = "[object Symbol]";
-var arrayBufferTag = "[object ArrayBuffer]";
-var dataViewTag = "[object DataView]";
-var symbolProto = Symbol2 ? Symbol2.prototype : void 0;
-var symbolValueOf = symbolProto ? symbolProto.valueOf : void 0;
-function equalByTag(object, other, tag2, bitmask, customizer, equalFunc, stack) {
-  switch (tag2) {
-    case dataViewTag:
-      if (object.byteLength != other.byteLength || object.byteOffset != other.byteOffset) {
-        return false;
-      }
-      object = object.buffer;
-      other = other.buffer;
-    case arrayBufferTag:
-      if (object.byteLength != other.byteLength || !equalFunc(new Uint8Array2(object), new Uint8Array2(other))) {
-        return false;
-      }
-      return true;
-    case boolTag:
-    case dateTag:
-    case numberTag:
-      return eq(+object, +other);
-    case errorTag:
-      return object.name == other.name && object.message == other.message;
-    case regexpTag:
-    case stringTag:
-      return object == other + "";
-    case mapTag$1:
-      var convert = mapToArray;
-    case setTag$1:
-      var isPartial = bitmask & COMPARE_PARTIAL_FLAG$4;
-      convert || (convert = setToArray);
-      if (object.size != other.size && !isPartial) {
-        return false;
-      }
-      var stacked = stack.get(object);
-      if (stacked) {
-        return stacked == other;
-      }
-      bitmask |= COMPARE_UNORDERED_FLAG$2;
-      stack.set(object, other);
-      var result = equalArrays(convert(object), convert(other), bitmask, customizer, equalFunc, stack);
-      stack["delete"](object);
-      return result;
-    case symbolTag:
-      if (symbolValueOf) {
-        return symbolValueOf.call(object) == symbolValueOf.call(other);
-      }
-  }
-  return false;
-}
-function arrayPush(array, values4) {
-  var index2 = -1, length3 = values4.length, offset = array.length;
-  while (++index2 < length3) {
-    array[offset + index2] = values4[index2];
-  }
-  return array;
-}
-function baseGetAllKeys(object, keysFunc, symbolsFunc) {
-  var result = keysFunc(object);
-  return isArray(object) ? result : arrayPush(result, symbolsFunc(object));
-}
-function stubArray() {
-  return [];
-}
-var objectProto$3 = Object.prototype;
-var propertyIsEnumerable = objectProto$3.propertyIsEnumerable;
-var nativeGetSymbols = Object.getOwnPropertySymbols;
-var getSymbols = !nativeGetSymbols ? stubArray : function(object) {
-  if (object == null) {
-    return [];
-  }
-  object = Object(object);
-  return arrayFilter(nativeGetSymbols(object), function(symbol) {
-    return propertyIsEnumerable.call(object, symbol);
-  });
-};
-function getAllKeys(object) {
-  return baseGetAllKeys(object, keys, getSymbols);
-}
-var COMPARE_PARTIAL_FLAG$3 = 1;
-var objectProto$2 = Object.prototype;
-var hasOwnProperty$2 = objectProto$2.hasOwnProperty;
-function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
-  var isPartial = bitmask & COMPARE_PARTIAL_FLAG$3, objProps = getAllKeys(object), objLength = objProps.length, othProps = getAllKeys(other), othLength = othProps.length;
-  if (objLength != othLength && !isPartial) {
-    return false;
-  }
-  var index2 = objLength;
-  while (index2--) {
-    var key = objProps[index2];
-    if (!(isPartial ? key in other : hasOwnProperty$2.call(other, key))) {
-      return false;
-    }
-  }
-  var objStacked = stack.get(object);
-  var othStacked = stack.get(other);
-  if (objStacked && othStacked) {
-    return objStacked == other && othStacked == object;
-  }
-  var result = true;
-  stack.set(object, other);
-  stack.set(other, object);
-  var skipCtor = isPartial;
-  while (++index2 < objLength) {
-    key = objProps[index2];
-    var objValue = object[key], othValue = other[key];
-    if (customizer) {
-      var compared = isPartial ? customizer(othValue, objValue, key, other, object, stack) : customizer(objValue, othValue, key, object, other, stack);
-    }
-    if (!(compared === void 0 ? objValue === othValue || equalFunc(objValue, othValue, bitmask, customizer, stack) : compared)) {
-      result = false;
-      break;
-    }
-    skipCtor || (skipCtor = key == "constructor");
-  }
-  if (result && !skipCtor) {
-    var objCtor = object.constructor, othCtor = other.constructor;
-    if (objCtor != othCtor && ("constructor" in object && "constructor" in other) && !(typeof objCtor == "function" && objCtor instanceof objCtor && typeof othCtor == "function" && othCtor instanceof othCtor)) {
-      result = false;
-    }
-  }
-  stack["delete"](object);
-  stack["delete"](other);
-  return result;
-}
-var COMPARE_PARTIAL_FLAG$2 = 1;
-var argsTag = "[object Arguments]";
-var arrayTag = "[object Array]";
-var objectTag = "[object Object]";
-var objectProto$1 = Object.prototype;
-var hasOwnProperty$1 = objectProto$1.hasOwnProperty;
-function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
-  var objIsArr = isArray(object), othIsArr = isArray(other), objTag = objIsArr ? arrayTag : getTag$1(object), othTag = othIsArr ? arrayTag : getTag$1(other);
-  objTag = objTag == argsTag ? objectTag : objTag;
-  othTag = othTag == argsTag ? objectTag : othTag;
-  var objIsObj = objTag == objectTag, othIsObj = othTag == objectTag, isSameTag = objTag == othTag;
-  if (isSameTag && isBuffer(object)) {
-    if (!isBuffer(other)) {
-      return false;
-    }
-    objIsArr = true;
-    objIsObj = false;
-  }
-  if (isSameTag && !objIsObj) {
-    stack || (stack = new Stack());
-    return objIsArr || isTypedArray(object) ? equalArrays(object, other, bitmask, customizer, equalFunc, stack) : equalByTag(object, other, objTag, bitmask, customizer, equalFunc, stack);
-  }
-  if (!(bitmask & COMPARE_PARTIAL_FLAG$2)) {
-    var objIsWrapped = objIsObj && hasOwnProperty$1.call(object, "__wrapped__"), othIsWrapped = othIsObj && hasOwnProperty$1.call(other, "__wrapped__");
-    if (objIsWrapped || othIsWrapped) {
-      var objUnwrapped = objIsWrapped ? object.value() : object, othUnwrapped = othIsWrapped ? other.value() : other;
-      stack || (stack = new Stack());
-      return equalFunc(objUnwrapped, othUnwrapped, bitmask, customizer, stack);
-    }
-  }
-  if (!isSameTag) {
-    return false;
-  }
-  stack || (stack = new Stack());
-  return equalObjects(object, other, bitmask, customizer, equalFunc, stack);
-}
-function baseIsEqual(value, other, bitmask, customizer, stack) {
-  if (value === other) {
-    return true;
-  }
-  if (value == null || other == null || !isObjectLike(value) && !isObjectLike(other)) {
-    return value !== value && other !== other;
-  }
-  return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);
-}
-var COMPARE_PARTIAL_FLAG$1 = 1;
-var COMPARE_UNORDERED_FLAG$1 = 2;
-function baseIsMatch(object, source, matchData, customizer) {
-  var index2 = matchData.length, length3 = index2, noCustomizer = !customizer;
-  if (object == null) {
-    return !length3;
-  }
-  object = Object(object);
-  while (index2--) {
-    var data = matchData[index2];
-    if (noCustomizer && data[2] ? data[1] !== object[data[0]] : !(data[0] in object)) {
-      return false;
-    }
-  }
-  while (++index2 < length3) {
-    data = matchData[index2];
-    var key = data[0], objValue = object[key], srcValue = data[1];
-    if (noCustomizer && data[2]) {
-      if (objValue === void 0 && !(key in object)) {
-        return false;
-      }
-    } else {
-      var stack = new Stack();
-      if (customizer) {
-        var result = customizer(objValue, srcValue, key, object, source, stack);
-      }
-      if (!(result === void 0 ? baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG$1 | COMPARE_UNORDERED_FLAG$1, customizer, stack) : result)) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-function isStrictComparable(value) {
-  return value === value && !isObject(value);
-}
-function getMatchData(object) {
-  var result = keys(object), length3 = result.length;
-  while (length3--) {
-    var key = result[length3], value = object[key];
-    result[length3] = [key, value, isStrictComparable(value)];
-  }
-  return result;
-}
-function matchesStrictComparable(key, srcValue) {
-  return function(object) {
-    if (object == null) {
-      return false;
-    }
-    return object[key] === srcValue && (srcValue !== void 0 || key in Object(object));
-  };
-}
-function baseMatches(source) {
-  var matchData = getMatchData(source);
-  if (matchData.length == 1 && matchData[0][2]) {
-    return matchesStrictComparable(matchData[0][0], matchData[0][1]);
-  }
-  return function(object) {
-    return object === source || baseIsMatch(object, source, matchData);
-  };
-}
-function baseGet(object, path4) {
-  path4 = castPath(path4, object);
-  var index2 = 0, length3 = path4.length;
-  while (object != null && index2 < length3) {
-    object = object[toKey(path4[index2++])];
-  }
-  return index2 && index2 == length3 ? object : void 0;
-}
-function get(object, path4, defaultValue) {
-  var result = object == null ? void 0 : baseGet(object, path4);
-  return result === void 0 ? defaultValue : result;
-}
-function baseHasIn(object, key) {
-  return object != null && key in Object(object);
-}
-function hasIn(object, path4) {
-  return object != null && hasPath(object, path4, baseHasIn);
-}
-var COMPARE_PARTIAL_FLAG = 1;
-var COMPARE_UNORDERED_FLAG = 2;
-function baseMatchesProperty(path4, srcValue) {
-  if (isKey(path4) && isStrictComparable(srcValue)) {
-    return matchesStrictComparable(toKey(path4), srcValue);
-  }
-  return function(object) {
-    var objValue = get(object, path4);
-    return objValue === void 0 && objValue === srcValue ? hasIn(object, path4) : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
-  };
-}
-function basePropertyDeep(path4) {
-  return function(object) {
-    return baseGet(object, path4);
-  };
-}
-function property(path4) {
-  return isKey(path4) ? baseProperty(toKey(path4)) : basePropertyDeep(path4);
-}
-function baseIteratee(value) {
-  if (typeof value == "function") {
-    return value;
-  }
-  if (value == null) {
-    return identity2;
-  }
-  if (typeof value == "object") {
-    return isArray(value) ? baseMatchesProperty(value[0], value[1]) : baseMatches(value);
-  }
-  return property(value);
-}
-function filter(collection, predicate) {
-  var func = isArray(collection) ? arrayFilter : baseFilter;
-  return func(collection, baseIteratee(predicate));
-}
-function isUndefined(value) {
-  return value === void 0;
-}
-var spreadableSymbol = Symbol2 ? Symbol2.isConcatSpreadable : void 0;
-function isFlattenable(value) {
-  return isArray(value) || isArguments(value) || !!(spreadableSymbol && value && value[spreadableSymbol]);
-}
-function baseFlatten(array, depth, predicate, isStrict, result) {
-  var index2 = -1, length3 = array.length;
-  predicate || (predicate = isFlattenable);
-  result || (result = []);
-  while (++index2 < length3) {
-    var value = array[index2];
-    if (depth > 0 && predicate(value)) {
-      if (depth > 1) {
-        baseFlatten(value, depth - 1, predicate, isStrict, result);
-      } else {
-        arrayPush(result, value);
-      }
-    } else if (!isStrict) {
-      result[result.length] = value;
-    }
-  }
-  return result;
-}
-function apply(func, thisArg, args) {
-  switch (args.length) {
-    case 0:
-      return func.call(thisArg);
-    case 1:
-      return func.call(thisArg, args[0]);
-    case 2:
-      return func.call(thisArg, args[0], args[1]);
-    case 3:
-      return func.call(thisArg, args[0], args[1], args[2]);
-  }
-  return func.apply(thisArg, args);
-}
-var nativeMax = Math.max;
-function overRest(func, start, transform7) {
-  start = nativeMax(start === void 0 ? func.length - 1 : start, 0);
-  return function() {
-    var args = arguments, index2 = -1, length3 = nativeMax(args.length - start, 0), array = Array(length3);
-    while (++index2 < length3) {
-      array[index2] = args[start + index2];
-    }
-    index2 = -1;
-    var otherArgs = Array(start + 1);
-    while (++index2 < start) {
-      otherArgs[index2] = args[index2];
-    }
-    otherArgs[start] = transform7(array);
-    return apply(func, this, otherArgs);
-  };
-}
-var defineProperty = function() {
-  try {
-    var func = getNative(Object, "defineProperty");
-    func({}, "", {});
-    return func;
-  } catch (e) {
-  }
-}();
-var baseSetToString = !defineProperty ? identity2 : function(func, string) {
-  return defineProperty(func, "toString", {
-    "configurable": true,
-    "enumerable": false,
-    "value": constant(string),
-    "writable": true
-  });
-};
-var HOT_COUNT = 800;
-var HOT_SPAN = 16;
-var nativeNow = Date.now;
-function shortOut(func) {
-  var count = 0, lastCalled = 0;
-  return function() {
-    var stamp = nativeNow(), remaining = HOT_SPAN - (stamp - lastCalled);
-    lastCalled = stamp;
-    if (remaining > 0) {
-      if (++count >= HOT_COUNT) {
-        return arguments[0];
-      }
-    } else {
-      count = 0;
-    }
-    return func.apply(void 0, arguments);
-  };
-}
-var setToString = shortOut(baseSetToString);
-function baseRest(func, start) {
-  return setToString(overRest(func, start, identity2), func + "");
-}
-function baseFindIndex(array, predicate, fromIndex, fromRight) {
-  var length3 = array.length, index2 = fromIndex + (fromRight ? 1 : -1);
-  while (fromRight ? index2-- : ++index2 < length3) {
-    if (predicate(array[index2], index2, array)) {
-      return index2;
-    }
-  }
-  return -1;
-}
-function baseIsNaN(value) {
-  return value !== value;
-}
-function strictIndexOf(array, value, fromIndex) {
-  var index2 = fromIndex - 1, length3 = array.length;
-  while (++index2 < length3) {
-    if (array[index2] === value) {
-      return index2;
-    }
-  }
-  return -1;
-}
-function baseIndexOf(array, value, fromIndex) {
-  return value === value ? strictIndexOf(array, value, fromIndex) : baseFindIndex(array, baseIsNaN, fromIndex);
-}
-function arrayIncludes(array, value) {
-  var length3 = array == null ? 0 : array.length;
-  return !!length3 && baseIndexOf(array, value, 0) > -1;
-}
-function arrayIncludesWith(array, value, comparator) {
-  var index2 = -1, length3 = array == null ? 0 : array.length;
-  while (++index2 < length3) {
-    if (comparator(value, array[index2])) {
-      return true;
-    }
-  }
-  return false;
-}
-function noop() {
-}
-var INFINITY = 1 / 0;
-var createSet = !(Set2 && 1 / setToArray(new Set2([, -0]))[1] == INFINITY) ? noop : function(values4) {
-  return new Set2(values4);
-};
-var LARGE_ARRAY_SIZE = 200;
-function baseUniq(array, iteratee, comparator) {
-  var index2 = -1, includes = arrayIncludes, length3 = array.length, isCommon = true, result = [], seen = result;
-  if (comparator) {
-    isCommon = false;
-    includes = arrayIncludesWith;
-  } else if (length3 >= LARGE_ARRAY_SIZE) {
-    var set3 = iteratee ? null : createSet(array);
-    if (set3) {
-      return setToArray(set3);
-    }
-    isCommon = false;
-    includes = cacheHas;
-    seen = new SetCache();
-  } else {
-    seen = iteratee ? [] : result;
-  }
-  outer:
-    while (++index2 < length3) {
-      var value = array[index2], computed = iteratee ? iteratee(value) : value;
-      value = comparator || value !== 0 ? value : 0;
-      if (isCommon && computed === computed) {
-        var seenIndex = seen.length;
-        while (seenIndex--) {
-          if (seen[seenIndex] === computed) {
-            continue outer;
-          }
-        }
-        if (iteratee) {
-          seen.push(computed);
-        }
-        result.push(value);
-      } else if (!includes(seen, computed, comparator)) {
-        if (seen !== result) {
-          seen.push(computed);
-        }
-        result.push(value);
-      }
-    }
-  return result;
-}
-function isArrayLikeObject(value) {
-  return isObjectLike(value) && isArrayLike(value);
-}
-var union = baseRest(function(arrays) {
-  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
-});
-var objectCreate = Object.create;
-var baseCreate = /* @__PURE__ */ function() {
-  function object() {
-  }
-  return function(proto) {
-    if (!isObject(proto)) {
-      return {};
-    }
-    if (objectCreate) {
-      return objectCreate(proto);
-    }
-    object.prototype = proto;
-    var result = new object();
-    object.prototype = void 0;
-    return result;
-  };
-}();
-var getPrototype = overArg(Object.getPrototypeOf, Object);
-function transform3(object, iteratee, accumulator) {
-  var isArr = isArray(object), isArrLike = isArr || isBuffer(object) || isTypedArray(object);
-  iteratee = baseIteratee(iteratee);
-  if (accumulator == null) {
-    var Ctor = object && object.constructor;
-    if (isArrLike) {
-      accumulator = isArr ? new Ctor() : [];
-    } else if (isObject(object)) {
-      accumulator = isFunction(Ctor) ? baseCreate(getPrototype(object)) : {};
-    } else {
-      accumulator = {};
-    }
-  }
-  (isArrLike ? arrayEach : baseForOwn)(object, function(value, index2, object2) {
-    return iteratee(accumulator, value, index2, object2);
-  });
-  return accumulator;
-}
-function baseMap(collection, iteratee) {
-  var index2 = -1, result = isArrayLike(collection) ? Array(collection.length) : [];
-  baseEach(collection, function(value, key, collection2) {
-    result[++index2] = iteratee(value, key, collection2);
-  });
-  return result;
-}
-function map(collection, iteratee) {
-  var func = isArray(collection) ? arrayMap : baseMap;
-  return func(collection, baseIteratee(iteratee));
-}
-function baseValues(object, props) {
-  return arrayMap(props, function(key) {
-    return object[key];
-  });
-}
-function values(object) {
-  return object == null ? [] : baseValues(object, keys(object));
-}
-var mapTag = "[object Map]";
-var setTag = "[object Set]";
-var objectProto = Object.prototype;
-var hasOwnProperty = objectProto.hasOwnProperty;
-function isEmpty(value) {
-  if (value == null) {
-    return true;
-  }
-  if (isArrayLike(value) && (isArray(value) || typeof value == "string" || typeof value.splice == "function" || isBuffer(value) || isTypedArray(value) || isArguments(value))) {
-    return !value.length;
-  }
-  var tag2 = getTag$1(value);
-  if (tag2 == mapTag || tag2 == setTag) {
-    return !value.size;
-  }
-  if (isPrototype(value)) {
-    return !baseKeys(value).length;
-  }
-  for (var key in value) {
-    if (hasOwnProperty.call(value, key)) {
-      return false;
-    }
-  }
-  return true;
-}
-function arrayReduce(array, iteratee, accumulator, initAccum) {
-  var index2 = -1, length3 = array == null ? 0 : array.length;
-  if (initAccum && length3) {
-    accumulator = array[++index2];
-  }
-  while (++index2 < length3) {
-    accumulator = iteratee(accumulator, array[index2], index2, array);
-  }
-  return accumulator;
-}
-function baseReduce(collection, iteratee, accumulator, initAccum, eachFunc) {
-  eachFunc(collection, function(value, index2, collection2) {
-    accumulator = initAccum ? (initAccum = false, value) : iteratee(accumulator, value, index2, collection2);
-  });
-  return accumulator;
-}
-function reduce(collection, iteratee, accumulator) {
-  var func = isArray(collection) ? arrayReduce : baseReduce, initAccum = arguments.length < 3;
-  return func(collection, baseIteratee(iteratee), accumulator, initAccum, baseEach);
-}
-var _ = {
-  has,
-  constant,
-  each: forEach2,
-  filter,
-  isUndefined,
-  union,
-  transform: transform3,
-  size,
-  isArray,
-  map,
-  keys,
-  values,
-  isEmpty,
-  isFunction,
-  reduce
-};
-var DEFAULT_EDGE_NAME = "\0";
-var GRAPH_NODE = "\0";
-var EDGE_KEY_DELIM = "";
-function Graph(opts) {
-  this._isDirected = _.has(opts, "directed") ? opts.directed : true;
-  this._isMultigraph = _.has(opts, "multigraph") ? opts.multigraph : false;
-  this._isCompound = _.has(opts, "compound") ? opts.compound : false;
-  this._label = void 0;
-  this._defaultNodeLabelFn = _.constant(void 0);
-  this._defaultEdgeLabelFn = _.constant(void 0);
-  this._nodes = {};
-  if (this._isCompound) {
-    this._parent = {};
-    this._children = {};
-    this._children[GRAPH_NODE] = {};
-  }
-  this._in = {};
-  this._preds = {};
-  this._out = {};
-  this._sucs = {};
-  this._edgeObjs = {};
-  this._edgeLabels = {};
-}
-Graph.prototype._nodeCount = 0;
-Graph.prototype._edgeCount = 0;
-Graph.prototype.isDirected = function() {
-  return this._isDirected;
-};
-Graph.prototype.isMultigraph = function() {
-  return this._isMultigraph;
-};
-Graph.prototype.isCompound = function() {
-  return this._isCompound;
-};
-Graph.prototype.setGraph = function(label) {
-  this._label = label;
-  return this;
-};
-Graph.prototype.graph = function() {
-  return this._label;
-};
-Graph.prototype.setDefaultNodeLabel = function(newDefault) {
-  if (!_.isFunction(newDefault)) {
-    newDefault = _.constant(newDefault);
-  }
-  this._defaultNodeLabelFn = newDefault;
-  return this;
-};
-Graph.prototype.nodeCount = function() {
-  return this._nodeCount;
-};
-Graph.prototype.nodes = function() {
-  return _.keys(this._nodes);
-};
-Graph.prototype.sources = function() {
-  const self2 = this;
-  return _.filter(this.nodes(), function(v) {
-    return _.isEmpty(self2._in[v]);
-  });
-};
-Graph.prototype.sinks = function() {
-  const self2 = this;
-  return _.filter(this.nodes(), function(v) {
-    return _.isEmpty(self2._out[v]);
-  });
-};
-Graph.prototype.setNodes = function(vs, value) {
-  const args = arguments;
-  const self2 = this;
-  _.each(vs, function(v) {
-    if (args.length > 1) {
-      self2.setNode(v, value);
-    } else {
-      self2.setNode(v);
-    }
-  });
-  return this;
-};
-Graph.prototype.setNode = function(v, value) {
-  if (_.has(this._nodes, v)) {
-    if (arguments.length > 1) {
-      this._nodes[v] = value;
-    }
-    return this;
-  }
-  this._nodes[v] = arguments.length > 1 ? value : this._defaultNodeLabelFn(v);
-  if (this._isCompound) {
-    this._parent[v] = GRAPH_NODE;
-    this._children[v] = {};
-    this._children[GRAPH_NODE][v] = true;
-  }
-  this._in[v] = {};
-  this._preds[v] = {};
-  this._out[v] = {};
-  this._sucs[v] = {};
-  ++this._nodeCount;
-  return this;
-};
-Graph.prototype.node = function(v) {
-  return this._nodes[v];
-};
-Graph.prototype.hasNode = function(v) {
-  return _.has(this._nodes, v);
-};
-Graph.prototype.removeNode = function(v) {
-  const self2 = this;
-  if (_.has(this._nodes, v)) {
-    const removeEdge = function(e) {
-      self2.removeEdge(self2._edgeObjs[e]);
-    };
-    delete this._nodes[v];
-    if (this._isCompound) {
-      this._removeFromParentsChildList(v);
-      delete this._parent[v];
-      _.each(this.children(v), function(child) {
-        self2.setParent(child);
-      });
-      delete this._children[v];
-    }
-    _.each(_.keys(this._in[v]), removeEdge);
-    delete this._in[v];
-    delete this._preds[v];
-    _.each(_.keys(this._out[v]), removeEdge);
-    delete this._out[v];
-    delete this._sucs[v];
-    --this._nodeCount;
-  }
-  return this;
-};
-Graph.prototype.setParent = function(v, parent) {
-  if (!this._isCompound) {
-    throw new Error("Cannot set parent in a non-compound graph");
-  }
-  if (_.isUndefined(parent)) {
-    parent = GRAPH_NODE;
-  } else {
-    parent += "";
-    for (let ancestor = parent; !_.isUndefined(ancestor); ancestor = this.parent(ancestor)) {
-      if (ancestor === v) {
-        throw new Error("Setting " + parent + " as parent of " + v + " would create a cycle");
-      }
-    }
-    this.setNode(parent);
-  }
-  this.setNode(v);
-  this._removeFromParentsChildList(v);
-  this._parent[v] = parent;
-  this._children[parent][v] = true;
-  return this;
-};
-Graph.prototype._removeFromParentsChildList = function(v) {
-  delete this._children[this._parent[v]][v];
-};
-Graph.prototype.parent = function(v) {
-  if (this._isCompound) {
-    const parent = this._parent[v];
-    if (parent !== GRAPH_NODE) {
-      return parent;
-    }
-  }
-};
-Graph.prototype.children = function(v) {
-  if (_.isUndefined(v)) {
-    v = GRAPH_NODE;
-  }
-  if (this._isCompound) {
-    const children = this._children[v];
-    if (children) {
-      return _.keys(children);
-    }
-  } else if (v === GRAPH_NODE) {
-    return this.nodes();
-  } else if (this.hasNode(v)) {
-    return [];
-  }
-};
-Graph.prototype.predecessors = function(v) {
-  const predsV = this._preds[v];
-  if (predsV) {
-    return _.keys(predsV);
-  }
-};
-Graph.prototype.successors = function(v) {
-  const sucsV = this._sucs[v];
-  if (sucsV) {
-    return _.keys(sucsV);
-  }
-};
-Graph.prototype.neighbors = function(v) {
-  const preds = this.predecessors(v);
-  if (preds) {
-    return _.union(preds, this.successors(v));
-  }
-};
-Graph.prototype.isLeaf = function(v) {
-  let neighbors;
-  if (this.isDirected()) {
-    neighbors = this.successors(v);
-  } else {
-    neighbors = this.neighbors(v);
-  }
-  return neighbors.length === 0;
-};
-Graph.prototype.filterNodes = function(filter3) {
-  const copy4 = new this.constructor({
-    directed: this._isDirected,
-    multigraph: this._isMultigraph,
-    compound: this._isCompound
-  });
-  copy4.setGraph(this.graph());
-  const self2 = this;
-  _.each(this._nodes, function(value, v) {
-    if (filter3(v)) {
-      copy4.setNode(v, value);
-    }
-  });
-  _.each(this._edgeObjs, function(e) {
-    if (copy4.hasNode(e.v) && copy4.hasNode(e.w)) {
-      copy4.setEdge(e, self2.edge(e));
-    }
-  });
-  const parents = {};
-  function findParent(v) {
-    const parent = self2.parent(v);
-    if (parent === void 0 || copy4.hasNode(parent)) {
-      parents[v] = parent;
-      return parent;
-    } else if (parent in parents) {
-      return parents[parent];
-    } else {
-      return findParent(parent);
-    }
-  }
-  if (this._isCompound) {
-    _.each(copy4.nodes(), function(v) {
-      copy4.setParent(v, findParent(v));
-    });
-  }
-  return copy4;
-};
-Graph.prototype.setDefaultEdgeLabel = function(newDefault) {
-  if (!_.isFunction(newDefault)) {
-    newDefault = _.constant(newDefault);
-  }
-  this._defaultEdgeLabelFn = newDefault;
-  return this;
-};
-Graph.prototype.edgeCount = function() {
-  return this._edgeCount;
-};
-Graph.prototype.edges = function() {
-  return _.values(this._edgeObjs);
-};
-Graph.prototype.setPath = function(vs, value) {
-  const self2 = this;
-  const args = arguments;
-  _.reduce(vs, function(v, w) {
-    if (args.length > 1) {
-      self2.setEdge(v, w, value);
-    } else {
-      self2.setEdge(v, w);
-    }
-    return w;
-  });
-  return this;
-};
-Graph.prototype.setEdge = function() {
-  let v, w, name, value;
-  let valueSpecified = false;
-  const arg0 = arguments[0];
-  if (typeof arg0 === "object" && arg0 !== null && "v" in arg0) {
-    v = arg0.v;
-    w = arg0.w;
-    name = arg0.name;
-    if (arguments.length === 2) {
-      value = arguments[1];
-      valueSpecified = true;
-    }
-  } else {
-    v = arg0;
-    w = arguments[1];
-    name = arguments[3];
-    if (arguments.length > 2) {
-      value = arguments[2];
-      valueSpecified = true;
-    }
-  }
-  v = "" + v;
-  w = "" + w;
-  if (!_.isUndefined(name)) {
-    name = "" + name;
-  }
-  const e = edgeArgsToId(this._isDirected, v, w, name);
-  if (_.has(this._edgeLabels, e)) {
-    if (valueSpecified) {
-      this._edgeLabels[e] = value;
-    }
-    return this;
-  }
-  if (!_.isUndefined(name) && !this._isMultigraph) {
-    throw new Error("Cannot set a named edge when isMultigraph = false");
-  }
-  this.setNode(v);
-  this.setNode(w);
-  this._edgeLabels[e] = valueSpecified ? value : this._defaultEdgeLabelFn(v, w, name);
-  const edgeObj = edgeArgsToObj(this._isDirected, v, w, name);
-  v = edgeObj.v;
-  w = edgeObj.w;
-  Object.freeze(edgeObj);
-  this._edgeObjs[e] = edgeObj;
-  incrementOrInitEntry(this._preds[w], v);
-  incrementOrInitEntry(this._sucs[v], w);
-  this._in[w][e] = edgeObj;
-  this._out[v][e] = edgeObj;
-  this._edgeCount++;
-  return this;
-};
-Graph.prototype.edge = function(v, w, name) {
-  const e = arguments.length === 1 ? edgeObjToId(this._isDirected, arguments[0]) : edgeArgsToId(this._isDirected, v, w, name);
-  return this._edgeLabels[e];
-};
-Graph.prototype.hasEdge = function(v, w, name) {
-  const e = arguments.length === 1 ? edgeObjToId(this._isDirected, arguments[0]) : edgeArgsToId(this._isDirected, v, w, name);
-  return _.has(this._edgeLabels, e);
-};
-Graph.prototype.removeEdge = function(v, w, name) {
-  const e = arguments.length === 1 ? edgeObjToId(this._isDirected, arguments[0]) : edgeArgsToId(this._isDirected, v, w, name);
-  const edge = this._edgeObjs[e];
-  if (edge) {
-    v = edge.v;
-    w = edge.w;
-    delete this._edgeLabels[e];
-    delete this._edgeObjs[e];
-    decrementOrRemoveEntry(this._preds[w], v);
-    decrementOrRemoveEntry(this._sucs[v], w);
-    delete this._in[w][e];
-    delete this._out[v][e];
-    this._edgeCount--;
-  }
-  return this;
-};
-Graph.prototype.inEdges = function(v, u) {
-  const inV = this._in[v];
-  if (inV) {
-    const edges = _.values(inV);
-    if (!u) {
-      return edges;
-    }
-    return _.filter(edges, function(edge) {
-      return edge.v === u;
-    });
-  }
-};
-Graph.prototype.outEdges = function(v, w) {
-  const outV = this._out[v];
-  if (outV) {
-    const edges = _.values(outV);
-    if (!w) {
-      return edges;
-    }
-    return _.filter(edges, function(edge) {
-      return edge.w === w;
-    });
-  }
-};
-Graph.prototype.nodeEdges = function(v, w) {
-  const inEdges = this.inEdges(v, w);
-  if (inEdges) {
-    return inEdges.concat(this.outEdges(v, w));
-  }
-};
-function incrementOrInitEntry(map4, k) {
-  if (map4[k]) {
-    map4[k]++;
-  } else {
-    map4[k] = 1;
-  }
-}
-function decrementOrRemoveEntry(map4, k) {
-  if (!--map4[k]) {
-    delete map4[k];
-  }
-}
-function edgeArgsToId(isDirected, v_, w_, name) {
-  let v = "" + v_;
-  let w = "" + w_;
-  if (!isDirected && v > w) {
-    const tmp = v;
-    v = w;
-    w = tmp;
-  }
-  return v + EDGE_KEY_DELIM + w + EDGE_KEY_DELIM + (_.isUndefined(name) ? DEFAULT_EDGE_NAME : name);
-}
-function edgeArgsToObj(isDirected, v_, w_, name) {
-  let v = "" + v_;
-  let w = "" + w_;
-  if (!isDirected && v > w) {
-    const tmp = v;
-    v = w;
-    w = tmp;
-  }
-  const edgeObj = { v, w };
-  if (name) {
-    edgeObj.name = name;
-  }
-  return edgeObj;
-}
-function edgeObjToId(isDirected, edgeObj) {
-  return edgeArgsToId(isDirected, edgeObj.v, edgeObj.w, edgeObj.name);
-}
-function PriorityQueue() {
-  this._arr = [];
-  this._keyIndices = {};
-}
-PriorityQueue.prototype.size = function() {
-  return this._arr.length;
-};
-PriorityQueue.prototype.keys = function() {
-  return this._arr.map(function(x2) {
-    return x2.key;
-  });
-};
-PriorityQueue.prototype.has = function(key) {
-  return _.has(this._keyIndices, key);
-};
-PriorityQueue.prototype.priority = function(key) {
-  const index2 = this._keyIndices[key];
-  if (index2 !== void 0) {
-    return this._arr[index2].priority;
-  }
-};
-PriorityQueue.prototype.min = function() {
-  if (this.size() === 0) {
-    throw new Error("Queue underflow");
-  }
-  return this._arr[0].key;
-};
-PriorityQueue.prototype.add = function(key, priority) {
-  const keyIndices = this._keyIndices;
-  key = String(key);
-  if (!_.has(keyIndices, key)) {
-    const arr2 = this._arr;
-    const index2 = arr2.length;
-    keyIndices[key] = index2;
-    arr2.push({ key, priority });
-    this._decrease(index2);
-    return true;
-  }
-  return false;
-};
-PriorityQueue.prototype.removeMin = function() {
-  this._swap(0, this._arr.length - 1);
-  const min4 = this._arr.pop();
-  delete this._keyIndices[min4.key];
-  this._heapify(0);
-  return min4.key;
-};
-PriorityQueue.prototype.decrease = function(key, priority) {
-  const index2 = this._keyIndices[key];
-  if (priority > this._arr[index2].priority) {
-    throw new Error("New priority is greater than current priority. Key: " + key + " Old: " + this._arr[index2].priority + " New: " + priority);
-  }
-  this._arr[index2].priority = priority;
-  this._decrease(index2);
-};
-PriorityQueue.prototype._heapify = function(i2) {
-  const arr2 = this._arr;
-  const l = 2 * i2;
-  const r = l + 1;
-  let largest = i2;
-  if (l < arr2.length) {
-    largest = arr2[l].priority < arr2[largest].priority ? l : largest;
-    if (r < arr2.length) {
-      largest = arr2[r].priority < arr2[largest].priority ? r : largest;
-    }
-    if (largest !== i2) {
-      this._swap(i2, largest);
-      this._heapify(largest);
-    }
-  }
-};
-PriorityQueue.prototype._decrease = function(index2) {
-  const arr2 = this._arr;
-  const priority = arr2[index2].priority;
-  let parent;
-  while (index2 !== 0) {
-    parent = index2 >> 1;
-    if (arr2[parent].priority < priority) {
-      break;
-    }
-    this._swap(index2, parent);
-    index2 = parent;
-  }
-};
-PriorityQueue.prototype._swap = function(i2, j) {
-  const arr2 = this._arr;
-  const keyIndices = this._keyIndices;
-  const origArrI = arr2[i2];
-  const origArrJ = arr2[j];
-  arr2[i2] = origArrJ;
-  arr2[j] = origArrI;
-  keyIndices[origArrJ.key] = i2;
-  keyIndices[origArrI.key] = j;
-};
-var DEFAULT_WEIGHT_FUNC$1 = _.constant(1);
-var DEFAULT_WEIGHT_FUNC = _.constant(1);
-topsort.CycleException = CycleException;
-function topsort(g) {
-  const visited = {};
-  const stack = {};
-  const results = [];
-  function visit(node2) {
-    if (_.has(stack, node2)) {
-      throw new CycleException();
-    }
-    if (!_.has(visited, node2)) {
-      stack[node2] = true;
-      visited[node2] = true;
-      _.each(g.predecessors(node2), visit);
-      delete stack[node2];
-      results.push(node2);
-    }
-  }
-  _.each(g.sinks(), visit);
-  if (_.size(visited) !== g.nodeCount()) {
-    throw new CycleException();
-  }
-  return results;
-}
-function CycleException() {
-}
-CycleException.prototype = new Error();
-
-// ../pintora-diagrams/lib/util/graph.js
-function createLayoutGraph(opts) {
-  return new Graph(opts);
-}
-function getGraphBounds(g, opts = {}) {
-  let left = opts.startLeft || 0;
-  let right = 0;
-  let top = opts.startTop || 0;
-  let bottom = 0;
-  g.nodes().forEach((k) => {
-    const node2 = g.node(k);
-    if (!node2)
-      return;
-    if (opts.filterNode && !opts.filterNode(node2))
-      return;
-    left = Math.min(node2.outerLeft || node2.x, left);
-    const width2 = node2.outerWidth || node2.width || 0;
-    right = Math.max(node2.outerRight || node2.x + width2 / 2, right);
-    top = Math.min(node2.outerTop || node2.y, top);
-    const height = node2.outerHeight || node2.height || 0;
-    bottom = Math.max(node2.outerBottom || node2.y + height / 2, bottom);
-  });
-  const graphOpts = g.graph();
-  const marginx = graphOpts.marginx || 0;
-  const marginy = graphOpts.marginy || 0;
-  return {
-    left,
-    right,
-    top,
-    bottom,
-    width: right - left + marginx,
-    height: bottom - top + marginy
-  };
-}
-function isGraphVertical(g) {
-  return g.graph().rankdir === "TB";
-}
-function getGraphSplinesOption(edgeType) {
-  if (["polyline", "ortho"].includes(edgeType)) {
-    return edgeType;
-  }
-  return "polyline";
-}
-
-// ../pintora-diagrams/lib/er/artist-util.js
-var MARKER_GENERATORS = {
-  [Cardinality.ONLY_ONE]() {
-    const mark = makeMark("path", {
-      path: "M9,-9 L9,9 M15,-9 L15,9"
-    }, { class: "er-marker--only-one" });
-    return mark;
-  },
-  [Cardinality.ZERO_OR_ONE](attrs) {
-    const circle = makeMark("circle", {
-      ...attrs,
-      fill: "#fff",
-      x: 28,
-      y: 0,
-      r: 6
-    });
-    const path4 = makeMark("path", {
-      ...attrs,
-      path: "M14,-9 L14,9"
-    });
-    const group = {
-      type: "group",
-      class: "er-marker--zero-or-one",
-      children: [circle, path4]
-    };
-    return group;
-  },
-  [Cardinality.ONE_OR_MORE]() {
-    const mark = makeMark("path", {
-      path: "M-18,0 Q 0,18 18,0 Q 0,-18 -18,0 M24,-9 L24,9"
-    }, { class: "er-marker--one-or-more" });
-    return mark;
-  },
-  [Cardinality.ZERO_OR_MORE](attrs) {
-    const circle = makeMark("circle", {
-      ...attrs,
-      fill: "#fff",
-      x: 28,
-      y: 0,
-      r: 6
-    });
-    const path4 = makeMark("path", {
-      ...attrs,
-      path: "M-18,0 Q 0,18 18,0 Q 0,-18 -18,0"
-    });
-    const group = {
-      type: "group",
-      class: "er-marker--zero-or-more",
-      children: [circle, path4]
-    };
-    return group;
-  }
-};
-function drawMarkerTo(dest, type, rad, attrs) {
-  const generator = MARKER_GENERATORS[type];
-  if (!generator)
-    return;
-  const mark = generator(attrs || {});
-  safeAssign(mark.attrs, attrs || {});
-  const finalMatrix = mat3_exports.create();
-  mat3_exports.translate(finalMatrix, mat3_exports.create(), [dest.x, dest.y]);
-  mat3_exports.rotate(finalMatrix, finalMatrix, rad);
-  mark.matrix = finalMatrix;
-  if (mark.class)
-    mark.class = `er-marker ${mark.class}`;
-  return mark;
-}
-var TableCell = class _TableCell {
-  constructor() {
-    this.width = 0;
-    this.height = 0;
-    this.order = 0;
-  }
-  static fromMark(mark, name, opts = {}) {
-    const cell = new _TableCell();
-    cell.mark = mark;
-    cell.name = name;
-    cell.width = mark.attrs.width;
-    cell.height = mark.attrs.height;
-    Object.assign(cell, opts);
-    if (!("order" in opts)) {
-      if (name in CELL_ORDER) {
-        cell.order = CELL_ORDER[name];
-      }
-    }
-    return cell;
-  }
-};
-var TableRow = class {
-  constructor() {
-    this.cellMap = /* @__PURE__ */ new Map();
-  }
-  addCells(cells) {
-    const validCells = cells.filter((o) => Boolean(o));
-    validCells.forEach((cell) => {
-      this.cellMap.set(cell.name, cell);
-    });
-  }
-  getCell(name) {
-    return this.cellMap.get(name);
-  }
-  map(fn) {
-    return Array.from(this.cellMap.values()).map(fn);
-  }
-};
-var TableBuilder = class {
-  constructor() {
-    this.rows = [];
-  }
-  addRow(row) {
-    this.rows.push(row);
-  }
-};
-var CELL_ORDER = {
-  key: 1,
-  type: 2,
-  name: 3,
-  comment: 4
-};
-
-// ../../node_modules/.pnpm/d3-path@3.0.1/node_modules/d3-path/src/path.js
-var pi = Math.PI;
-var tau = 2 * pi;
-var epsilon = 1e-6;
-var tauEpsilon = tau - epsilon;
-function Path() {
-  this._x0 = this._y0 = // start of current subpath
-  this._x1 = this._y1 = null;
-  this._ = "";
-}
-function path() {
-  return new Path();
-}
-Path.prototype = path.prototype = {
-  constructor: Path,
-  moveTo: function(x2, y2) {
-    this._ += "M" + (this._x0 = this._x1 = +x2) + "," + (this._y0 = this._y1 = +y2);
-  },
-  closePath: function() {
-    if (this._x1 !== null) {
-      this._x1 = this._x0, this._y1 = this._y0;
-      this._ += "Z";
-    }
-  },
-  lineTo: function(x2, y2) {
-    this._ += "L" + (this._x1 = +x2) + "," + (this._y1 = +y2);
-  },
-  quadraticCurveTo: function(x1, y1, x2, y2) {
-    this._ += "Q" + +x1 + "," + +y1 + "," + (this._x1 = +x2) + "," + (this._y1 = +y2);
-  },
-  bezierCurveTo: function(x1, y1, x2, y2, x3, y3) {
-    this._ += "C" + +x1 + "," + +y1 + "," + +x2 + "," + +y2 + "," + (this._x1 = +x3) + "," + (this._y1 = +y3);
-  },
-  arcTo: function(x1, y1, x2, y2, r) {
-    x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
-    var x0 = this._x1, y0 = this._y1, x21 = x2 - x1, y21 = y2 - y1, x01 = x0 - x1, y01 = y0 - y1, l01_2 = x01 * x01 + y01 * y01;
-    if (r < 0) throw new Error("negative radius: " + r);
-    if (this._x1 === null) {
-      this._ += "M" + (this._x1 = x1) + "," + (this._y1 = y1);
-    } else if (!(l01_2 > epsilon)) ;
-    else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon) || !r) {
-      this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1);
-    } else {
-      var x20 = x2 - x0, y20 = y2 - y0, l21_2 = x21 * x21 + y21 * y21, l20_2 = x20 * x20 + y20 * y20, l21 = Math.sqrt(l21_2), l01 = Math.sqrt(l01_2), l = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2), t01 = l / l01, t21 = l / l21;
-      if (Math.abs(t01 - 1) > epsilon) {
-        this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01);
-      }
-      this._ += "A" + r + "," + r + ",0,0," + +(y01 * x20 > x01 * y20) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
-    }
-  },
-  arc: function(x2, y2, r, a0, a1, ccw) {
-    x2 = +x2, y2 = +y2, r = +r, ccw = !!ccw;
-    var dx = r * Math.cos(a0), dy = r * Math.sin(a0), x0 = x2 + dx, y0 = y2 + dy, cw = 1 ^ ccw, da = ccw ? a0 - a1 : a1 - a0;
-    if (r < 0) throw new Error("negative radius: " + r);
-    if (this._x1 === null) {
-      this._ += "M" + x0 + "," + y0;
-    } else if (Math.abs(this._x1 - x0) > epsilon || Math.abs(this._y1 - y0) > epsilon) {
-      this._ += "L" + x0 + "," + y0;
-    }
-    if (!r) return;
-    if (da < 0) da = da % tau + tau;
-    if (da > tauEpsilon) {
-      this._ += "A" + r + "," + r + ",0,1," + cw + "," + (x2 - dx) + "," + (y2 - dy) + "A" + r + "," + r + ",0,1," + cw + "," + (this._x1 = x0) + "," + (this._y1 = y0);
-    } else if (da > epsilon) {
-      this._ += "A" + r + "," + r + ",0," + +(da >= pi) + "," + cw + "," + (this._x1 = x2 + r * Math.cos(a1)) + "," + (this._y1 = y2 + r * Math.sin(a1));
-    }
-  },
-  rect: function(x2, y2, w, h) {
-    this._ += "M" + (this._x0 = this._x1 = +x2) + "," + (this._y0 = this._y1 = +y2) + "h" + +w + "v" + +h + "h" + -w + "Z";
-  },
-  toString: function() {
-    return this._;
-  }
-};
-var path_default = path;
-
-// ../../node_modules/.pnpm/d3-shape@3.1.0/node_modules/d3-shape/src/constant.js
-function constant_default(x2) {
-  return function constant3() {
-    return x2;
-  };
-}
-
-// ../../node_modules/.pnpm/d3-shape@3.1.0/node_modules/d3-shape/src/array.js
-var slice = Array.prototype.slice;
-function array_default(x2) {
-  return typeof x2 === "object" && "length" in x2 ? x2 : Array.from(x2);
-}
-
-// ../../node_modules/.pnpm/d3-shape@3.1.0/node_modules/d3-shape/src/curve/linear.js
-function Linear(context) {
-  this._context = context;
-}
-Linear.prototype = {
-  areaStart: function() {
-    this._line = 0;
-  },
-  areaEnd: function() {
-    this._line = NaN;
-  },
-  lineStart: function() {
-    this._point = 0;
-  },
-  lineEnd: function() {
-    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
-    this._line = 1 - this._line;
-  },
-  point: function(x2, y2) {
-    x2 = +x2, y2 = +y2;
-    switch (this._point) {
-      case 0:
-        this._point = 1;
-        this._line ? this._context.lineTo(x2, y2) : this._context.moveTo(x2, y2);
-        break;
-      case 1:
-        this._point = 2;
-      default:
-        this._context.lineTo(x2, y2);
-        break;
-    }
-  }
-};
-function linear_default(context) {
-  return new Linear(context);
-}
-
-// ../../node_modules/.pnpm/d3-shape@3.1.0/node_modules/d3-shape/src/point.js
-function x(p) {
-  return p[0];
-}
-function y(p) {
-  return p[1];
-}
-
-// ../../node_modules/.pnpm/d3-shape@3.1.0/node_modules/d3-shape/src/line.js
-function line_default(x2, y2) {
-  var defined = constant_default(true), context = null, curve = linear_default, output = null;
-  x2 = typeof x2 === "function" ? x2 : x2 === void 0 ? x : constant_default(x2);
-  y2 = typeof y2 === "function" ? y2 : y2 === void 0 ? y : constant_default(y2);
-  function line(data) {
-    var i2, n2 = (data = array_default(data)).length, d, defined0 = false, buffer;
-    if (context == null) output = curve(buffer = path_default());
-    for (i2 = 0; i2 <= n2; ++i2) {
-      if (!(i2 < n2 && defined(d = data[i2], i2, data)) === defined0) {
-        if (defined0 = !defined0) output.lineStart();
-        else output.lineEnd();
-      }
-      if (defined0) output.point(+x2(d, i2, data), +y2(d, i2, data));
-    }
-    if (buffer) return output = null, buffer + "" || null;
-  }
-  line.x = function(_3) {
-    return arguments.length ? (x2 = typeof _3 === "function" ? _3 : constant_default(+_3), line) : x2;
-  };
-  line.y = function(_3) {
-    return arguments.length ? (y2 = typeof _3 === "function" ? _3 : constant_default(+_3), line) : y2;
-  };
-  line.defined = function(_3) {
-    return arguments.length ? (defined = typeof _3 === "function" ? _3 : constant_default(!!_3), line) : defined;
-  };
-  line.curve = function(_3) {
-    return arguments.length ? (curve = _3, context != null && (output = curve(context)), line) : curve;
-  };
-  line.context = function(_3) {
-    return arguments.length ? (_3 == null ? context = output = null : output = curve(context = _3), line) : context;
-  };
-  return line;
-}
-
-// ../../node_modules/.pnpm/d3-shape@3.1.0/node_modules/d3-shape/src/curve/basis.js
-function point(that, x2, y2) {
-  that._context.bezierCurveTo(
-    (2 * that._x0 + that._x1) / 3,
-    (2 * that._y0 + that._y1) / 3,
-    (that._x0 + 2 * that._x1) / 3,
-    (that._y0 + 2 * that._y1) / 3,
-    (that._x0 + 4 * that._x1 + x2) / 6,
-    (that._y0 + 4 * that._y1 + y2) / 6
-  );
-}
-function Basis(context) {
-  this._context = context;
-}
-Basis.prototype = {
-  areaStart: function() {
-    this._line = 0;
-  },
-  areaEnd: function() {
-    this._line = NaN;
-  },
-  lineStart: function() {
-    this._x0 = this._x1 = this._y0 = this._y1 = NaN;
-    this._point = 0;
-  },
-  lineEnd: function() {
-    switch (this._point) {
-      case 3:
-        point(this, this._x1, this._y1);
-      case 2:
-        this._context.lineTo(this._x1, this._y1);
-        break;
-    }
-    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
-    this._line = 1 - this._line;
-  },
-  point: function(x2, y2) {
-    x2 = +x2, y2 = +y2;
-    switch (this._point) {
-      case 0:
-        this._point = 1;
-        this._line ? this._context.lineTo(x2, y2) : this._context.moveTo(x2, y2);
-        break;
-      case 1:
-        this._point = 2;
-        break;
-      case 2:
-        this._point = 3;
-        this._context.lineTo((5 * this._x0 + this._x1) / 6, (5 * this._y0 + this._y1) / 6);
-      default:
-        point(this, x2, y2);
-        break;
-    }
-    this._x0 = this._x1, this._x1 = x2;
-    this._y0 = this._y1, this._y1 = y2;
-  }
-};
-function basis_default(context) {
-  return new Basis(context);
-}
-
-// ../pintora-diagrams/lib/util/line-util.js
-function getPointsCurvePath(points, factory = basis_default) {
-  const pathString = line_default().curve(factory)(points.map((o) => [o.x, o.y]));
-  return pathString;
-}
-function getPointsLinearPath(points) {
-  const [startPoint, ...restPoints] = points;
-  return [
-    ["M", startPoint.x, startPoint.y],
-    ...restPoints.map((point2) => {
-      return ["L", point2.x, point2.y];
-    })
-  ];
-}
-function getMedianPoint(points) {
-  const len2 = points.length;
-  const index2 = Math.floor(len2 / 2);
-  return { index: index2, point: points[index2] };
-}
 
 // ../pintora-diagrams/lib/util/bound.js
 var MARK_BOUND_CALCULATORS = {
@@ -22823,7 +21056,7 @@ function baseFlatten$1(array, depth, predicate, isStrict, result) {
   }
   return result;
 }
-function flatten(array) {
+function flatten2(array) {
   var length3 = array == null ? 0 : array.length;
   return length3 ? baseFlatten$1(array, 1) : [];
 }
@@ -22892,7 +21125,7 @@ function shortOut$1(func) {
 var setToString$1 = shortOut$1(baseSetToString$2);
 var setToString$2 = setToString$1;
 function flatRest(func) {
-  return setToString$2(overRest$1(func, void 0, flatten), func + "");
+  return setToString$2(overRest$1(func, void 0, flatten2), func + "");
 }
 var pick2 = flatRest(function(object, paths) {
   return object == null ? {} : basePick(object, paths);
@@ -23585,8 +21818,8 @@ function filter$1(collection, predicate) {
 }
 var idCounter = 0;
 function uniqueId(prefix) {
-  var id9 = ++idCounter;
-  return toString$1(prefix) + id9;
+  var id10 = ++idCounter;
+  return toString$1(prefix) + id10;
 }
 function baseZipObject(props, values4, assignFunc) {
   var index2 = -1, length3 = props.length, valsLength = values4.length, result = {};
@@ -24036,6 +22269,4454 @@ function last2(list) {
 function isUndefined$1(o) {
   return typeof o === "undefined";
 }
+var objectProto$d = Object.prototype;
+var hasOwnProperty$a = objectProto$d.hasOwnProperty;
+function baseHas(object, key) {
+  return object != null && hasOwnProperty$a.call(object, key);
+}
+var isArray = Array.isArray;
+var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
+var freeSelf = typeof self == "object" && self && self.Object === Object && self;
+var root = freeGlobal || freeSelf || Function("return this")();
+var Symbol2 = root.Symbol;
+var objectProto$c = Object.prototype;
+var hasOwnProperty$9 = objectProto$c.hasOwnProperty;
+var nativeObjectToString$1 = objectProto$c.toString;
+var symToStringTag$1 = Symbol2 ? Symbol2.toStringTag : void 0;
+function getRawTag(value) {
+  var isOwn = hasOwnProperty$9.call(value, symToStringTag$1), tag2 = value[symToStringTag$1];
+  try {
+    value[symToStringTag$1] = void 0;
+    var unmasked = true;
+  } catch (e) {
+  }
+  var result = nativeObjectToString$1.call(value);
+  if (unmasked) {
+    if (isOwn) {
+      value[symToStringTag$1] = tag2;
+    } else {
+      delete value[symToStringTag$1];
+    }
+  }
+  return result;
+}
+var objectProto$b = Object.prototype;
+var nativeObjectToString = objectProto$b.toString;
+function objectToString(value) {
+  return nativeObjectToString.call(value);
+}
+var nullTag = "[object Null]";
+var undefinedTag = "[object Undefined]";
+var symToStringTag = Symbol2 ? Symbol2.toStringTag : void 0;
+function baseGetTag(value) {
+  if (value == null) {
+    return value === void 0 ? undefinedTag : nullTag;
+  }
+  return symToStringTag && symToStringTag in Object(value) ? getRawTag(value) : objectToString(value);
+}
+function isObjectLike(value) {
+  return value != null && typeof value == "object";
+}
+var symbolTag$1 = "[object Symbol]";
+function isSymbol(value) {
+  return typeof value == "symbol" || isObjectLike(value) && baseGetTag(value) == symbolTag$1;
+}
+var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
+var reIsPlainProp = /^\w*$/;
+function isKey(value, object) {
+  if (isArray(value)) {
+    return false;
+  }
+  var type = typeof value;
+  if (type == "number" || type == "symbol" || type == "boolean" || value == null || isSymbol(value)) {
+    return true;
+  }
+  return reIsPlainProp.test(value) || !reIsDeepProp.test(value) || object != null && value in Object(object);
+}
+function isObject(value) {
+  var type = typeof value;
+  return value != null && (type == "object" || type == "function");
+}
+var asyncTag = "[object AsyncFunction]";
+var funcTag$1 = "[object Function]";
+var genTag = "[object GeneratorFunction]";
+var proxyTag = "[object Proxy]";
+function isFunction(value) {
+  if (!isObject(value)) {
+    return false;
+  }
+  var tag2 = baseGetTag(value);
+  return tag2 == funcTag$1 || tag2 == genTag || tag2 == asyncTag || tag2 == proxyTag;
+}
+var coreJsData = root["__core-js_shared__"];
+var maskSrcKey = function() {
+  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || "");
+  return uid ? "Symbol(src)_1." + uid : "";
+}();
+function isMasked(func) {
+  return !!maskSrcKey && maskSrcKey in func;
+}
+var funcProto$1 = Function.prototype;
+var funcToString$1 = funcProto$1.toString;
+function toSource(func) {
+  if (func != null) {
+    try {
+      return funcToString$1.call(func);
+    } catch (e) {
+    }
+    try {
+      return func + "";
+    } catch (e) {
+    }
+  }
+  return "";
+}
+var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+var reIsHostCtor = /^\[object .+?Constructor\]$/;
+var funcProto = Function.prototype;
+var objectProto$a = Object.prototype;
+var funcToString = funcProto.toString;
+var hasOwnProperty$8 = objectProto$a.hasOwnProperty;
+var reIsNative = RegExp(
+  "^" + funcToString.call(hasOwnProperty$8).replace(reRegExpChar, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"
+);
+function baseIsNative(value) {
+  if (!isObject(value) || isMasked(value)) {
+    return false;
+  }
+  var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
+  return pattern.test(toSource(value));
+}
+function getValue(object, key) {
+  return object == null ? void 0 : object[key];
+}
+function getNative(object, key) {
+  var value = getValue(object, key);
+  return baseIsNative(value) ? value : void 0;
+}
+var nativeCreate = getNative(Object, "create");
+function hashClear() {
+  this.__data__ = nativeCreate ? nativeCreate(null) : {};
+  this.size = 0;
+}
+function hashDelete(key) {
+  var result = this.has(key) && delete this.__data__[key];
+  this.size -= result ? 1 : 0;
+  return result;
+}
+var HASH_UNDEFINED$2 = "__lodash_hash_undefined__";
+var objectProto$9 = Object.prototype;
+var hasOwnProperty$7 = objectProto$9.hasOwnProperty;
+function hashGet(key) {
+  var data = this.__data__;
+  if (nativeCreate) {
+    var result = data[key];
+    return result === HASH_UNDEFINED$2 ? void 0 : result;
+  }
+  return hasOwnProperty$7.call(data, key) ? data[key] : void 0;
+}
+var objectProto$8 = Object.prototype;
+var hasOwnProperty$6 = objectProto$8.hasOwnProperty;
+function hashHas(key) {
+  var data = this.__data__;
+  return nativeCreate ? data[key] !== void 0 : hasOwnProperty$6.call(data, key);
+}
+var HASH_UNDEFINED$1 = "__lodash_hash_undefined__";
+function hashSet(key, value) {
+  var data = this.__data__;
+  this.size += this.has(key) ? 0 : 1;
+  data[key] = nativeCreate && value === void 0 ? HASH_UNDEFINED$1 : value;
+  return this;
+}
+function Hash(entries) {
+  var index2 = -1, length3 = entries == null ? 0 : entries.length;
+  this.clear();
+  while (++index2 < length3) {
+    var entry = entries[index2];
+    this.set(entry[0], entry[1]);
+  }
+}
+Hash.prototype.clear = hashClear;
+Hash.prototype["delete"] = hashDelete;
+Hash.prototype.get = hashGet;
+Hash.prototype.has = hashHas;
+Hash.prototype.set = hashSet;
+function listCacheClear() {
+  this.__data__ = [];
+  this.size = 0;
+}
+function eq(value, other) {
+  return value === other || value !== value && other !== other;
+}
+function assocIndexOf(array, key) {
+  var length3 = array.length;
+  while (length3--) {
+    if (eq(array[length3][0], key)) {
+      return length3;
+    }
+  }
+  return -1;
+}
+var arrayProto = Array.prototype;
+var splice = arrayProto.splice;
+function listCacheDelete(key) {
+  var data = this.__data__, index2 = assocIndexOf(data, key);
+  if (index2 < 0) {
+    return false;
+  }
+  var lastIndex = data.length - 1;
+  if (index2 == lastIndex) {
+    data.pop();
+  } else {
+    splice.call(data, index2, 1);
+  }
+  --this.size;
+  return true;
+}
+function listCacheGet(key) {
+  var data = this.__data__, index2 = assocIndexOf(data, key);
+  return index2 < 0 ? void 0 : data[index2][1];
+}
+function listCacheHas(key) {
+  return assocIndexOf(this.__data__, key) > -1;
+}
+function listCacheSet(key, value) {
+  var data = this.__data__, index2 = assocIndexOf(data, key);
+  if (index2 < 0) {
+    ++this.size;
+    data.push([key, value]);
+  } else {
+    data[index2][1] = value;
+  }
+  return this;
+}
+function ListCache(entries) {
+  var index2 = -1, length3 = entries == null ? 0 : entries.length;
+  this.clear();
+  while (++index2 < length3) {
+    var entry = entries[index2];
+    this.set(entry[0], entry[1]);
+  }
+}
+ListCache.prototype.clear = listCacheClear;
+ListCache.prototype["delete"] = listCacheDelete;
+ListCache.prototype.get = listCacheGet;
+ListCache.prototype.has = listCacheHas;
+ListCache.prototype.set = listCacheSet;
+var Map2 = getNative(root, "Map");
+function mapCacheClear() {
+  this.size = 0;
+  this.__data__ = {
+    "hash": new Hash(),
+    "map": new (Map2 || ListCache)(),
+    "string": new Hash()
+  };
+}
+function isKeyable(value) {
+  var type = typeof value;
+  return type == "string" || type == "number" || type == "symbol" || type == "boolean" ? value !== "__proto__" : value === null;
+}
+function getMapData(map4, key) {
+  var data = map4.__data__;
+  return isKeyable(key) ? data[typeof key == "string" ? "string" : "hash"] : data.map;
+}
+function mapCacheDelete(key) {
+  var result = getMapData(this, key)["delete"](key);
+  this.size -= result ? 1 : 0;
+  return result;
+}
+function mapCacheGet(key) {
+  return getMapData(this, key).get(key);
+}
+function mapCacheHas(key) {
+  return getMapData(this, key).has(key);
+}
+function mapCacheSet(key, value) {
+  var data = getMapData(this, key), size4 = data.size;
+  data.set(key, value);
+  this.size += data.size == size4 ? 0 : 1;
+  return this;
+}
+function MapCache(entries) {
+  var index2 = -1, length3 = entries == null ? 0 : entries.length;
+  this.clear();
+  while (++index2 < length3) {
+    var entry = entries[index2];
+    this.set(entry[0], entry[1]);
+  }
+}
+MapCache.prototype.clear = mapCacheClear;
+MapCache.prototype["delete"] = mapCacheDelete;
+MapCache.prototype.get = mapCacheGet;
+MapCache.prototype.has = mapCacheHas;
+MapCache.prototype.set = mapCacheSet;
+var FUNC_ERROR_TEXT = "Expected a function";
+function memoize(func, resolver) {
+  if (typeof func != "function" || resolver != null && typeof resolver != "function") {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  var memoized = function() {
+    var args = arguments, key = resolver ? resolver.apply(this, args) : args[0], cache2 = memoized.cache;
+    if (cache2.has(key)) {
+      return cache2.get(key);
+    }
+    var result = func.apply(this, args);
+    memoized.cache = cache2.set(key, result) || cache2;
+    return result;
+  };
+  memoized.cache = new (memoize.Cache || MapCache)();
+  return memoized;
+}
+memoize.Cache = MapCache;
+var MAX_MEMOIZE_SIZE = 500;
+function memoizeCapped(func) {
+  var result = memoize(func, function(key) {
+    if (cache2.size === MAX_MEMOIZE_SIZE) {
+      cache2.clear();
+    }
+    return key;
+  });
+  var cache2 = result.cache;
+  return result;
+}
+var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+var reEscapeChar = /\\(\\)?/g;
+var stringToPath = memoizeCapped(function(string) {
+  var result = [];
+  if (string.charCodeAt(0) === 46) {
+    result.push("");
+  }
+  string.replace(rePropName, function(match, number4, quote, subString) {
+    result.push(quote ? subString.replace(reEscapeChar, "$1") : number4 || match);
+  });
+  return result;
+});
+function arrayMap(array, iteratee) {
+  var index2 = -1, length3 = array == null ? 0 : array.length, result = Array(length3);
+  while (++index2 < length3) {
+    result[index2] = iteratee(array[index2], index2, array);
+  }
+  return result;
+}
+var INFINITY$2 = 1 / 0;
+var symbolProto$1 = Symbol2 ? Symbol2.prototype : void 0;
+var symbolToString = symbolProto$1 ? symbolProto$1.toString : void 0;
+function baseToString(value) {
+  if (typeof value == "string") {
+    return value;
+  }
+  if (isArray(value)) {
+    return arrayMap(value, baseToString) + "";
+  }
+  if (isSymbol(value)) {
+    return symbolToString ? symbolToString.call(value) : "";
+  }
+  var result = value + "";
+  return result == "0" && 1 / value == -INFINITY$2 ? "-0" : result;
+}
+function toString(value) {
+  return value == null ? "" : baseToString(value);
+}
+function castPath(value, object) {
+  if (isArray(value)) {
+    return value;
+  }
+  return isKey(value, object) ? [value] : stringToPath(toString(value));
+}
+var argsTag$2 = "[object Arguments]";
+function baseIsArguments(value) {
+  return isObjectLike(value) && baseGetTag(value) == argsTag$2;
+}
+var objectProto$7 = Object.prototype;
+var hasOwnProperty$5 = objectProto$7.hasOwnProperty;
+var propertyIsEnumerable$1 = objectProto$7.propertyIsEnumerable;
+var isArguments = baseIsArguments(/* @__PURE__ */ function() {
+  return arguments;
+}()) ? baseIsArguments : function(value) {
+  return isObjectLike(value) && hasOwnProperty$5.call(value, "callee") && !propertyIsEnumerable$1.call(value, "callee");
+};
+var MAX_SAFE_INTEGER$1 = 9007199254740991;
+var reIsUint = /^(?:0|[1-9]\d*)$/;
+function isIndex(value, length3) {
+  var type = typeof value;
+  length3 = length3 == null ? MAX_SAFE_INTEGER$1 : length3;
+  return !!length3 && (type == "number" || type != "symbol" && reIsUint.test(value)) && (value > -1 && value % 1 == 0 && value < length3);
+}
+var MAX_SAFE_INTEGER = 9007199254740991;
+function isLength(value) {
+  return typeof value == "number" && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+var INFINITY$1 = 1 / 0;
+function toKey(value) {
+  if (typeof value == "string" || isSymbol(value)) {
+    return value;
+  }
+  var result = value + "";
+  return result == "0" && 1 / value == -INFINITY$1 ? "-0" : result;
+}
+function hasPath(object, path4, hasFunc) {
+  path4 = castPath(path4, object);
+  var index2 = -1, length3 = path4.length, result = false;
+  while (++index2 < length3) {
+    var key = toKey(path4[index2]);
+    if (!(result = object != null && hasFunc(object, key))) {
+      break;
+    }
+    object = object[key];
+  }
+  if (result || ++index2 != length3) {
+    return result;
+  }
+  length3 = object == null ? 0 : object.length;
+  return !!length3 && isLength(length3) && isIndex(key, length3) && (isArray(object) || isArguments(object));
+}
+function has(object, path4) {
+  return object != null && hasPath(object, path4, baseHas);
+}
+function arrayEach(array, iteratee) {
+  var index2 = -1, length3 = array == null ? 0 : array.length;
+  while (++index2 < length3) {
+    if (iteratee(array[index2], index2, array) === false) {
+      break;
+    }
+  }
+  return array;
+}
+function createBaseFor(fromRight) {
+  return function(object, iteratee, keysFunc) {
+    var index2 = -1, iterable = Object(object), props = keysFunc(object), length3 = props.length;
+    while (length3--) {
+      var key = props[fromRight ? length3 : ++index2];
+      if (iteratee(iterable[key], key, iterable) === false) {
+        break;
+      }
+    }
+    return object;
+  };
+}
+var baseFor = createBaseFor();
+function baseTimes(n2, iteratee) {
+  var index2 = -1, result = Array(n2);
+  while (++index2 < n2) {
+    result[index2] = iteratee(index2);
+  }
+  return result;
+}
+function stubFalse() {
+  return false;
+}
+var freeExports$1 = typeof exports == "object" && exports && !exports.nodeType && exports;
+var freeModule$1 = freeExports$1 && typeof module == "object" && module && !module.nodeType && module;
+var moduleExports$1 = freeModule$1 && freeModule$1.exports === freeExports$1;
+var Buffer2 = moduleExports$1 ? root.Buffer : void 0;
+var nativeIsBuffer = Buffer2 ? Buffer2.isBuffer : void 0;
+var isBuffer = nativeIsBuffer || stubFalse;
+var argsTag$1 = "[object Arguments]";
+var arrayTag$1 = "[object Array]";
+var boolTag$1 = "[object Boolean]";
+var dateTag$1 = "[object Date]";
+var errorTag$1 = "[object Error]";
+var funcTag = "[object Function]";
+var mapTag$4 = "[object Map]";
+var numberTag$1 = "[object Number]";
+var objectTag$2 = "[object Object]";
+var regexpTag$1 = "[object RegExp]";
+var setTag$4 = "[object Set]";
+var stringTag$2 = "[object String]";
+var weakMapTag$1 = "[object WeakMap]";
+var arrayBufferTag$1 = "[object ArrayBuffer]";
+var dataViewTag$2 = "[object DataView]";
+var float32Tag = "[object Float32Array]";
+var float64Tag = "[object Float64Array]";
+var int8Tag = "[object Int8Array]";
+var int16Tag = "[object Int16Array]";
+var int32Tag = "[object Int32Array]";
+var uint8Tag = "[object Uint8Array]";
+var uint8ClampedTag = "[object Uint8ClampedArray]";
+var uint16Tag = "[object Uint16Array]";
+var uint32Tag = "[object Uint32Array]";
+var typedArrayTags = {};
+typedArrayTags[float32Tag] = typedArrayTags[float64Tag] = typedArrayTags[int8Tag] = typedArrayTags[int16Tag] = typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] = typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] = typedArrayTags[uint32Tag] = true;
+typedArrayTags[argsTag$1] = typedArrayTags[arrayTag$1] = typedArrayTags[arrayBufferTag$1] = typedArrayTags[boolTag$1] = typedArrayTags[dataViewTag$2] = typedArrayTags[dateTag$1] = typedArrayTags[errorTag$1] = typedArrayTags[funcTag] = typedArrayTags[mapTag$4] = typedArrayTags[numberTag$1] = typedArrayTags[objectTag$2] = typedArrayTags[regexpTag$1] = typedArrayTags[setTag$4] = typedArrayTags[stringTag$2] = typedArrayTags[weakMapTag$1] = false;
+function baseIsTypedArray(value) {
+  return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
+}
+function baseUnary(func) {
+  return function(value) {
+    return func(value);
+  };
+}
+var freeExports = typeof exports == "object" && exports && !exports.nodeType && exports;
+var freeModule = freeExports && typeof module == "object" && module && !module.nodeType && module;
+var moduleExports = freeModule && freeModule.exports === freeExports;
+var freeProcess = moduleExports && freeGlobal.process;
+var nodeUtil = function() {
+  try {
+    var types = freeModule && freeModule.require && freeModule.require("util").types;
+    if (types) {
+      return types;
+    }
+    return freeProcess && freeProcess.binding && freeProcess.binding("util");
+  } catch (e) {
+  }
+}();
+var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
+var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
+var objectProto$6 = Object.prototype;
+var hasOwnProperty$4 = objectProto$6.hasOwnProperty;
+function arrayLikeKeys(value, inherited) {
+  var isArr = isArray(value), isArg = !isArr && isArguments(value), isBuff = !isArr && !isArg && isBuffer(value), isType2 = !isArr && !isArg && !isBuff && isTypedArray(value), skipIndexes = isArr || isArg || isBuff || isType2, result = skipIndexes ? baseTimes(value.length, String) : [], length3 = result.length;
+  for (var key in value) {
+    if ((inherited || hasOwnProperty$4.call(value, key)) && !(skipIndexes && // Safari 9 has enumerable `arguments.length` in strict mode.
+    (key == "length" || // Node.js 0.10 has enumerable non-index properties on buffers.
+    isBuff && (key == "offset" || key == "parent") || // PhantomJS 2 has enumerable non-index properties on typed arrays.
+    isType2 && (key == "buffer" || key == "byteLength" || key == "byteOffset") || // Skip index properties.
+    isIndex(key, length3)))) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+var objectProto$5 = Object.prototype;
+function isPrototype(value) {
+  var Ctor = value && value.constructor, proto = typeof Ctor == "function" && Ctor.prototype || objectProto$5;
+  return value === proto;
+}
+function overArg(func, transform7) {
+  return function(arg) {
+    return func(transform7(arg));
+  };
+}
+var nativeKeys = overArg(Object.keys, Object);
+var objectProto$4 = Object.prototype;
+var hasOwnProperty$3 = objectProto$4.hasOwnProperty;
+function baseKeys(object) {
+  if (!isPrototype(object)) {
+    return nativeKeys(object);
+  }
+  var result = [];
+  for (var key in Object(object)) {
+    if (hasOwnProperty$3.call(object, key) && key != "constructor") {
+      result.push(key);
+    }
+  }
+  return result;
+}
+function isArrayLike(value) {
+  return value != null && isLength(value.length) && !isFunction(value);
+}
+function keys(object) {
+  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
+}
+function baseForOwn(object, iteratee) {
+  return object && baseFor(object, iteratee, keys);
+}
+function createBaseEach(eachFunc, fromRight) {
+  return function(collection, iteratee) {
+    if (collection == null) {
+      return collection;
+    }
+    if (!isArrayLike(collection)) {
+      return eachFunc(collection, iteratee);
+    }
+    var length3 = collection.length, index2 = fromRight ? length3 : -1, iterable = Object(collection);
+    while (fromRight ? index2-- : ++index2 < length3) {
+      if (iteratee(iterable[index2], index2, iterable) === false) {
+        break;
+      }
+    }
+    return collection;
+  };
+}
+var baseEach = createBaseEach(baseForOwn);
+function identity2(value) {
+  return value;
+}
+function castFunction(value) {
+  return typeof value == "function" ? value : identity2;
+}
+function forEach2(collection, iteratee) {
+  var func = isArray(collection) ? arrayEach : baseEach;
+  return func(collection, castFunction(iteratee));
+}
+var DataView2 = getNative(root, "DataView");
+var Promise$1 = getNative(root, "Promise");
+var Set$1 = getNative(root, "Set");
+var WeakMap2 = getNative(root, "WeakMap");
+var mapTag$3 = "[object Map]";
+var objectTag$1 = "[object Object]";
+var promiseTag = "[object Promise]";
+var setTag$3 = "[object Set]";
+var weakMapTag = "[object WeakMap]";
+var dataViewTag$1 = "[object DataView]";
+var dataViewCtorString = toSource(DataView2);
+var mapCtorString = toSource(Map2);
+var promiseCtorString = toSource(Promise$1);
+var setCtorString = toSource(Set$1);
+var weakMapCtorString = toSource(WeakMap2);
+var getTag = baseGetTag;
+if (DataView2 && getTag(new DataView2(new ArrayBuffer(1))) != dataViewTag$1 || Map2 && getTag(new Map2()) != mapTag$3 || Promise$1 && getTag(Promise$1.resolve()) != promiseTag || Set$1 && getTag(new Set$1()) != setTag$3 || WeakMap2 && getTag(new WeakMap2()) != weakMapTag) {
+  getTag = function(value) {
+    var result = baseGetTag(value), Ctor = result == objectTag$1 ? value.constructor : void 0, ctorString = Ctor ? toSource(Ctor) : "";
+    if (ctorString) {
+      switch (ctorString) {
+        case dataViewCtorString:
+          return dataViewTag$1;
+        case mapCtorString:
+          return mapTag$3;
+        case promiseCtorString:
+          return promiseTag;
+        case setCtorString:
+          return setTag$3;
+        case weakMapCtorString:
+          return weakMapTag;
+      }
+    }
+    return result;
+  };
+}
+var getTag$1 = getTag;
+var stringTag$1 = "[object String]";
+function isString(value) {
+  return typeof value == "string" || !isArray(value) && isObjectLike(value) && baseGetTag(value) == stringTag$1;
+}
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? void 0 : object[key];
+  };
+}
+var asciiSize = baseProperty("length");
+var rsAstralRange$1 = "\\ud800-\\udfff";
+var rsComboMarksRange$1 = "\\u0300-\\u036f";
+var reComboHalfMarksRange$1 = "\\ufe20-\\ufe2f";
+var rsComboSymbolsRange$1 = "\\u20d0-\\u20ff";
+var rsComboRange$1 = rsComboMarksRange$1 + reComboHalfMarksRange$1 + rsComboSymbolsRange$1;
+var rsVarRange$1 = "\\ufe0e\\ufe0f";
+var rsZWJ$1 = "\\u200d";
+var reHasUnicode = RegExp("[" + rsZWJ$1 + rsAstralRange$1 + rsComboRange$1 + rsVarRange$1 + "]");
+function hasUnicode(string) {
+  return reHasUnicode.test(string);
+}
+var rsAstralRange = "\\ud800-\\udfff";
+var rsComboMarksRange = "\\u0300-\\u036f";
+var reComboHalfMarksRange = "\\ufe20-\\ufe2f";
+var rsComboSymbolsRange = "\\u20d0-\\u20ff";
+var rsComboRange = rsComboMarksRange + reComboHalfMarksRange + rsComboSymbolsRange;
+var rsVarRange = "\\ufe0e\\ufe0f";
+var rsAstral = "[" + rsAstralRange + "]";
+var rsCombo = "[" + rsComboRange + "]";
+var rsFitz = "\\ud83c[\\udffb-\\udfff]";
+var rsModifier = "(?:" + rsCombo + "|" + rsFitz + ")";
+var rsNonAstral = "[^" + rsAstralRange + "]";
+var rsRegional = "(?:\\ud83c[\\udde6-\\uddff]){2}";
+var rsSurrPair = "[\\ud800-\\udbff][\\udc00-\\udfff]";
+var rsZWJ = "\\u200d";
+var reOptMod = rsModifier + "?";
+var rsOptVar = "[" + rsVarRange + "]?";
+var rsOptJoin = "(?:" + rsZWJ + "(?:" + [rsNonAstral, rsRegional, rsSurrPair].join("|") + ")" + rsOptVar + reOptMod + ")*";
+var rsSeq = rsOptVar + reOptMod + rsOptJoin;
+var rsSymbol = "(?:" + [rsNonAstral + rsCombo + "?", rsCombo, rsRegional, rsSurrPair, rsAstral].join("|") + ")";
+var reUnicode = RegExp(rsFitz + "(?=" + rsFitz + ")|" + rsSymbol + rsSeq, "g");
+function unicodeSize(string) {
+  var result = reUnicode.lastIndex = 0;
+  while (reUnicode.test(string)) {
+    ++result;
+  }
+  return result;
+}
+function stringSize(string) {
+  return hasUnicode(string) ? unicodeSize(string) : asciiSize(string);
+}
+var mapTag$2 = "[object Map]";
+var setTag$2 = "[object Set]";
+function size(collection) {
+  if (collection == null) {
+    return 0;
+  }
+  if (isArrayLike(collection)) {
+    return isString(collection) ? stringSize(collection) : collection.length;
+  }
+  var tag2 = getTag$1(collection);
+  if (tag2 == mapTag$2 || tag2 == setTag$2) {
+    return collection.size;
+  }
+  return baseKeys(collection).length;
+}
+function constant(value) {
+  return function() {
+    return value;
+  };
+}
+function arrayFilter(array, predicate) {
+  var index2 = -1, length3 = array == null ? 0 : array.length, resIndex = 0, result = [];
+  while (++index2 < length3) {
+    var value = array[index2];
+    if (predicate(value, index2, array)) {
+      result[resIndex++] = value;
+    }
+  }
+  return result;
+}
+function baseFilter(collection, predicate) {
+  var result = [];
+  baseEach(collection, function(value, index2, collection2) {
+    if (predicate(value, index2, collection2)) {
+      result.push(value);
+    }
+  });
+  return result;
+}
+function stackClear() {
+  this.__data__ = new ListCache();
+  this.size = 0;
+}
+function stackDelete(key) {
+  var data = this.__data__, result = data["delete"](key);
+  this.size = data.size;
+  return result;
+}
+function stackGet(key) {
+  return this.__data__.get(key);
+}
+function stackHas(key) {
+  return this.__data__.has(key);
+}
+var LARGE_ARRAY_SIZE$1 = 200;
+function stackSet(key, value) {
+  var data = this.__data__;
+  if (data instanceof ListCache) {
+    var pairs = data.__data__;
+    if (!Map2 || pairs.length < LARGE_ARRAY_SIZE$1 - 1) {
+      pairs.push([key, value]);
+      this.size = ++data.size;
+      return this;
+    }
+    data = this.__data__ = new MapCache(pairs);
+  }
+  data.set(key, value);
+  this.size = data.size;
+  return this;
+}
+function Stack(entries) {
+  var data = this.__data__ = new ListCache(entries);
+  this.size = data.size;
+}
+Stack.prototype.clear = stackClear;
+Stack.prototype["delete"] = stackDelete;
+Stack.prototype.get = stackGet;
+Stack.prototype.has = stackHas;
+Stack.prototype.set = stackSet;
+var HASH_UNDEFINED = "__lodash_hash_undefined__";
+function setCacheAdd(value) {
+  this.__data__.set(value, HASH_UNDEFINED);
+  return this;
+}
+function setCacheHas(value) {
+  return this.__data__.has(value);
+}
+function SetCache(values4) {
+  var index2 = -1, length3 = values4 == null ? 0 : values4.length;
+  this.__data__ = new MapCache();
+  while (++index2 < length3) {
+    this.add(values4[index2]);
+  }
+}
+SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
+SetCache.prototype.has = setCacheHas;
+function arraySome(array, predicate) {
+  var index2 = -1, length3 = array == null ? 0 : array.length;
+  while (++index2 < length3) {
+    if (predicate(array[index2], index2, array)) {
+      return true;
+    }
+  }
+  return false;
+}
+function cacheHas(cache2, key) {
+  return cache2.has(key);
+}
+var COMPARE_PARTIAL_FLAG$5 = 1;
+var COMPARE_UNORDERED_FLAG$3 = 2;
+function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
+  var isPartial = bitmask & COMPARE_PARTIAL_FLAG$5, arrLength = array.length, othLength = other.length;
+  if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
+    return false;
+  }
+  var arrStacked = stack.get(array);
+  var othStacked = stack.get(other);
+  if (arrStacked && othStacked) {
+    return arrStacked == other && othStacked == array;
+  }
+  var index2 = -1, result = true, seen = bitmask & COMPARE_UNORDERED_FLAG$3 ? new SetCache() : void 0;
+  stack.set(array, other);
+  stack.set(other, array);
+  while (++index2 < arrLength) {
+    var arrValue = array[index2], othValue = other[index2];
+    if (customizer) {
+      var compared = isPartial ? customizer(othValue, arrValue, index2, other, array, stack) : customizer(arrValue, othValue, index2, array, other, stack);
+    }
+    if (compared !== void 0) {
+      if (compared) {
+        continue;
+      }
+      result = false;
+      break;
+    }
+    if (seen) {
+      if (!arraySome(other, function(othValue2, othIndex) {
+        if (!cacheHas(seen, othIndex) && (arrValue === othValue2 || equalFunc(arrValue, othValue2, bitmask, customizer, stack))) {
+          return seen.push(othIndex);
+        }
+      })) {
+        result = false;
+        break;
+      }
+    } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {
+      result = false;
+      break;
+    }
+  }
+  stack["delete"](array);
+  stack["delete"](other);
+  return result;
+}
+var Uint8Array2 = root.Uint8Array;
+function mapToArray(map4) {
+  var index2 = -1, result = Array(map4.size);
+  map4.forEach(function(value, key) {
+    result[++index2] = [key, value];
+  });
+  return result;
+}
+function setToArray(set3) {
+  var index2 = -1, result = Array(set3.size);
+  set3.forEach(function(value) {
+    result[++index2] = value;
+  });
+  return result;
+}
+var COMPARE_PARTIAL_FLAG$4 = 1;
+var COMPARE_UNORDERED_FLAG$2 = 2;
+var boolTag = "[object Boolean]";
+var dateTag = "[object Date]";
+var errorTag = "[object Error]";
+var mapTag$1 = "[object Map]";
+var numberTag = "[object Number]";
+var regexpTag = "[object RegExp]";
+var setTag$1 = "[object Set]";
+var stringTag = "[object String]";
+var symbolTag = "[object Symbol]";
+var arrayBufferTag = "[object ArrayBuffer]";
+var dataViewTag = "[object DataView]";
+var symbolProto = Symbol2 ? Symbol2.prototype : void 0;
+var symbolValueOf = symbolProto ? symbolProto.valueOf : void 0;
+function equalByTag(object, other, tag2, bitmask, customizer, equalFunc, stack) {
+  switch (tag2) {
+    case dataViewTag:
+      if (object.byteLength != other.byteLength || object.byteOffset != other.byteOffset) {
+        return false;
+      }
+      object = object.buffer;
+      other = other.buffer;
+    case arrayBufferTag:
+      if (object.byteLength != other.byteLength || !equalFunc(new Uint8Array2(object), new Uint8Array2(other))) {
+        return false;
+      }
+      return true;
+    case boolTag:
+    case dateTag:
+    case numberTag:
+      return eq(+object, +other);
+    case errorTag:
+      return object.name == other.name && object.message == other.message;
+    case regexpTag:
+    case stringTag:
+      return object == other + "";
+    case mapTag$1:
+      var convert = mapToArray;
+    case setTag$1:
+      var isPartial = bitmask & COMPARE_PARTIAL_FLAG$4;
+      convert || (convert = setToArray);
+      if (object.size != other.size && !isPartial) {
+        return false;
+      }
+      var stacked = stack.get(object);
+      if (stacked) {
+        return stacked == other;
+      }
+      bitmask |= COMPARE_UNORDERED_FLAG$2;
+      stack.set(object, other);
+      var result = equalArrays(convert(object), convert(other), bitmask, customizer, equalFunc, stack);
+      stack["delete"](object);
+      return result;
+    case symbolTag:
+      if (symbolValueOf) {
+        return symbolValueOf.call(object) == symbolValueOf.call(other);
+      }
+  }
+  return false;
+}
+function arrayPush(array, values4) {
+  var index2 = -1, length3 = values4.length, offset = array.length;
+  while (++index2 < length3) {
+    array[offset + index2] = values4[index2];
+  }
+  return array;
+}
+function baseGetAllKeys(object, keysFunc, symbolsFunc) {
+  var result = keysFunc(object);
+  return isArray(object) ? result : arrayPush(result, symbolsFunc(object));
+}
+function stubArray() {
+  return [];
+}
+var objectProto$3 = Object.prototype;
+var propertyIsEnumerable = objectProto$3.propertyIsEnumerable;
+var nativeGetSymbols = Object.getOwnPropertySymbols;
+var getSymbols = !nativeGetSymbols ? stubArray : function(object) {
+  if (object == null) {
+    return [];
+  }
+  object = Object(object);
+  return arrayFilter(nativeGetSymbols(object), function(symbol) {
+    return propertyIsEnumerable.call(object, symbol);
+  });
+};
+function getAllKeys(object) {
+  return baseGetAllKeys(object, keys, getSymbols);
+}
+var COMPARE_PARTIAL_FLAG$3 = 1;
+var objectProto$2 = Object.prototype;
+var hasOwnProperty$2 = objectProto$2.hasOwnProperty;
+function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
+  var isPartial = bitmask & COMPARE_PARTIAL_FLAG$3, objProps = getAllKeys(object), objLength = objProps.length, othProps = getAllKeys(other), othLength = othProps.length;
+  if (objLength != othLength && !isPartial) {
+    return false;
+  }
+  var index2 = objLength;
+  while (index2--) {
+    var key = objProps[index2];
+    if (!(isPartial ? key in other : hasOwnProperty$2.call(other, key))) {
+      return false;
+    }
+  }
+  var objStacked = stack.get(object);
+  var othStacked = stack.get(other);
+  if (objStacked && othStacked) {
+    return objStacked == other && othStacked == object;
+  }
+  var result = true;
+  stack.set(object, other);
+  stack.set(other, object);
+  var skipCtor = isPartial;
+  while (++index2 < objLength) {
+    key = objProps[index2];
+    var objValue = object[key], othValue = other[key];
+    if (customizer) {
+      var compared = isPartial ? customizer(othValue, objValue, key, other, object, stack) : customizer(objValue, othValue, key, object, other, stack);
+    }
+    if (!(compared === void 0 ? objValue === othValue || equalFunc(objValue, othValue, bitmask, customizer, stack) : compared)) {
+      result = false;
+      break;
+    }
+    skipCtor || (skipCtor = key == "constructor");
+  }
+  if (result && !skipCtor) {
+    var objCtor = object.constructor, othCtor = other.constructor;
+    if (objCtor != othCtor && ("constructor" in object && "constructor" in other) && !(typeof objCtor == "function" && objCtor instanceof objCtor && typeof othCtor == "function" && othCtor instanceof othCtor)) {
+      result = false;
+    }
+  }
+  stack["delete"](object);
+  stack["delete"](other);
+  return result;
+}
+var COMPARE_PARTIAL_FLAG$2 = 1;
+var argsTag = "[object Arguments]";
+var arrayTag = "[object Array]";
+var objectTag = "[object Object]";
+var objectProto$1 = Object.prototype;
+var hasOwnProperty$1 = objectProto$1.hasOwnProperty;
+function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
+  var objIsArr = isArray(object), othIsArr = isArray(other), objTag = objIsArr ? arrayTag : getTag$1(object), othTag = othIsArr ? arrayTag : getTag$1(other);
+  objTag = objTag == argsTag ? objectTag : objTag;
+  othTag = othTag == argsTag ? objectTag : othTag;
+  var objIsObj = objTag == objectTag, othIsObj = othTag == objectTag, isSameTag = objTag == othTag;
+  if (isSameTag && isBuffer(object)) {
+    if (!isBuffer(other)) {
+      return false;
+    }
+    objIsArr = true;
+    objIsObj = false;
+  }
+  if (isSameTag && !objIsObj) {
+    stack || (stack = new Stack());
+    return objIsArr || isTypedArray(object) ? equalArrays(object, other, bitmask, customizer, equalFunc, stack) : equalByTag(object, other, objTag, bitmask, customizer, equalFunc, stack);
+  }
+  if (!(bitmask & COMPARE_PARTIAL_FLAG$2)) {
+    var objIsWrapped = objIsObj && hasOwnProperty$1.call(object, "__wrapped__"), othIsWrapped = othIsObj && hasOwnProperty$1.call(other, "__wrapped__");
+    if (objIsWrapped || othIsWrapped) {
+      var objUnwrapped = objIsWrapped ? object.value() : object, othUnwrapped = othIsWrapped ? other.value() : other;
+      stack || (stack = new Stack());
+      return equalFunc(objUnwrapped, othUnwrapped, bitmask, customizer, stack);
+    }
+  }
+  if (!isSameTag) {
+    return false;
+  }
+  stack || (stack = new Stack());
+  return equalObjects(object, other, bitmask, customizer, equalFunc, stack);
+}
+function baseIsEqual(value, other, bitmask, customizer, stack) {
+  if (value === other) {
+    return true;
+  }
+  if (value == null || other == null || !isObjectLike(value) && !isObjectLike(other)) {
+    return value !== value && other !== other;
+  }
+  return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);
+}
+var COMPARE_PARTIAL_FLAG$1 = 1;
+var COMPARE_UNORDERED_FLAG$1 = 2;
+function baseIsMatch(object, source, matchData, customizer) {
+  var index2 = matchData.length, length3 = index2, noCustomizer = !customizer;
+  if (object == null) {
+    return !length3;
+  }
+  object = Object(object);
+  while (index2--) {
+    var data = matchData[index2];
+    if (noCustomizer && data[2] ? data[1] !== object[data[0]] : !(data[0] in object)) {
+      return false;
+    }
+  }
+  while (++index2 < length3) {
+    data = matchData[index2];
+    var key = data[0], objValue = object[key], srcValue = data[1];
+    if (noCustomizer && data[2]) {
+      if (objValue === void 0 && !(key in object)) {
+        return false;
+      }
+    } else {
+      var stack = new Stack();
+      if (customizer) {
+        var result = customizer(objValue, srcValue, key, object, source, stack);
+      }
+      if (!(result === void 0 ? baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG$1 | COMPARE_UNORDERED_FLAG$1, customizer, stack) : result)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+function isStrictComparable(value) {
+  return value === value && !isObject(value);
+}
+function getMatchData(object) {
+  var result = keys(object), length3 = result.length;
+  while (length3--) {
+    var key = result[length3], value = object[key];
+    result[length3] = [key, value, isStrictComparable(value)];
+  }
+  return result;
+}
+function matchesStrictComparable(key, srcValue) {
+  return function(object) {
+    if (object == null) {
+      return false;
+    }
+    return object[key] === srcValue && (srcValue !== void 0 || key in Object(object));
+  };
+}
+function baseMatches(source) {
+  var matchData = getMatchData(source);
+  if (matchData.length == 1 && matchData[0][2]) {
+    return matchesStrictComparable(matchData[0][0], matchData[0][1]);
+  }
+  return function(object) {
+    return object === source || baseIsMatch(object, source, matchData);
+  };
+}
+function baseGet(object, path4) {
+  path4 = castPath(path4, object);
+  var index2 = 0, length3 = path4.length;
+  while (object != null && index2 < length3) {
+    object = object[toKey(path4[index2++])];
+  }
+  return index2 && index2 == length3 ? object : void 0;
+}
+function get(object, path4, defaultValue) {
+  var result = object == null ? void 0 : baseGet(object, path4);
+  return result === void 0 ? defaultValue : result;
+}
+function baseHasIn(object, key) {
+  return object != null && key in Object(object);
+}
+function hasIn(object, path4) {
+  return object != null && hasPath(object, path4, baseHasIn);
+}
+var COMPARE_PARTIAL_FLAG = 1;
+var COMPARE_UNORDERED_FLAG = 2;
+function baseMatchesProperty(path4, srcValue) {
+  if (isKey(path4) && isStrictComparable(srcValue)) {
+    return matchesStrictComparable(toKey(path4), srcValue);
+  }
+  return function(object) {
+    var objValue = get(object, path4);
+    return objValue === void 0 && objValue === srcValue ? hasIn(object, path4) : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
+  };
+}
+function basePropertyDeep(path4) {
+  return function(object) {
+    return baseGet(object, path4);
+  };
+}
+function property(path4) {
+  return isKey(path4) ? baseProperty(toKey(path4)) : basePropertyDeep(path4);
+}
+function baseIteratee(value) {
+  if (typeof value == "function") {
+    return value;
+  }
+  if (value == null) {
+    return identity2;
+  }
+  if (typeof value == "object") {
+    return isArray(value) ? baseMatchesProperty(value[0], value[1]) : baseMatches(value);
+  }
+  return property(value);
+}
+function filter(collection, predicate) {
+  var func = isArray(collection) ? arrayFilter : baseFilter;
+  return func(collection, baseIteratee(predicate));
+}
+function isUndefined(value) {
+  return value === void 0;
+}
+var spreadableSymbol = Symbol2 ? Symbol2.isConcatSpreadable : void 0;
+function isFlattenable(value) {
+  return isArray(value) || isArguments(value) || !!(spreadableSymbol && value && value[spreadableSymbol]);
+}
+function baseFlatten(array, depth, predicate, isStrict, result) {
+  var index2 = -1, length3 = array.length;
+  predicate || (predicate = isFlattenable);
+  result || (result = []);
+  while (++index2 < length3) {
+    var value = array[index2];
+    if (depth > 0 && predicate(value)) {
+      if (depth > 1) {
+        baseFlatten(value, depth - 1, predicate, isStrict, result);
+      } else {
+        arrayPush(result, value);
+      }
+    } else if (!isStrict) {
+      result[result.length] = value;
+    }
+  }
+  return result;
+}
+function apply(func, thisArg, args) {
+  switch (args.length) {
+    case 0:
+      return func.call(thisArg);
+    case 1:
+      return func.call(thisArg, args[0]);
+    case 2:
+      return func.call(thisArg, args[0], args[1]);
+    case 3:
+      return func.call(thisArg, args[0], args[1], args[2]);
+  }
+  return func.apply(thisArg, args);
+}
+var nativeMax = Math.max;
+function overRest(func, start, transform7) {
+  start = nativeMax(start === void 0 ? func.length - 1 : start, 0);
+  return function() {
+    var args = arguments, index2 = -1, length3 = nativeMax(args.length - start, 0), array = Array(length3);
+    while (++index2 < length3) {
+      array[index2] = args[start + index2];
+    }
+    index2 = -1;
+    var otherArgs = Array(start + 1);
+    while (++index2 < start) {
+      otherArgs[index2] = args[index2];
+    }
+    otherArgs[start] = transform7(array);
+    return apply(func, this, otherArgs);
+  };
+}
+var defineProperty = function() {
+  try {
+    var func = getNative(Object, "defineProperty");
+    func({}, "", {});
+    return func;
+  } catch (e) {
+  }
+}();
+var baseSetToString = !defineProperty ? identity2 : function(func, string) {
+  return defineProperty(func, "toString", {
+    "configurable": true,
+    "enumerable": false,
+    "value": constant(string),
+    "writable": true
+  });
+};
+var HOT_COUNT = 800;
+var HOT_SPAN = 16;
+var nativeNow = Date.now;
+function shortOut(func) {
+  var count = 0, lastCalled = 0;
+  return function() {
+    var stamp = nativeNow(), remaining = HOT_SPAN - (stamp - lastCalled);
+    lastCalled = stamp;
+    if (remaining > 0) {
+      if (++count >= HOT_COUNT) {
+        return arguments[0];
+      }
+    } else {
+      count = 0;
+    }
+    return func.apply(void 0, arguments);
+  };
+}
+var setToString = shortOut(baseSetToString);
+function baseRest(func, start) {
+  return setToString(overRest(func, start, identity2), func + "");
+}
+function baseFindIndex(array, predicate, fromIndex, fromRight) {
+  var length3 = array.length, index2 = fromIndex + (fromRight ? 1 : -1);
+  while (fromRight ? index2-- : ++index2 < length3) {
+    if (predicate(array[index2], index2, array)) {
+      return index2;
+    }
+  }
+  return -1;
+}
+function baseIsNaN(value) {
+  return value !== value;
+}
+function strictIndexOf(array, value, fromIndex) {
+  var index2 = fromIndex - 1, length3 = array.length;
+  while (++index2 < length3) {
+    if (array[index2] === value) {
+      return index2;
+    }
+  }
+  return -1;
+}
+function baseIndexOf(array, value, fromIndex) {
+  return value === value ? strictIndexOf(array, value, fromIndex) : baseFindIndex(array, baseIsNaN, fromIndex);
+}
+function arrayIncludes(array, value) {
+  var length3 = array == null ? 0 : array.length;
+  return !!length3 && baseIndexOf(array, value, 0) > -1;
+}
+function arrayIncludesWith(array, value, comparator) {
+  var index2 = -1, length3 = array == null ? 0 : array.length;
+  while (++index2 < length3) {
+    if (comparator(value, array[index2])) {
+      return true;
+    }
+  }
+  return false;
+}
+function noop() {
+}
+var INFINITY = 1 / 0;
+var createSet = !(Set$1 && 1 / setToArray(new Set$1([, -0]))[1] == INFINITY) ? noop : function(values4) {
+  return new Set$1(values4);
+};
+var LARGE_ARRAY_SIZE = 200;
+function baseUniq(array, iteratee, comparator) {
+  var index2 = -1, includes = arrayIncludes, length3 = array.length, isCommon = true, result = [], seen = result;
+  if (comparator) {
+    isCommon = false;
+    includes = arrayIncludesWith;
+  } else if (length3 >= LARGE_ARRAY_SIZE) {
+    var set3 = iteratee ? null : createSet(array);
+    if (set3) {
+      return setToArray(set3);
+    }
+    isCommon = false;
+    includes = cacheHas;
+    seen = new SetCache();
+  } else {
+    seen = iteratee ? [] : result;
+  }
+  outer:
+    while (++index2 < length3) {
+      var value = array[index2], computed = iteratee ? iteratee(value) : value;
+      value = comparator || value !== 0 ? value : 0;
+      if (isCommon && computed === computed) {
+        var seenIndex = seen.length;
+        while (seenIndex--) {
+          if (seen[seenIndex] === computed) {
+            continue outer;
+          }
+        }
+        if (iteratee) {
+          seen.push(computed);
+        }
+        result.push(value);
+      } else if (!includes(seen, computed, comparator)) {
+        if (seen !== result) {
+          seen.push(computed);
+        }
+        result.push(value);
+      }
+    }
+  return result;
+}
+function isArrayLikeObject(value) {
+  return isObjectLike(value) && isArrayLike(value);
+}
+var union = baseRest(function(arrays) {
+  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
+});
+var objectCreate = Object.create;
+var baseCreate = /* @__PURE__ */ function() {
+  function object() {
+  }
+  return function(proto) {
+    if (!isObject(proto)) {
+      return {};
+    }
+    if (objectCreate) {
+      return objectCreate(proto);
+    }
+    object.prototype = proto;
+    var result = new object();
+    object.prototype = void 0;
+    return result;
+  };
+}();
+var getPrototype = overArg(Object.getPrototypeOf, Object);
+function transform3(object, iteratee, accumulator) {
+  var isArr = isArray(object), isArrLike = isArr || isBuffer(object) || isTypedArray(object);
+  iteratee = baseIteratee(iteratee);
+  if (accumulator == null) {
+    var Ctor = object && object.constructor;
+    if (isArrLike) {
+      accumulator = isArr ? new Ctor() : [];
+    } else if (isObject(object)) {
+      accumulator = isFunction(Ctor) ? baseCreate(getPrototype(object)) : {};
+    } else {
+      accumulator = {};
+    }
+  }
+  (isArrLike ? arrayEach : baseForOwn)(object, function(value, index2, object2) {
+    return iteratee(accumulator, value, index2, object2);
+  });
+  return accumulator;
+}
+function baseMap(collection, iteratee) {
+  var index2 = -1, result = isArrayLike(collection) ? Array(collection.length) : [];
+  baseEach(collection, function(value, key, collection2) {
+    result[++index2] = iteratee(value, key, collection2);
+  });
+  return result;
+}
+function map(collection, iteratee) {
+  var func = isArray(collection) ? arrayMap : baseMap;
+  return func(collection, baseIteratee(iteratee));
+}
+function baseValues(object, props) {
+  return arrayMap(props, function(key) {
+    return object[key];
+  });
+}
+function values(object) {
+  return object == null ? [] : baseValues(object, keys(object));
+}
+var mapTag = "[object Map]";
+var setTag = "[object Set]";
+var objectProto = Object.prototype;
+var hasOwnProperty = objectProto.hasOwnProperty;
+function isEmpty(value) {
+  if (value == null) {
+    return true;
+  }
+  if (isArrayLike(value) && (isArray(value) || typeof value == "string" || typeof value.splice == "function" || isBuffer(value) || isTypedArray(value) || isArguments(value))) {
+    return !value.length;
+  }
+  var tag2 = getTag$1(value);
+  if (tag2 == mapTag || tag2 == setTag) {
+    return !value.size;
+  }
+  if (isPrototype(value)) {
+    return !baseKeys(value).length;
+  }
+  for (var key in value) {
+    if (hasOwnProperty.call(value, key)) {
+      return false;
+    }
+  }
+  return true;
+}
+function arrayReduce(array, iteratee, accumulator, initAccum) {
+  var index2 = -1, length3 = array == null ? 0 : array.length;
+  if (initAccum && length3) {
+    accumulator = array[++index2];
+  }
+  while (++index2 < length3) {
+    accumulator = iteratee(accumulator, array[index2], index2, array);
+  }
+  return accumulator;
+}
+function baseReduce(collection, iteratee, accumulator, initAccum, eachFunc) {
+  eachFunc(collection, function(value, index2, collection2) {
+    accumulator = initAccum ? (initAccum = false, value) : iteratee(accumulator, value, index2, collection2);
+  });
+  return accumulator;
+}
+function reduce(collection, iteratee, accumulator) {
+  var func = isArray(collection) ? arrayReduce : baseReduce, initAccum = arguments.length < 3;
+  return func(collection, baseIteratee(iteratee), accumulator, initAccum, baseEach);
+}
+var _ = {
+  has,
+  constant,
+  each: forEach2,
+  filter,
+  isUndefined,
+  union,
+  transform: transform3,
+  size,
+  isArray,
+  map,
+  keys,
+  values,
+  isEmpty,
+  isFunction,
+  reduce
+};
+var DEFAULT_EDGE_NAME = "\0";
+var GRAPH_NODE = "\0";
+var EDGE_KEY_DELIM = "";
+function Graph(opts) {
+  this._isDirected = _.has(opts, "directed") ? opts.directed : true;
+  this._isMultigraph = _.has(opts, "multigraph") ? opts.multigraph : false;
+  this._isCompound = _.has(opts, "compound") ? opts.compound : false;
+  this._label = void 0;
+  this._defaultNodeLabelFn = _.constant(void 0);
+  this._defaultEdgeLabelFn = _.constant(void 0);
+  this._nodes = {};
+  if (this._isCompound) {
+    this._parent = {};
+    this._children = {};
+    this._children[GRAPH_NODE] = {};
+  }
+  this._in = {};
+  this._preds = {};
+  this._out = {};
+  this._sucs = {};
+  this._edgeObjs = {};
+  this._edgeLabels = {};
+}
+Graph.prototype._nodeCount = 0;
+Graph.prototype._edgeCount = 0;
+Graph.prototype.isDirected = function() {
+  return this._isDirected;
+};
+Graph.prototype.isMultigraph = function() {
+  return this._isMultigraph;
+};
+Graph.prototype.isCompound = function() {
+  return this._isCompound;
+};
+Graph.prototype.setGraph = function(label) {
+  this._label = label;
+  return this;
+};
+Graph.prototype.graph = function() {
+  return this._label;
+};
+Graph.prototype.setDefaultNodeLabel = function(newDefault) {
+  if (!_.isFunction(newDefault)) {
+    newDefault = _.constant(newDefault);
+  }
+  this._defaultNodeLabelFn = newDefault;
+  return this;
+};
+Graph.prototype.nodeCount = function() {
+  return this._nodeCount;
+};
+Graph.prototype.nodes = function() {
+  return _.keys(this._nodes);
+};
+Graph.prototype.sources = function() {
+  const self2 = this;
+  return _.filter(this.nodes(), function(v) {
+    return _.isEmpty(self2._in[v]);
+  });
+};
+Graph.prototype.sinks = function() {
+  const self2 = this;
+  return _.filter(this.nodes(), function(v) {
+    return _.isEmpty(self2._out[v]);
+  });
+};
+Graph.prototype.setNodes = function(vs, value) {
+  const args = arguments;
+  const self2 = this;
+  _.each(vs, function(v) {
+    if (args.length > 1) {
+      self2.setNode(v, value);
+    } else {
+      self2.setNode(v);
+    }
+  });
+  return this;
+};
+Graph.prototype.setNode = function(v, value) {
+  if (_.has(this._nodes, v)) {
+    if (arguments.length > 1) {
+      this._nodes[v] = value;
+    }
+    return this;
+  }
+  this._nodes[v] = arguments.length > 1 ? value : this._defaultNodeLabelFn(v);
+  if (this._isCompound) {
+    this._parent[v] = GRAPH_NODE;
+    this._children[v] = {};
+    this._children[GRAPH_NODE][v] = true;
+  }
+  this._in[v] = {};
+  this._preds[v] = {};
+  this._out[v] = {};
+  this._sucs[v] = {};
+  ++this._nodeCount;
+  return this;
+};
+Graph.prototype.node = function(v) {
+  return this._nodes[v];
+};
+Graph.prototype.hasNode = function(v) {
+  return _.has(this._nodes, v);
+};
+Graph.prototype.removeNode = function(v) {
+  const self2 = this;
+  if (_.has(this._nodes, v)) {
+    const removeEdge = function(e) {
+      self2.removeEdge(self2._edgeObjs[e]);
+    };
+    delete this._nodes[v];
+    if (this._isCompound) {
+      this._removeFromParentsChildList(v);
+      delete this._parent[v];
+      _.each(this.children(v), function(child) {
+        self2.setParent(child);
+      });
+      delete this._children[v];
+    }
+    _.each(_.keys(this._in[v]), removeEdge);
+    delete this._in[v];
+    delete this._preds[v];
+    _.each(_.keys(this._out[v]), removeEdge);
+    delete this._out[v];
+    delete this._sucs[v];
+    --this._nodeCount;
+  }
+  return this;
+};
+Graph.prototype.setParent = function(v, parent) {
+  if (!this._isCompound) {
+    throw new Error("Cannot set parent in a non-compound graph");
+  }
+  if (_.isUndefined(parent)) {
+    parent = GRAPH_NODE;
+  } else {
+    parent += "";
+    for (let ancestor = parent; !_.isUndefined(ancestor); ancestor = this.parent(ancestor)) {
+      if (ancestor === v) {
+        throw new Error("Setting " + parent + " as parent of " + v + " would create a cycle");
+      }
+    }
+    this.setNode(parent);
+  }
+  this.setNode(v);
+  this._removeFromParentsChildList(v);
+  this._parent[v] = parent;
+  this._children[parent][v] = true;
+  return this;
+};
+Graph.prototype._removeFromParentsChildList = function(v) {
+  delete this._children[this._parent[v]][v];
+};
+Graph.prototype.parent = function(v) {
+  if (this._isCompound) {
+    const parent = this._parent[v];
+    if (parent !== GRAPH_NODE) {
+      return parent;
+    }
+  }
+};
+Graph.prototype.children = function(v) {
+  if (_.isUndefined(v)) {
+    v = GRAPH_NODE;
+  }
+  if (this._isCompound) {
+    const children = this._children[v];
+    if (children) {
+      return _.keys(children);
+    }
+  } else if (v === GRAPH_NODE) {
+    return this.nodes();
+  } else if (this.hasNode(v)) {
+    return [];
+  }
+};
+Graph.prototype.predecessors = function(v) {
+  const predsV = this._preds[v];
+  if (predsV) {
+    return _.keys(predsV);
+  }
+};
+Graph.prototype.successors = function(v) {
+  const sucsV = this._sucs[v];
+  if (sucsV) {
+    return _.keys(sucsV);
+  }
+};
+Graph.prototype.neighbors = function(v) {
+  const preds = this.predecessors(v);
+  if (preds) {
+    return _.union(preds, this.successors(v));
+  }
+};
+Graph.prototype.isLeaf = function(v) {
+  let neighbors;
+  if (this.isDirected()) {
+    neighbors = this.successors(v);
+  } else {
+    neighbors = this.neighbors(v);
+  }
+  return neighbors.length === 0;
+};
+Graph.prototype.filterNodes = function(filter3) {
+  const copy4 = new this.constructor({
+    directed: this._isDirected,
+    multigraph: this._isMultigraph,
+    compound: this._isCompound
+  });
+  copy4.setGraph(this.graph());
+  const self2 = this;
+  _.each(this._nodes, function(value, v) {
+    if (filter3(v)) {
+      copy4.setNode(v, value);
+    }
+  });
+  _.each(this._edgeObjs, function(e) {
+    if (copy4.hasNode(e.v) && copy4.hasNode(e.w)) {
+      copy4.setEdge(e, self2.edge(e));
+    }
+  });
+  const parents = {};
+  function findParent(v) {
+    const parent = self2.parent(v);
+    if (parent === void 0 || copy4.hasNode(parent)) {
+      parents[v] = parent;
+      return parent;
+    } else if (parent in parents) {
+      return parents[parent];
+    } else {
+      return findParent(parent);
+    }
+  }
+  if (this._isCompound) {
+    _.each(copy4.nodes(), function(v) {
+      copy4.setParent(v, findParent(v));
+    });
+  }
+  return copy4;
+};
+Graph.prototype.setDefaultEdgeLabel = function(newDefault) {
+  if (!_.isFunction(newDefault)) {
+    newDefault = _.constant(newDefault);
+  }
+  this._defaultEdgeLabelFn = newDefault;
+  return this;
+};
+Graph.prototype.edgeCount = function() {
+  return this._edgeCount;
+};
+Graph.prototype.edges = function() {
+  return _.values(this._edgeObjs);
+};
+Graph.prototype.setPath = function(vs, value) {
+  const self2 = this;
+  const args = arguments;
+  _.reduce(vs, function(v, w) {
+    if (args.length > 1) {
+      self2.setEdge(v, w, value);
+    } else {
+      self2.setEdge(v, w);
+    }
+    return w;
+  });
+  return this;
+};
+Graph.prototype.setEdge = function() {
+  let v, w, name, value;
+  let valueSpecified = false;
+  const arg0 = arguments[0];
+  if (typeof arg0 === "object" && arg0 !== null && "v" in arg0) {
+    v = arg0.v;
+    w = arg0.w;
+    name = arg0.name;
+    if (arguments.length === 2) {
+      value = arguments[1];
+      valueSpecified = true;
+    }
+  } else {
+    v = arg0;
+    w = arguments[1];
+    name = arguments[3];
+    if (arguments.length > 2) {
+      value = arguments[2];
+      valueSpecified = true;
+    }
+  }
+  v = "" + v;
+  w = "" + w;
+  if (!_.isUndefined(name)) {
+    name = "" + name;
+  }
+  const e = edgeArgsToId(this._isDirected, v, w, name);
+  if (_.has(this._edgeLabels, e)) {
+    if (valueSpecified) {
+      this._edgeLabels[e] = value;
+    }
+    return this;
+  }
+  if (!_.isUndefined(name) && !this._isMultigraph) {
+    throw new Error("Cannot set a named edge when isMultigraph = false");
+  }
+  this.setNode(v);
+  this.setNode(w);
+  this._edgeLabels[e] = valueSpecified ? value : this._defaultEdgeLabelFn(v, w, name);
+  const edgeObj = edgeArgsToObj(this._isDirected, v, w, name);
+  v = edgeObj.v;
+  w = edgeObj.w;
+  Object.freeze(edgeObj);
+  this._edgeObjs[e] = edgeObj;
+  incrementOrInitEntry(this._preds[w], v);
+  incrementOrInitEntry(this._sucs[v], w);
+  this._in[w][e] = edgeObj;
+  this._out[v][e] = edgeObj;
+  this._edgeCount++;
+  return this;
+};
+Graph.prototype.edge = function(v, w, name) {
+  const e = arguments.length === 1 ? edgeObjToId(this._isDirected, arguments[0]) : edgeArgsToId(this._isDirected, v, w, name);
+  return this._edgeLabels[e];
+};
+Graph.prototype.hasEdge = function(v, w, name) {
+  const e = arguments.length === 1 ? edgeObjToId(this._isDirected, arguments[0]) : edgeArgsToId(this._isDirected, v, w, name);
+  return _.has(this._edgeLabels, e);
+};
+Graph.prototype.removeEdge = function(v, w, name) {
+  const e = arguments.length === 1 ? edgeObjToId(this._isDirected, arguments[0]) : edgeArgsToId(this._isDirected, v, w, name);
+  const edge = this._edgeObjs[e];
+  if (edge) {
+    v = edge.v;
+    w = edge.w;
+    delete this._edgeLabels[e];
+    delete this._edgeObjs[e];
+    decrementOrRemoveEntry(this._preds[w], v);
+    decrementOrRemoveEntry(this._sucs[v], w);
+    delete this._in[w][e];
+    delete this._out[v][e];
+    this._edgeCount--;
+  }
+  return this;
+};
+Graph.prototype.inEdges = function(v, u) {
+  const inV = this._in[v];
+  if (inV) {
+    const edges = _.values(inV);
+    if (!u) {
+      return edges;
+    }
+    return _.filter(edges, function(edge) {
+      return edge.v === u;
+    });
+  }
+};
+Graph.prototype.outEdges = function(v, w) {
+  const outV = this._out[v];
+  if (outV) {
+    const edges = _.values(outV);
+    if (!w) {
+      return edges;
+    }
+    return _.filter(edges, function(edge) {
+      return edge.w === w;
+    });
+  }
+};
+Graph.prototype.nodeEdges = function(v, w) {
+  const inEdges = this.inEdges(v, w);
+  if (inEdges) {
+    return inEdges.concat(this.outEdges(v, w));
+  }
+};
+function incrementOrInitEntry(map4, k) {
+  if (map4[k]) {
+    map4[k]++;
+  } else {
+    map4[k] = 1;
+  }
+}
+function decrementOrRemoveEntry(map4, k) {
+  if (!--map4[k]) {
+    delete map4[k];
+  }
+}
+function edgeArgsToId(isDirected, v_, w_, name) {
+  let v = "" + v_;
+  let w = "" + w_;
+  if (!isDirected && v > w) {
+    const tmp = v;
+    v = w;
+    w = tmp;
+  }
+  return v + EDGE_KEY_DELIM + w + EDGE_KEY_DELIM + (_.isUndefined(name) ? DEFAULT_EDGE_NAME : name);
+}
+function edgeArgsToObj(isDirected, v_, w_, name) {
+  let v = "" + v_;
+  let w = "" + w_;
+  if (!isDirected && v > w) {
+    const tmp = v;
+    v = w;
+    w = tmp;
+  }
+  const edgeObj = { v, w };
+  if (name) {
+    edgeObj.name = name;
+  }
+  return edgeObj;
+}
+function edgeObjToId(isDirected, edgeObj) {
+  return edgeArgsToId(isDirected, edgeObj.v, edgeObj.w, edgeObj.name);
+}
+function components(g) {
+  const visited = {};
+  const cmpts = [];
+  let cmpt;
+  function dfs2(v) {
+    if (_.has(visited, v)) return;
+    visited[v] = true;
+    cmpt.push(v);
+    _.each(g.successors(v), dfs2);
+    _.each(g.predecessors(v), dfs2);
+  }
+  _.each(g.nodes(), function(v) {
+    cmpt = [];
+    dfs2(v);
+    if (cmpt.length) {
+      cmpts.push(cmpt);
+    }
+  });
+  return cmpts;
+}
+function PriorityQueue() {
+  this._arr = [];
+  this._keyIndices = {};
+}
+PriorityQueue.prototype.size = function() {
+  return this._arr.length;
+};
+PriorityQueue.prototype.keys = function() {
+  return this._arr.map(function(x2) {
+    return x2.key;
+  });
+};
+PriorityQueue.prototype.has = function(key) {
+  return _.has(this._keyIndices, key);
+};
+PriorityQueue.prototype.priority = function(key) {
+  const index2 = this._keyIndices[key];
+  if (index2 !== void 0) {
+    return this._arr[index2].priority;
+  }
+};
+PriorityQueue.prototype.min = function() {
+  if (this.size() === 0) {
+    throw new Error("Queue underflow");
+  }
+  return this._arr[0].key;
+};
+PriorityQueue.prototype.add = function(key, priority) {
+  const keyIndices = this._keyIndices;
+  key = String(key);
+  if (!_.has(keyIndices, key)) {
+    const arr2 = this._arr;
+    const index2 = arr2.length;
+    keyIndices[key] = index2;
+    arr2.push({ key, priority });
+    this._decrease(index2);
+    return true;
+  }
+  return false;
+};
+PriorityQueue.prototype.removeMin = function() {
+  this._swap(0, this._arr.length - 1);
+  const min4 = this._arr.pop();
+  delete this._keyIndices[min4.key];
+  this._heapify(0);
+  return min4.key;
+};
+PriorityQueue.prototype.decrease = function(key, priority) {
+  const index2 = this._keyIndices[key];
+  if (priority > this._arr[index2].priority) {
+    throw new Error("New priority is greater than current priority. Key: " + key + " Old: " + this._arr[index2].priority + " New: " + priority);
+  }
+  this._arr[index2].priority = priority;
+  this._decrease(index2);
+};
+PriorityQueue.prototype._heapify = function(i2) {
+  const arr2 = this._arr;
+  const l = 2 * i2;
+  const r = l + 1;
+  let largest = i2;
+  if (l < arr2.length) {
+    largest = arr2[l].priority < arr2[largest].priority ? l : largest;
+    if (r < arr2.length) {
+      largest = arr2[r].priority < arr2[largest].priority ? r : largest;
+    }
+    if (largest !== i2) {
+      this._swap(i2, largest);
+      this._heapify(largest);
+    }
+  }
+};
+PriorityQueue.prototype._decrease = function(index2) {
+  const arr2 = this._arr;
+  const priority = arr2[index2].priority;
+  let parent;
+  while (index2 !== 0) {
+    parent = index2 >> 1;
+    if (arr2[parent].priority < priority) {
+      break;
+    }
+    this._swap(index2, parent);
+    index2 = parent;
+  }
+};
+PriorityQueue.prototype._swap = function(i2, j) {
+  const arr2 = this._arr;
+  const keyIndices = this._keyIndices;
+  const origArrI = arr2[i2];
+  const origArrJ = arr2[j];
+  arr2[i2] = origArrJ;
+  arr2[j] = origArrI;
+  keyIndices[origArrJ.key] = i2;
+  keyIndices[origArrI.key] = j;
+};
+var DEFAULT_WEIGHT_FUNC$1 = _.constant(1);
+function dijkstra(g, source, weightFn, edgeFn) {
+  return runDijkstra(
+    g,
+    String(source),
+    weightFn || DEFAULT_WEIGHT_FUNC$1,
+    edgeFn || function(v) {
+      return g.outEdges(v);
+    }
+  );
+}
+function runDijkstra(g, source, weightFn, edgeFn) {
+  const results = {};
+  const pq = new PriorityQueue();
+  let v, vEntry;
+  const updateNeighbors = function(edge) {
+    const w = edge.v !== v ? edge.v : edge.w;
+    const wEntry = results[w];
+    const weight = weightFn(edge);
+    const distance3 = vEntry.distance + weight;
+    if (weight < 0) {
+      throw new Error("dijkstra does not allow negative edge weights. Bad edge: " + edge + " Weight: " + weight);
+    }
+    if (distance3 < wEntry.distance) {
+      wEntry.distance = distance3;
+      wEntry.predecessor = v;
+      pq.decrease(w, distance3);
+    }
+  };
+  g.nodes().forEach(function(v2) {
+    const distance3 = v2 === source ? 0 : Number.POSITIVE_INFINITY;
+    results[v2] = { distance: distance3 };
+    pq.add(v2, distance3);
+  });
+  while (pq.size() > 0) {
+    v = pq.removeMin();
+    vEntry = results[v];
+    if (vEntry.distance === Number.POSITIVE_INFINITY) {
+      break;
+    }
+    edgeFn(v).forEach(updateNeighbors);
+  }
+  return results;
+}
+function dijkstraAll(g, weightFunc, edgeFunc) {
+  return _.transform(g.nodes(), function(acc, v) {
+    acc[v] = dijkstra(g, v, weightFunc, edgeFunc);
+  }, {});
+}
+function tarjan(g) {
+  let index2 = 0;
+  const stack = [];
+  const visited = {};
+  const results = [];
+  function dfs2(v) {
+    const entry = visited[v] = {
+      onStack: true,
+      lowlink: index2,
+      index: index2++
+    };
+    stack.push(v);
+    g.successors(v).forEach(function(w) {
+      if (!_.has(visited, w)) {
+        dfs2(w);
+        entry.lowlink = Math.min(entry.lowlink, visited[w].lowlink);
+      } else if (visited[w].onStack) {
+        entry.lowlink = Math.min(entry.lowlink, visited[w].index);
+      }
+    });
+    if (entry.lowlink === entry.index) {
+      const cmpt = [];
+      let w;
+      do {
+        w = stack.pop();
+        visited[w].onStack = false;
+        cmpt.push(w);
+      } while (v !== w);
+      results.push(cmpt);
+    }
+  }
+  g.nodes().forEach(function(v) {
+    if (!_.has(visited, v)) {
+      dfs2(v);
+    }
+  });
+  return results;
+}
+function findCycles(g) {
+  return _.filter(tarjan(g), function(cmpt) {
+    return cmpt.length > 1 || cmpt.length === 1 && g.hasEdge(cmpt[0], cmpt[0]);
+  });
+}
+var DEFAULT_WEIGHT_FUNC = _.constant(1);
+function floydWarshall(g, weightFn, edgeFn) {
+  return runFloydWarshall(
+    g,
+    weightFn || DEFAULT_WEIGHT_FUNC,
+    edgeFn || function(v) {
+      return g.outEdges(v);
+    }
+  );
+}
+function runFloydWarshall(g, weightFn, edgeFn) {
+  const results = {};
+  const nodes = g.nodes();
+  nodes.forEach(function(v) {
+    results[v] = {};
+    results[v][v] = { distance: 0 };
+    nodes.forEach(function(w) {
+      if (v !== w) {
+        results[v][w] = { distance: Number.POSITIVE_INFINITY };
+      }
+    });
+    edgeFn(v).forEach(function(edge) {
+      const w = edge.v === v ? edge.w : edge.v;
+      const d = weightFn(edge);
+      results[v][w] = { distance: d, predecessor: v };
+    });
+  });
+  nodes.forEach(function(k) {
+    const rowK = results[k];
+    nodes.forEach(function(i2) {
+      const rowI = results[i2];
+      nodes.forEach(function(j) {
+        const ik = rowI[k];
+        const kj = rowK[j];
+        const ij = rowI[j];
+        const altDistance = ik.distance + kj.distance;
+        if (altDistance < ij.distance) {
+          ij.distance = altDistance;
+          ij.predecessor = kj.predecessor;
+        }
+      });
+    });
+  });
+  return results;
+}
+topsort.CycleException = CycleException;
+function topsort(g) {
+  const visited = {};
+  const stack = {};
+  const results = [];
+  function visit(node2) {
+    if (_.has(stack, node2)) {
+      throw new CycleException();
+    }
+    if (!_.has(visited, node2)) {
+      stack[node2] = true;
+      visited[node2] = true;
+      _.each(g.predecessors(node2), visit);
+      delete stack[node2];
+      results.push(node2);
+    }
+  }
+  _.each(g.sinks(), visit);
+  if (_.size(visited) !== g.nodeCount()) {
+    throw new CycleException();
+  }
+  return results;
+}
+function CycleException() {
+}
+CycleException.prototype = new Error();
+function isAcyclic(g) {
+  try {
+    topsort(g);
+  } catch (e) {
+    if (e instanceof topsort.CycleException) {
+      return false;
+    }
+    throw e;
+  }
+  return true;
+}
+function dfs$1(g, vs, order2) {
+  if (!_.isArray(vs)) {
+    vs = [vs];
+  }
+  const navigation = (g.isDirected() ? g.successors : g.neighbors).bind(g);
+  const acc = [];
+  const visited = {};
+  _.each(vs, function(v) {
+    if (!g.hasNode(v)) {
+      throw new Error("Graph does not have node: " + v);
+    }
+    doDfs(g, v, order2 === "post", visited, navigation, acc);
+  });
+  return acc;
+}
+function doDfs(g, v, postorder2, visited, navigation, acc) {
+  if (!_.has(visited, v)) {
+    visited[v] = true;
+    if (!postorder2) {
+      acc.push(v);
+    }
+    _.each(navigation(v), function(w) {
+      doDfs(g, w, postorder2, visited, navigation, acc);
+    });
+    if (postorder2) {
+      acc.push(v);
+    }
+  }
+}
+function postorder$2(g, vs) {
+  return dfs$1(g, vs, "post");
+}
+function preorder$1(g, vs) {
+  return dfs$1(g, vs, "pre");
+}
+function prim(g, weightFunc) {
+  const result = new Graph();
+  const parents = {};
+  const pq = new PriorityQueue();
+  let v;
+  function updateNeighbors(edge) {
+    const w = edge.v === v ? edge.w : edge.v;
+    const pri = pq.priority(w);
+    if (pri !== void 0) {
+      const edgeWeight = weightFunc(edge);
+      if (edgeWeight < pri) {
+        parents[w] = v;
+        pq.decrease(w, edgeWeight);
+      }
+    }
+  }
+  if (g.nodeCount() === 0) {
+    return result;
+  }
+  _.each(g.nodes(), function(v2) {
+    pq.add(v2, Number.POSITIVE_INFINITY);
+    result.setNode(v2);
+  });
+  pq.decrease(g.nodes()[0], 0);
+  let init = false;
+  while (pq.size() > 0) {
+    v = pq.removeMin();
+    if (_.has(parents, v)) {
+      result.setEdge(v, parents[v]);
+    } else if (init) {
+      throw new Error("Input graph is not connected: " + g);
+    } else {
+      init = true;
+    }
+    g.nodeEdges(v).forEach(updateNeighbors);
+  }
+  return result;
+}
+var alg = {
+  components,
+  dijkstra,
+  dijkstraAll,
+  findCycles,
+  floydWarshall,
+  isAcyclic,
+  postorder: postorder$2,
+  preorder: preorder$1,
+  prim,
+  tarjan,
+  topsort
+};
+function List() {
+  const sentinel = {};
+  sentinel._next = sentinel._prev = sentinel;
+  this._sentinel = sentinel;
+}
+List.prototype.dequeue = function() {
+  const sentinel = this._sentinel;
+  const entry = sentinel._prev;
+  if (entry !== sentinel) {
+    unlink(entry);
+    return entry;
+  }
+};
+List.prototype.enqueue = function(entry) {
+  const sentinel = this._sentinel;
+  if (entry._prev && entry._next) {
+    unlink(entry);
+  }
+  entry._next = sentinel._next;
+  sentinel._next._prev = entry;
+  sentinel._next = entry;
+  entry._prev = sentinel;
+};
+List.prototype.toString = function() {
+  const strs = [];
+  const sentinel = this._sentinel;
+  let curr = sentinel._prev;
+  while (curr !== sentinel) {
+    strs.push(JSON.stringify(curr, filterOutLinks));
+    curr = curr._prev;
+  }
+  return "[" + strs.join(", ") + "]";
+};
+function unlink(entry) {
+  entry._prev._next = entry._next;
+  entry._next._prev = entry._prev;
+  delete entry._next;
+  delete entry._prev;
+}
+function filterOutLinks(k, v) {
+  if (k !== "_next" && k !== "_prev") {
+    return v;
+  }
+}
+var DEFAULT_WEIGHT_FN = (e) => 1;
+function greedyFAS(g, weightFn) {
+  if (g.nodeCount() <= 1) {
+    return [];
+  }
+  const state = buildState(g, weightFn || DEFAULT_WEIGHT_FN);
+  const results = doGreedyFAS(state.graph, state.buckets, state.zeroIdx);
+  return flatten2(map$1(results, function(e) {
+    return g.outEdges(e.v, e.w);
+  }));
+}
+function doGreedyFAS(g, buckets, zeroIdx) {
+  let results = [];
+  const sources = buckets[buckets.length - 1];
+  const sinks = buckets[0];
+  let entry;
+  while (g.nodeCount()) {
+    while (entry = sinks.dequeue()) {
+      removeNode(g, buckets, zeroIdx, entry);
+    }
+    while (entry = sources.dequeue()) {
+      removeNode(g, buckets, zeroIdx, entry);
+    }
+    if (g.nodeCount()) {
+      for (let i2 = buckets.length - 2; i2 > 0; --i2) {
+        entry = buckets[i2].dequeue();
+        if (entry) {
+          results = results.concat(removeNode(g, buckets, zeroIdx, entry, true));
+          break;
+        }
+      }
+    }
+  }
+  return results;
+}
+function removeNode(g, buckets, zeroIdx, entry, collectPredecessors = false) {
+  const results = collectPredecessors ? [] : void 0;
+  forEach$1(g.inEdges(entry.v), function(edge) {
+    const weight = g.edge(edge);
+    const uEntry = g.node(edge.v);
+    if (collectPredecessors) {
+      results.push({ v: edge.v, w: edge.w });
+    }
+    uEntry.out -= weight;
+    assignBucket(buckets, zeroIdx, uEntry);
+  });
+  forEach$1(g.outEdges(entry.v), function(edge) {
+    const weight = g.edge(edge);
+    const w = edge.w;
+    const wEntry = g.node(w);
+    wEntry["in"] -= weight;
+    assignBucket(buckets, zeroIdx, wEntry);
+  });
+  g.removeNode(entry.v);
+  return results;
+}
+function buildState(g, weightFn) {
+  const fasGraph = new Graph();
+  let maxIn = 0;
+  let maxOut = 0;
+  forEach$1(g.nodes(), function(v) {
+    fasGraph.setNode(v, { v, in: 0, out: 0 });
+  });
+  forEach$1(g.edges(), function(e) {
+    const prevWeight = fasGraph.edge(e.v, e.w) || 0;
+    const weight = weightFn(e);
+    const edgeWeight = prevWeight + weight;
+    fasGraph.setEdge(e.v, e.w, edgeWeight);
+    maxOut = Math.max(maxOut, fasGraph.node(e.v).out += weight);
+    maxIn = Math.max(maxIn, fasGraph.node(e.w)["in"] += weight);
+  });
+  const buckets = range$1(maxOut + maxIn + 3).map(function() {
+    return new List();
+  });
+  const zeroIdx = maxIn + 1;
+  forEach$1(fasGraph.nodes(), function(v) {
+    assignBucket(buckets, zeroIdx, fasGraph.node(v));
+  });
+  return { graph: fasGraph, buckets, zeroIdx };
+}
+function assignBucket(buckets, zeroIdx, entry) {
+  if (!entry.out) {
+    buckets[0].enqueue(entry);
+  } else if (!entry["in"]) {
+    buckets[buckets.length - 1].enqueue(entry);
+  } else {
+    buckets[entry.out - entry["in"] + zeroIdx].enqueue(entry);
+  }
+}
+function run$2(g) {
+  const fas = g.graph().acyclicer === "greedy" ? greedyFAS(g, weightFn(g)) : dfsFAS(g);
+  forEach$1(fas, function(e) {
+    const label = g.edge(e);
+    g.removeEdge(e);
+    label.forwardName = e.name;
+    label.reversed = true;
+    g.setEdge(e.w, e.v, label, uniqueId("rev"));
+  });
+  function weightFn(g2) {
+    return function(e) {
+      return g2.edge(e).weight;
+    };
+  }
+}
+function dfsFAS(g) {
+  const fas = [];
+  const stack = {};
+  const visited = {};
+  function dfs2(v) {
+    if (has$1(visited, v)) {
+      return;
+    }
+    visited[v] = true;
+    stack[v] = true;
+    forEach$1(g.outEdges(v), function(e) {
+      if (has$1(stack, e.w)) {
+        fas.push(e);
+      } else {
+        dfs2(e.w);
+      }
+    });
+    delete stack[v];
+  }
+  forEach$1(g.nodes(), dfs2);
+  return fas;
+}
+function undo$2(g) {
+  forEach$1(g.edges(), function(e) {
+    const label = g.edge(e);
+    if (label.reversed) {
+      g.removeEdge(e);
+      const forwardName = label.forwardName;
+      delete label.reversed;
+      delete label.forwardName;
+      g.setEdge(e.w, e.v, label, forwardName);
+    }
+  });
+}
+var acyclic = {
+  run: run$2,
+  undo: undo$2
+};
+function addDummyNode(g, type, attrs, name) {
+  let v;
+  do {
+    v = uniqueId(name);
+  } while (g.hasNode(v));
+  attrs.dummy = type;
+  g.setNode(v, attrs);
+  return v;
+}
+function simplify(g) {
+  const simplified = new Graph().setGraph(g.graph());
+  forEach$1(g.nodes(), function(v) {
+    simplified.setNode(v, g.node(v));
+  });
+  forEach$1(g.edges(), function(e) {
+    const simpleLabel = simplified.edge(e.v, e.w) || { weight: 0, minlen: 1 };
+    const label = g.edge(e);
+    simplified.setEdge(e.v, e.w, {
+      weight: simpleLabel.weight + label.weight,
+      minlen: Math.max(simpleLabel.minlen, label.minlen)
+    });
+  });
+  return simplified;
+}
+function asNonCompoundGraph(g) {
+  const simplified = new Graph({ multigraph: g.isMultigraph() }).setGraph(g.graph());
+  forEach$1(g.nodes(), function(v) {
+    if (!g.children(v).length) {
+      simplified.setNode(v, g.node(v));
+    }
+  });
+  forEach$1(g.edges(), function(e) {
+    simplified.setEdge(e, g.edge(e));
+  });
+  return simplified;
+}
+function successorWeights(g) {
+  const weightMap = map$1(g.nodes(), function(v) {
+    const sucs = {};
+    forEach$1(g.outEdges(v), function(e) {
+      sucs[e.w] = (sucs[e.w] || 0) + g.edge(e).weight;
+    });
+    return sucs;
+  });
+  return zipObject(g.nodes(), weightMap);
+}
+function predecessorWeights(g) {
+  const weightMap = map$1(g.nodes(), function(v) {
+    const preds = {};
+    forEach$1(g.inEdges(v), function(e) {
+      preds[e.v] = (preds[e.v] || 0) + g.edge(e).weight;
+    });
+    return preds;
+  });
+  return zipObject(g.nodes(), weightMap);
+}
+function intersectRect(rect, point2) {
+  const x2 = rect.x;
+  const y2 = rect.y;
+  const dx = point2.x - x2;
+  const dy = point2.y - y2;
+  let w = rect.width / 2;
+  let h = rect.height / 2;
+  if (!dx && !dy) {
+    throw new Error("Not possible to find intersection inside of the rectangle");
+  }
+  let sx;
+  let sy;
+  if (Math.abs(dy) * w > Math.abs(dx) * h) {
+    if (dy < 0) {
+      h = -h;
+    }
+    sx = h * dx / dy;
+    sy = h;
+  } else {
+    if (dx < 0) {
+      w = -w;
+    }
+    sx = w;
+    sy = w * dy / dx;
+  }
+  return { x: x2 + sx, y: y2 + sy };
+}
+function buildLayerMatrix(g) {
+  const layering = map$1(range$1(maxRank(g) + 1), function() {
+    return [];
+  });
+  forEach$1(g.nodes(), function(v) {
+    const node2 = g.node(v);
+    const rank2 = node2.rank;
+    if (!isUndefined$1(rank2) && typeof node2.order === "number") {
+      layering[rank2][node2.order] = v;
+    }
+  });
+  return layering;
+}
+function normalizeRanks(g) {
+  const min$1 = min3(map$1(g.nodes(), function(v) {
+    return g.node(v).rank;
+  }));
+  forEach$1(g.nodes(), function(v) {
+    const node2 = g.node(v);
+    if (has$1(node2, "rank")) {
+      node2.rank -= min$1;
+    }
+  });
+}
+function removeEmptyRanks(g) {
+  const offset = min3(map$1(g.nodes(), function(v) {
+    return g.node(v).rank;
+  }));
+  const layers = [];
+  forEach$1(g.nodes(), function(v) {
+    const rank2 = g.node(v).rank - offset;
+    if (!layers[rank2]) {
+      layers[rank2] = [];
+    }
+    layers[rank2].push(v);
+  });
+  let delta = 0;
+  const nodeRankFactor = g.graph().nodeRankFactor;
+  forEach$1(layers, function(vs, i2) {
+    if (isUndefined$1(vs) && i2 % nodeRankFactor !== 0) {
+      --delta;
+    } else if (delta) {
+      forEach$1(vs, function(v) {
+        g.node(v).rank += delta;
+      });
+    }
+  });
+}
+function addBorderNode$1(g, prefix, rank2, order2) {
+  const node2 = {
+    width: 0,
+    height: 0
+  };
+  if (arguments.length >= 4) {
+    node2.rank = rank2;
+    node2.order = order2;
+  }
+  return addDummyNode(g, "border", node2, prefix);
+}
+function maxRank(g) {
+  return max3(map$1(g.nodes(), function(v) {
+    const rank2 = g.node(v).rank;
+    if (!isUndefined$1(rank2)) {
+      return rank2;
+    }
+  }));
+}
+function partition(collection, fn) {
+  const result = { lhs: [], rhs: [] };
+  forEach$1(collection, function(value) {
+    if (fn(value)) {
+      result.lhs.push(value);
+    } else {
+      result.rhs.push(value);
+    }
+  });
+  return result;
+}
+function time(name, fn) {
+  const start = Date.now();
+  try {
+    return fn();
+  } finally {
+    console.log(name + " time: " + (Date.now() - start) + "ms");
+  }
+}
+function notime(name, fn) {
+  return fn();
+}
+function comparePositions(p1, p2) {
+  const isXEqual = p1.x === p2.x;
+  const isYEqual = p1.y === p2.y;
+  const leftOne = p2.x < p1.x ? p2 : p1;
+  const topOne = p2.y < p1.y ? p2 : p1;
+  const rightOne = p1 === leftOne ? p2 : p1;
+  const bottomOne = p1 === topOne ? p2 : p1;
+  const dx = rightOne.x - leftOne.x;
+  const dy = bottomOne.y - topOne.y;
+  return {
+    isXEqual,
+    isYEqual,
+    leftOne,
+    rightOne,
+    topOne,
+    bottomOne,
+    dx,
+    dy
+  };
+}
+function isInsideRange(v, range2) {
+  const [start, end] = range2;
+  if (v >= start && v <= end)
+    return true;
+  return false;
+}
+function getNum(v, defaultValue = 0) {
+  return v || defaultValue;
+}
+function isNumber(v) {
+  return typeof v === "number" && !isNaN(v);
+}
+var util2 = {
+  addDummyNode,
+  simplify,
+  asNonCompoundGraph,
+  successorWeights,
+  predecessorWeights,
+  intersectRect,
+  buildLayerMatrix,
+  normalizeRanks,
+  removeEmptyRanks,
+  addBorderNode: addBorderNode$1,
+  maxRank,
+  partition,
+  time,
+  notime
+};
+function run$1(g) {
+  g.graph().dummyChains = [];
+  forEach$1(g.edges(), function(edge) {
+    normalizeEdge(g, edge);
+  });
+}
+function normalizeEdge(g, e) {
+  let v = e.v;
+  let vRank = g.node(v).rank;
+  const w = e.w;
+  const wRank = g.node(w).rank;
+  const name = e.name;
+  const edgeLabel = g.edge(e);
+  const labelRank = edgeLabel.labelRank;
+  if (wRank === vRank + 1)
+    return;
+  g.removeEdge(e);
+  let dummy;
+  let attrs;
+  let i2;
+  for (i2 = 0, ++vRank; vRank < wRank; ++i2, ++vRank) {
+    edgeLabel.points = [];
+    attrs = {
+      width: 0,
+      height: 0,
+      edgeLabel,
+      edgeObj: e,
+      rank: vRank
+    };
+    dummy = util2.addDummyNode(g, "edge", attrs, "_d");
+    if (vRank === labelRank) {
+      attrs.width = edgeLabel.width;
+      attrs.height = edgeLabel.height;
+      attrs.dummy = "edge-label";
+      attrs.labelpos = edgeLabel.labelpos;
+    }
+    g.setEdge(v, dummy, { weight: edgeLabel.weight }, name);
+    if (i2 === 0) {
+      g.graph().dummyChains.push(dummy);
+    }
+    v = dummy;
+  }
+  g.setEdge(v, w, { weight: edgeLabel.weight }, name);
+}
+function undo$1(g) {
+  forEach$1(g.graph().dummyChains, function(v) {
+    let node2 = g.node(v);
+    const origLabel = node2.edgeLabel;
+    let w = null;
+    g.setEdge(node2.edgeObj, origLabel);
+    while (node2.dummy) {
+      w = g.successors(v)[0];
+      g.removeNode(v);
+      origLabel.points.push({ x: node2.x, y: node2.y });
+      if (node2.dummy === "edge-label") {
+        origLabel.x = node2.x;
+        origLabel.y = node2.y;
+        origLabel.width = node2.width;
+        origLabel.height = node2.height;
+      }
+      v = w;
+      node2 = g.node(v);
+    }
+  });
+}
+var normalize2 = {
+  run: run$1,
+  undo: undo$1
+};
+function longestPath(g) {
+  const visited = {};
+  function dfs2(v) {
+    const label = g.node(v);
+    if (has$1(visited, v)) {
+      return label.rank;
+    }
+    visited[v] = true;
+    const rank2 = min3(map$1(g.outEdges(v), function(e) {
+      return dfs2(e.w) - g.edge(e).minlen;
+    })) || 0;
+    label.rank = rank2;
+    return rank2;
+  }
+  forEach$1(g.sources(), dfs2);
+}
+function slack(g, e) {
+  return g.node(e.w).rank - g.node(e.v).rank - g.edge(e).minlen;
+}
+function feasibleTree(g) {
+  const t = new Graph({ directed: false });
+  const start = g.nodes()[0];
+  const size4 = g.nodeCount();
+  t.setNode(start, {});
+  let edge;
+  let delta;
+  while (tightTree(t, g) < size4) {
+    edge = findMinSlackEdge(t, g);
+    if (!edge)
+      break;
+    delta = t.hasNode(edge.v) ? slack(g, edge) : -slack(g, edge);
+    shiftRanks(t, g, delta);
+  }
+  return t;
+}
+function tightTree(t, g) {
+  function dfs2(v) {
+    forEach$1(g.nodeEdges(v), function(e) {
+      const edgeV = e.v;
+      const w = v === edgeV ? e.w : edgeV;
+      if (!t.hasNode(w) && !slack(g, e)) {
+        t.setNode(w, {});
+        t.setEdge(v, w, {});
+        dfs2(w);
+      }
+    });
+  }
+  forEach$1(t.nodes(), dfs2);
+  return t.nodeCount();
+}
+function findMinSlackEdge(t, g) {
+  return minBy(g.edges(), function(e) {
+    if (t.hasNode(e.v) !== t.hasNode(e.w)) {
+      return slack(g, e);
+    }
+  });
+}
+function shiftRanks(t, g, delta) {
+  forEach$1(t.nodes(), function(v) {
+    g.node(v).rank += delta;
+  });
+}
+var { preorder, postorder: postorder$1 } = alg;
+networkSimplex.initLowLimValues = initLowLimValues;
+networkSimplex.initCutValues = initCutValues;
+networkSimplex.calcCutValue = calcCutValue;
+networkSimplex.leaveEdge = leaveEdge;
+networkSimplex.enterEdge = enterEdge;
+networkSimplex.exchangeEdges = exchangeEdges;
+function networkSimplex(g) {
+  g = simplify(g);
+  longestPath(g);
+  const t = feasibleTree(g);
+  initLowLimValues(t);
+  initCutValues(t, g);
+  let e;
+  let f;
+  while (e = leaveEdge(t)) {
+    f = enterEdge(t, g, e);
+    exchangeEdges(t, g, e, f);
+  }
+}
+function initCutValues(t, g) {
+  let vs = postorder$1(t, t.nodes());
+  vs = vs.slice(0, vs.length - 1);
+  forEach$1(vs, function(v) {
+    assignCutValue(t, g, v);
+  });
+}
+function assignCutValue(t, g, child) {
+  const childLab = t.node(child);
+  const parent = childLab.parent;
+  t.edge(child, parent).cutvalue = calcCutValue(t, g, child);
+}
+function calcCutValue(t, g, child) {
+  const childLab = t.node(child);
+  const parent = childLab.parent;
+  let childIsTail = true;
+  let graphEdge = g.edge(child, parent);
+  let cutValue = 0;
+  if (!graphEdge) {
+    childIsTail = false;
+    graphEdge = g.edge(parent, child);
+  }
+  cutValue = graphEdge.weight;
+  forEach$1(g.nodeEdges(child), function(e) {
+    const isOutEdge = e.v === child;
+    const other = isOutEdge ? e.w : e.v;
+    if (other !== parent) {
+      const pointsToHead = isOutEdge === childIsTail;
+      const otherWeight = g.edge(e).weight;
+      cutValue += pointsToHead ? otherWeight : -otherWeight;
+      if (isTreeEdge(t, child, other)) {
+        const otherCutValue = t.edge(child, other).cutvalue;
+        cutValue += pointsToHead ? -otherCutValue : otherCutValue;
+      }
+    }
+  });
+  return cutValue;
+}
+function initLowLimValues(tree, root3) {
+  if (arguments.length < 2) {
+    root3 = tree.nodes()[0];
+  }
+  dfsAssignLowLim(tree, {}, 1, root3);
+}
+function dfsAssignLowLim(tree, visited, nextLim, v, parent) {
+  const low = nextLim;
+  const label = tree.node(v);
+  visited[v] = true;
+  forEach$1(tree.neighbors(v), function(w) {
+    if (!has$1(visited, w)) {
+      nextLim = dfsAssignLowLim(tree, visited, nextLim, w, v);
+    }
+  });
+  label.low = low;
+  label.lim = nextLim++;
+  if (parent) {
+    label.parent = parent;
+  } else {
+    delete label.parent;
+  }
+  return nextLim;
+}
+function leaveEdge(tree) {
+  return find$1(tree.edges(), function(e) {
+    return tree.edge(e).cutvalue < 0;
+  });
+}
+function enterEdge(t, g, edge) {
+  let v = edge.v;
+  let w = edge.w;
+  if (!g.hasEdge(v, w)) {
+    v = edge.w;
+    w = edge.v;
+  }
+  const vLabel = t.node(v);
+  const wLabel = t.node(w);
+  let tailLabel = vLabel;
+  let flip = false;
+  if (vLabel.lim > wLabel.lim) {
+    tailLabel = wLabel;
+    flip = true;
+  }
+  const candidates = filter$1(g.edges(), function(edge2) {
+    return flip === isDescendant(t, t.node(edge2.v), tailLabel) && flip !== isDescendant(t, t.node(edge2.w), tailLabel);
+  });
+  return minBy(candidates, function(edge2) {
+    return slack(g, edge2);
+  });
+}
+function exchangeEdges(t, g, e, f) {
+  const v = e.v;
+  const w = e.w;
+  t.removeEdge(v, w);
+  t.setEdge(f.v, f.w, {});
+  initLowLimValues(t);
+  initCutValues(t, g);
+  updateRanks(t, g);
+}
+function updateRanks(t, g) {
+  const root3 = find$1(t.nodes(), function(v) {
+    return !g.node(v).parent;
+  });
+  let vs = preorder(t, root3);
+  vs = vs.slice(1);
+  forEach$1(vs, function(v) {
+    const parent = t.node(v).parent;
+    let edge = g.edge(v, parent);
+    let flipped = false;
+    if (!edge) {
+      edge = g.edge(parent, v);
+      flipped = true;
+    }
+    g.node(v).rank = g.node(parent).rank + (flipped ? edge.minlen : -edge.minlen);
+  });
+}
+function isTreeEdge(tree, u, v) {
+  return tree.hasEdge(u, v);
+}
+function isDescendant(tree, vLabel, rootLabel) {
+  return rootLabel.low <= vLabel.lim && vLabel.lim <= rootLabel.lim;
+}
+function rank(g) {
+  switch (g.graph().ranker) {
+    case "network-simplex":
+      networkSimplexRanker(g);
+      break;
+    case "tight-tree":
+      tightTreeRanker(g);
+      break;
+    case "longest-path":
+      longestPathRanker(g);
+      break;
+    default:
+      networkSimplexRanker(g);
+  }
+}
+var longestPathRanker = longestPath;
+function tightTreeRanker(g) {
+  longestPath(g);
+  feasibleTree(g);
+}
+function networkSimplexRanker(g) {
+  networkSimplex(g);
+}
+function parentDummyChains(g) {
+  const postorderNums = postorder(g);
+  forEach$1(g.graph().dummyChains, function(v) {
+    let node2 = g.node(v);
+    const edgeObj = node2.edgeObj;
+    const pathData = findPath(g, postorderNums, edgeObj.v, edgeObj.w);
+    const path4 = pathData.path;
+    const lca = pathData.lca;
+    let pathIdx = 0;
+    let pathV = path4[pathIdx];
+    let ascending2 = true;
+    while (v !== edgeObj.w) {
+      node2 = g.node(v);
+      if (ascending2) {
+        while ((pathV = path4[pathIdx]) !== lca && g.node(pathV).maxRank < node2.rank) {
+          pathIdx++;
+        }
+        if (pathV === lca) {
+          ascending2 = false;
+        }
+      }
+      if (!ascending2) {
+        while (pathIdx < path4.length - 1 && g.node(pathV = path4[pathIdx + 1]).minRank <= node2.rank) {
+          pathIdx++;
+        }
+        pathV = path4[pathIdx];
+      }
+      g.setParent(v, pathV);
+      v = g.successors(v)[0];
+    }
+  });
+}
+function findPath(g, postorderNums, v, w) {
+  const vPath = [];
+  const wPath = [];
+  const low = Math.min(postorderNums[v].low, postorderNums[w].low);
+  const lim = Math.max(postorderNums[v].lim, postorderNums[w].lim);
+  let parent;
+  let lca;
+  parent = v;
+  do {
+    parent = g.parent(parent);
+    vPath.push(parent);
+  } while (parent && (postorderNums[parent].low > low || lim > postorderNums[parent].lim));
+  lca = parent;
+  parent = w;
+  while ((parent = g.parent(parent)) !== lca) {
+    wPath.push(parent);
+  }
+  return { path: vPath.concat(wPath.reverse()), lca };
+}
+function postorder(g) {
+  const result = {};
+  let lim = 0;
+  function dfs2(v) {
+    const low = lim;
+    forEach$1(g.children(v), dfs2);
+    result[v] = { low, lim: lim++ };
+  }
+  forEach$1(g.children(), dfs2);
+  return result;
+}
+function run(g) {
+  const root3 = util2.addDummyNode(g, "root", {}, "_root");
+  const depths = treeDepths(g);
+  const height = Math.max.apply(null, values$1(depths)) - 1;
+  const nodeSep = 2 * height + 1;
+  g.graph().nestingRoot = root3;
+  forEach$1(g.edges(), function(e) {
+    g.edge(e).minlen *= nodeSep;
+  });
+  const weight = sumWeights(g) + 1;
+  forEach$1(g.children(), function(child) {
+    dfs(g, root3, nodeSep, weight, height, depths, child);
+  });
+  g.graph().nodeRankFactor = nodeSep;
+}
+function dfs(g, root3, nodeSep, weight, height, depths, v) {
+  const children = g.children(v);
+  if (!children.length) {
+    if (v !== root3) {
+      g.setEdge(root3, v, { weight: 0, minlen: nodeSep });
+    }
+    return;
+  }
+  const top = util2.addBorderNode(g, "_bt");
+  const bottom = util2.addBorderNode(g, "_bb");
+  const label = g.node(v);
+  g.setParent(top, v);
+  label.borderTop = top;
+  g.setParent(bottom, v);
+  label.borderBottom = bottom;
+  forEach$1(children, function(child) {
+    dfs(g, root3, nodeSep, weight, height, depths, child);
+    const childNode = g.node(child);
+    const childTop = childNode.borderTop ? childNode.borderTop : child;
+    const childBottom = childNode.borderBottom ? childNode.borderBottom : child;
+    const thisWeight = childNode.borderTop ? weight : 2 * weight;
+    const minlen = childTop !== childBottom ? 1 : height - depths[v] + 1;
+    g.setEdge(top, childTop, {
+      weight: thisWeight,
+      minlen,
+      nestingEdge: true
+    });
+    g.setEdge(childBottom, bottom, {
+      weight: thisWeight,
+      minlen,
+      nestingEdge: true
+    });
+  });
+  if (!g.parent(v)) {
+    g.setEdge(root3, top, { weight: 0, minlen: height + depths[v] });
+  }
+}
+function treeDepths(g) {
+  const depths = {};
+  function dfs2(v, depth) {
+    const children = g.children(v);
+    if (children && children.length) {
+      forEach$1(children, function(child) {
+        dfs2(child, depth + 1);
+      });
+    }
+    depths[v] = depth;
+  }
+  forEach$1(g.children(), function(v) {
+    dfs2(v, 1);
+  });
+  return depths;
+}
+function sumWeights(g) {
+  return reduce$1(g.edges(), function(acc, e) {
+    return acc + g.edge(e).weight;
+  }, 0);
+}
+function cleanup(g) {
+  const graphLabel = g.graph();
+  g.removeNode(graphLabel.nestingRoot);
+  delete graphLabel.nestingRoot;
+  forEach$1(g.edges(), function(e) {
+    const edge = g.edge(e);
+    if (edge.nestingEdge) {
+      g.removeEdge(e);
+    }
+  });
+}
+var nestingGraph = {
+  run,
+  cleanup
+};
+function addBorderSegments(g) {
+  function dfs2(v) {
+    const children = g.children(v);
+    const node2 = g.node(v);
+    if (children.length) {
+      forEach$1(children, dfs2);
+    }
+    if (has$1(node2, "minRank")) {
+      node2.borderLeft = [];
+      node2.borderRight = [];
+      for (let rank2 = node2.minRank, maxRank2 = node2.maxRank + 1; rank2 < maxRank2; ++rank2) {
+        addBorderNode(g, "borderLeft", "_bl", v, node2, rank2);
+        addBorderNode(g, "borderRight", "_br", v, node2, rank2);
+      }
+    }
+  }
+  forEach$1(g.children(), dfs2);
+}
+function addBorderNode(g, prop, prefix, sg, sgNode, rank2) {
+  const label = { width: 0, height: 0, rank: rank2, borderType: prop };
+  const prev = sgNode[prop][rank2 - 1];
+  const curr = util2.addDummyNode(g, "border", label, prefix);
+  sgNode[prop][rank2] = curr;
+  g.setParent(curr, sg);
+  if (prev) {
+    g.setEdge(prev, curr, { weight: 1 });
+  }
+}
+function adjust(g) {
+  const rankDir = g.graph().rankdir.toLowerCase();
+  if (rankDir === "lr" || rankDir === "rl") {
+    swapWidthHeight(g);
+  }
+}
+function undo(g) {
+  const rankDir = g.graph().rankdir.toLowerCase();
+  if (rankDir === "bt" || rankDir === "rl") {
+    reverseY(g);
+  }
+  if (rankDir === "lr" || rankDir === "rl") {
+    swapXY(g);
+    swapWidthHeight(g);
+  }
+}
+function swapWidthHeight(g) {
+  forEach$1(g.nodes(), function(v) {
+    swapWidthHeightOne(g.node(v));
+  });
+  forEach$1(g.edges(), function(e) {
+    swapWidthHeightOne(g.edge(e));
+  });
+}
+function swapWidthHeightOne(attrs) {
+  const w = attrs.width;
+  attrs.width = attrs.height;
+  attrs.height = w;
+}
+function reverseY(g) {
+  forEach$1(g.nodes(), function(v) {
+    reverseYOne(g.node(v));
+  });
+  forEach$1(g.edges(), function(e) {
+    const edge = g.edge(e);
+    forEach$1(edge.points, reverseYOne);
+    if (has$1(edge, "y")) {
+      reverseYOne(edge);
+    }
+  });
+}
+function reverseYOne(attrs) {
+  attrs.y = -attrs.y;
+}
+function swapXY(g) {
+  forEach$1(g.nodes(), function(v) {
+    swapXYOne(g.node(v));
+  });
+  forEach$1(g.edges(), function(e) {
+    const edge = g.edge(e);
+    forEach$1(edge.points, swapXYOne);
+    if (has$1(edge, "x")) {
+      swapXYOne(edge);
+    }
+  });
+}
+function swapXYOne(attrs) {
+  const x2 = attrs.x;
+  attrs.x = attrs.y;
+  attrs.y = x2;
+}
+var coordinateSystem = {
+  adjust,
+  undo
+};
+function initOrder(g) {
+  const visited = {};
+  const simpleNodes = filter$1(g.nodes(), function(v) {
+    return !g.children(v).length;
+  });
+  const maxRank2 = max3(map$1(simpleNodes, function(v) {
+    return g.node(v).rank;
+  }));
+  const layers = map$1(range$1(maxRank2 + 1), function() {
+    return [];
+  });
+  function dfs2(v) {
+    if (has$1(visited, v))
+      return;
+    visited[v] = true;
+    const node2 = g.node(v);
+    layers[node2.rank].push(v);
+    forEach$1(g.successors(v).filter((n2) => {
+      return !g.children(n2).length;
+    }), dfs2);
+  }
+  const orderedVs = sortBy$1(simpleNodes, function(v) {
+    return g.node(v).rank;
+  });
+  forEach$1(orderedVs, dfs2);
+  return layers;
+}
+function crossCount(g, layering) {
+  let cc = 0;
+  for (let i2 = 1; i2 < layering.length; ++i2) {
+    cc += twoLayerCrossCount(g, layering[i2 - 1], layering[i2]);
+  }
+  return cc;
+}
+function twoLayerCrossCount(g, northLayer, southLayer) {
+  const southPos = zipObject(southLayer, southLayer.map(function(v, i2) {
+    return i2;
+  }));
+  const southEntries = flatten2(map$1(northLayer, function(v) {
+    const list = (g.outEdges(v) || []).map(function(e) {
+      return { pos: southPos[e.w], weight: g.edge(e).weight };
+    });
+    return sortBy$1(list, "pos");
+  }));
+  let firstIndex = 1;
+  while (firstIndex < southLayer.length) {
+    firstIndex <<= 1;
+  }
+  const treeSize = 2 * firstIndex - 1;
+  firstIndex -= 1;
+  const tree = map$1(new Array(treeSize), function() {
+    return 0;
+  });
+  let cc = 0;
+  southEntries.forEach(function(entry) {
+    let index2 = entry.pos + firstIndex;
+    tree[index2] += entry.weight;
+    let weightSum = 0;
+    while (index2 > 0) {
+      if (index2 % 2) {
+        weightSum += tree[index2 + 1];
+      }
+      index2 = index2 - 1 >> 1;
+      tree[index2] += entry.weight;
+    }
+    cc += entry.weight * weightSum;
+  });
+  return cc;
+}
+function barycenter(g, movable) {
+  return map$1(movable, function(v) {
+    const inV = g.inEdges(v);
+    if (!inV.length) {
+      return { v };
+    } else {
+      const result = reduce$1(inV, function(acc, e) {
+        const edge = g.edge(e);
+        const nodeU = g.node(e.v);
+        return {
+          sum: acc.sum + edge.weight * nodeU.order,
+          weight: acc.weight + edge.weight
+        };
+      }, { sum: 0, weight: 0 });
+      return {
+        v,
+        barycenter: result.sum / result.weight,
+        weight: result.weight
+      };
+    }
+  });
+}
+function resolveConflicts(entries, cg) {
+  const mappedEntries = {};
+  forEach$1(entries, function(entry, i2) {
+    const tmp = mappedEntries[entry.v] = {
+      indegree: 0,
+      in: [],
+      out: [],
+      vs: [entry.v],
+      i: i2
+    };
+    if (!isUndefined$1(entry.barycenter)) {
+      tmp.barycenter = entry.barycenter;
+      tmp.weight = entry.weight;
+    }
+  });
+  forEach$1(cg.edges(), function(e) {
+    const entryV = mappedEntries[e.v];
+    const entryW = mappedEntries[e.w];
+    if (!isUndefined$1(entryV) && !isUndefined$1(entryW)) {
+      entryW.indegree++;
+      entryV.out.push(mappedEntries[e.w]);
+    }
+  });
+  const sourceSet = filter$1(mappedEntries, function(entry) {
+    return !entry.indegree;
+  });
+  return doResolveConflicts(sourceSet);
+}
+function doResolveConflicts(sourceSet) {
+  const entries = [];
+  function handleIn(vEntry) {
+    return function(uEntry) {
+      if (uEntry.merged) {
+        return;
+      }
+      if (isUndefined$1(uEntry.barycenter) || isUndefined$1(vEntry.barycenter) || uEntry.barycenter >= vEntry.barycenter) {
+        mergeEntries(vEntry, uEntry);
+      }
+    };
+  }
+  function handleOut(vEntry) {
+    return function(wEntry) {
+      wEntry["in"].push(vEntry);
+      if (--wEntry.indegree === 0) {
+        sourceSet.push(wEntry);
+      }
+    };
+  }
+  while (sourceSet.length) {
+    const entry = sourceSet.pop();
+    entries.push(entry);
+    forEach$1(entry["in"].reverse(), handleIn(entry));
+    forEach$1(entry.out, handleOut(entry));
+  }
+  return entries.filter(function(entry) {
+    return !entry.merged;
+  }).map(function(entry) {
+    return pick$1(entry, ["vs", "i", "barycenter", "weight"]);
+  });
+}
+function mergeEntries(target, source) {
+  let sum = 0;
+  let weight = 0;
+  if (target.weight) {
+    sum += target.barycenter * target.weight;
+    weight += target.weight;
+  }
+  if (source.weight) {
+    sum += source.barycenter * source.weight;
+    weight += source.weight;
+  }
+  target.vs = source.vs.concat(target.vs);
+  target.barycenter = sum / weight;
+  target.weight = weight;
+  target.i = Math.min(source.i, target.i);
+  source.merged = true;
+}
+function sort(entries, biasRight) {
+  const parts = util2.partition(entries, function(entry) {
+    return has$1(entry, "barycenter");
+  });
+  const sortable = parts.lhs;
+  const unsortable = sortBy$1(parts.rhs, function(entry) {
+    return -entry.i;
+  });
+  const vs = [];
+  let sum = 0;
+  let weight = 0;
+  let vsIndex = 0;
+  sortable.sort(compareWithBias(!!biasRight));
+  vsIndex = consumeUnsortable(vs, unsortable, vsIndex);
+  forEach$1(sortable, function(entry) {
+    vsIndex += entry.vs.length;
+    vs.push(entry.vs);
+    sum += entry.barycenter * entry.weight;
+    weight += entry.weight;
+    vsIndex = consumeUnsortable(vs, unsortable, vsIndex);
+  });
+  const result = { vs: flatten2(vs) };
+  if (weight) {
+    result.barycenter = sum / weight;
+    result.weight = weight;
+  }
+  return result;
+}
+function consumeUnsortable(vs, unsortable, index2) {
+  let last$1;
+  while (unsortable.length && (last$1 = last2(unsortable)).i <= index2) {
+    unsortable.pop();
+    vs.push(last$1.vs);
+    index2++;
+  }
+  return index2;
+}
+function compareWithBias(bias) {
+  return function(entryV, entryW) {
+    if (entryV.barycenter < entryW.barycenter) {
+      return -1;
+    } else if (entryV.barycenter > entryW.barycenter) {
+      return 1;
+    }
+    return !bias ? entryV.i - entryW.i : entryW.i - entryV.i;
+  };
+}
+function sortSubgraph(g, v, cg, biasRight) {
+  let movable = g.children(v);
+  const node2 = g.node(v);
+  const bl = node2 ? node2.borderLeft : void 0;
+  const br = node2 ? node2.borderRight : void 0;
+  const subgraphs = {};
+  if (bl) {
+    movable = filter$1(movable, function(w) {
+      return w !== bl && w !== br;
+    });
+  }
+  const barycenters = barycenter(g, movable);
+  forEach$1(barycenters, function(entry) {
+    if (g.children(entry.v).length) {
+      const subgraphResult = sortSubgraph(g, entry.v, cg, biasRight);
+      subgraphs[entry.v] = subgraphResult;
+      if (has$1(subgraphResult, "barycenter")) {
+        mergeBarycenters(entry, subgraphResult);
+      }
+    }
+  });
+  const entries = resolveConflicts(barycenters, cg);
+  expandSubgraphs(entries, subgraphs);
+  const result = sort(entries, biasRight);
+  if (bl) {
+    result.vs = flatten2([bl, result.vs, br]);
+    if (g.predecessors(bl).length) {
+      const blPred = g.node(g.predecessors(bl)[0]);
+      const brPred = g.node(g.predecessors(br)[0]);
+      if (!has$1(result, "barycenter")) {
+        result.barycenter = 0;
+        result.weight = 0;
+      }
+      result.barycenter = (result.barycenter * result.weight + blPred.order + brPred.order) / (result.weight + 2);
+      result.weight += 2;
+    }
+  }
+  return result;
+}
+function expandSubgraphs(entries, subgraphs) {
+  forEach$1(entries, function(entry) {
+    entry.vs = flatten2(entry.vs.map(function(v) {
+      if (subgraphs[v]) {
+        return subgraphs[v].vs;
+      }
+      return v;
+    }));
+  });
+}
+function mergeBarycenters(target, other) {
+  if (!isUndefined$1(target.barycenter)) {
+    target.barycenter = (target.barycenter * target.weight + other.barycenter * other.weight) / (target.weight + other.weight);
+    target.weight += other.weight;
+  } else {
+    target.barycenter = other.barycenter;
+    target.weight = other.weight;
+  }
+}
+function buildLayerGraph(g, rank2, relationship) {
+  const root3 = createRootNode(g);
+  const result = new Graph({ compound: true }).setGraph({ root: root3 }).setDefaultNodeLabel(function(v) {
+    return g.node(v);
+  });
+  forEach$1(g.nodes(), function(v) {
+    const node2 = g.node(v);
+    const parent = g.parent(v);
+    if (node2.rank === rank2 || node2.minRank <= rank2 && rank2 <= node2.maxRank) {
+      result.setNode(v);
+      result.setParent(v, parent || root3);
+      forEach$1(g[relationship](v), function(e) {
+        const u = e.v === v ? e.w : e.v;
+        const edge = result.edge(u, v);
+        const weight = !isUndefined$1(edge) ? edge.weight : 0;
+        result.setEdge(u, v, { weight: g.edge(e).weight + weight });
+      });
+      if (has$1(node2, "minRank")) {
+        result.setNode(v, {
+          borderLeft: node2.borderLeft[rank2],
+          borderRight: node2.borderRight[rank2]
+        });
+      }
+    }
+  });
+  return result;
+}
+function createRootNode(g) {
+  let v;
+  while (g.hasNode(v = uniqueId("_root")))
+    ;
+  return v;
+}
+function addSubgraphConstraints(g, cg, vs) {
+  const prev = {};
+  let rootPrev;
+  forEach$1(vs, function(v) {
+    let child = g.parent(v);
+    let parent;
+    let prevChild;
+    while (child) {
+      parent = g.parent(child);
+      if (parent) {
+        prevChild = prev[parent];
+        prev[parent] = child;
+      } else {
+        prevChild = rootPrev;
+        rootPrev = child;
+      }
+      if (prevChild && prevChild !== child) {
+        cg.setEdge(prevChild, child);
+        return;
+      }
+      child = parent;
+    }
+  });
+}
+function order(g) {
+  const maxRank2 = util2.maxRank(g);
+  const downLayerGraphs = buildLayerGraphs(g, range$1(1, maxRank2 + 1), "inEdges");
+  const upLayerGraphs = buildLayerGraphs(g, range$1(maxRank2 - 1, -1, -1), "outEdges");
+  let layering = initOrder(g);
+  assignOrder(g, layering);
+  let bestCC = Number.POSITIVE_INFINITY;
+  let best;
+  for (let i2 = 0, lastBest = 0; lastBest < 4; ++i2, ++lastBest) {
+    sweepLayerGraphs(i2 % 2 ? downLayerGraphs : upLayerGraphs, i2 % 4 >= 2);
+    layering = util2.buildLayerMatrix(g);
+    const cc = crossCount(g, layering);
+    if (cc < bestCC) {
+      lastBest = 0;
+      best = cloneDeep2(layering);
+      bestCC = cc;
+    }
+  }
+  assignOrder(g, best);
+}
+function buildLayerGraphs(g, ranks, relationship) {
+  return map$1(ranks, function(rank2) {
+    return buildLayerGraph(g, rank2, relationship);
+  });
+}
+function sweepLayerGraphs(layerGraphs, biasRight) {
+  const cg = new Graph();
+  forEach$1(layerGraphs, function(lg) {
+    const root3 = lg.graph().root;
+    const sorted = sortSubgraph(lg, root3, cg, biasRight);
+    forEach$1(sorted.vs, function(v, i2) {
+      lg.node(v).order = i2;
+    });
+    addSubgraphConstraints(lg, cg, sorted.vs);
+  });
+}
+function assignOrder(g, layering) {
+  layering.forEach(function(layer) {
+    forEach$1(layer, function(v, i2) {
+      if (v) {
+        g.node(v).order = i2;
+      }
+    });
+  });
+}
+function findType1Conflicts(g, layering) {
+  const conflicts = {};
+  function visitLayer(prevLayer, layer) {
+    let k0 = 0;
+    let scanPos = 0;
+    const prevLayerLength = prevLayer.length;
+    const lastNode = last2(layer);
+    forEach$1(layer, function(v, i2) {
+      if (!v)
+        return;
+      const w = findOtherInnerSegmentNode(g, v);
+      const k1 = w ? g.node(w).order : prevLayerLength;
+      if (w || v === lastNode) {
+        forEach$1(layer.slice(scanPos, i2 + 1), function(scanNode) {
+          forEach$1(g.predecessors(scanNode), function(u) {
+            const uLabel = g.node(u);
+            const uPos = uLabel.order;
+            if ((uPos < k0 || k1 < uPos) && !(uLabel.dummy && g.node(scanNode).dummy)) {
+              addConflict(conflicts, u, scanNode);
+            }
+          });
+        });
+        scanPos = i2 + 1;
+        k0 = k1;
+      }
+    });
+    return layer;
+  }
+  reduce$1(layering, visitLayer);
+  return conflicts;
+}
+function findType2Conflicts(g, layering) {
+  const conflicts = {};
+  function scan(south, southPos, southEnd, prevNorthBorder, nextNorthBorder) {
+    let v;
+    forEach$1(range$1(southPos, southEnd), function(i2) {
+      v = south[i2];
+      if (!v)
+        return;
+      if (g.node(v).dummy) {
+        forEach$1(g.predecessors(v), function(u) {
+          const uNode = g.node(u);
+          if (uNode.dummy && (uNode.order < prevNorthBorder || uNode.order > nextNorthBorder)) {
+            addConflict(conflicts, u, v);
+          }
+        });
+      }
+    });
+  }
+  function visitLayer(north, south) {
+    let prevNorthPos = -1;
+    let nextNorthPos;
+    let southPos = 0;
+    forEach$1(south, function(v, southLookahead) {
+      if (!v)
+        return;
+      if (g.node(v).dummy === "border") {
+        const predecessors = g.predecessors(v);
+        if (predecessors.length) {
+          nextNorthPos = g.node(predecessors[0]).order;
+          scan(south, southPos, southLookahead, prevNorthPos, nextNorthPos);
+          southPos = southLookahead;
+          prevNorthPos = nextNorthPos;
+        }
+      }
+      scan(south, southPos, south.length, nextNorthPos, north.length);
+    });
+    return south;
+  }
+  reduce$1(layering, visitLayer);
+  return conflicts;
+}
+function findOtherInnerSegmentNode(g, v) {
+  if (g.node(v).dummy) {
+    return find$1(g.predecessors(v), function(u) {
+      return g.node(u).dummy;
+    });
+  }
+}
+function addConflict(conflicts, v, w) {
+  if (v > w) {
+    const tmp = v;
+    v = w;
+    w = tmp;
+  }
+  let conflictsV = conflicts[v];
+  if (!conflictsV) {
+    conflicts[v] = conflictsV = {};
+  }
+  conflictsV[w] = true;
+}
+function hasConflict(conflicts, v, w) {
+  if (v > w) {
+    const tmp = v;
+    v = w;
+    w = tmp;
+  }
+  return has$1(conflicts[v], w);
+}
+function verticalAlignment(g, layering, conflicts, neighborFn) {
+  const root3 = {};
+  const align = {};
+  const pos = {};
+  forEach$1(layering, function(layer) {
+    forEach$1(layer, function(v, order2) {
+      root3[v] = v;
+      align[v] = v;
+      pos[v] = order2;
+    });
+  });
+  forEach$1(layering, function(layer) {
+    let prevIdx = -1;
+    forEach$1(layer, function(v) {
+      if (!v)
+        return;
+      let ws = neighborFn(v);
+      if (ws.length) {
+        ws = sortBy$1(ws, function(w) {
+          return pos[w];
+        });
+        const mp = (ws.length - 1) / 2;
+        for (let i2 = Math.floor(mp), il = Math.ceil(mp); i2 <= il; ++i2) {
+          const w = ws[i2];
+          if (align[v] === v && prevIdx < pos[w] && !hasConflict(conflicts, v, w)) {
+            align[w] = v;
+            align[v] = root3[v] = root3[w];
+            prevIdx = pos[w];
+          }
+        }
+      }
+    });
+  });
+  return { root: root3, align };
+}
+function horizontalCompaction(g, layering, root3, alignMap, reverseSep) {
+  const xs = {};
+  const blockG = buildBlockGraph(g, layering, root3, reverseSep);
+  const visited = {};
+  function pass1(v) {
+    if (!has$1(visited, v)) {
+      visited[v] = true;
+      xs[v] = reduce$1(blockG.inEdges(v) || [], function(max4, e) {
+        pass1(e.v);
+        return Math.max(max4, xs[e.v] + blockG.edge(e));
+      }, 0);
+    }
+  }
+  forEach$1(blockG.nodes(), pass1);
+  const borderType = reverseSep ? "borderLeft" : "borderRight";
+  function pass2(v) {
+    if (visited[v] !== 2) {
+      visited[v]++;
+      const node2 = g.node(v);
+      const min4 = reduce$1(blockG.outEdges(v) || [], (min5, e) => {
+        pass2(e.w);
+        return Math.min(min5, xs[e.w] - blockG.edge(e));
+      }, Number.POSITIVE_INFINITY);
+      if (min4 !== Number.POSITIVE_INFINITY && node2.borderType !== borderType) {
+        xs[v] = Math.max(xs[v], min4);
+      }
+    }
+  }
+  forEach$1(blockG.nodes(), pass2);
+  forEach$1(alignMap, function(v) {
+    xs[v] = xs[root3[v]];
+  });
+  return xs;
+}
+function buildBlockGraph(g, layering, root3, reverseSep) {
+  const blockGraph = new Graph();
+  const graphLabel = g.graph();
+  const sepFn = makeSepFn(graphLabel.nodesep, graphLabel.edgesep, reverseSep);
+  forEach$1(layering, function(layer) {
+    let u;
+    forEach$1(layer, function(v) {
+      const vRoot = root3[v];
+      blockGraph.setNode(vRoot);
+      if (u) {
+        const uRoot = root3[u];
+        const prevMax = blockGraph.edge(uRoot, vRoot);
+        blockGraph.setEdge(uRoot, vRoot, Math.max(sepFn(g, v, u), prevMax || 0));
+      }
+      u = v;
+    });
+  });
+  return blockGraph;
+}
+function findSmallestWidthAlignment(g, xss) {
+  return minBy(values$1(xss), function(xs) {
+    const min4 = (minBy(toPairs$1(xs), (pair) => pair[1] - width(g, pair[0]) / 2) || ["k", 0])[1];
+    const max4 = (maxBy(toPairs$1(xs), (pair) => pair[1] + width(g, pair[0]) / 2) || ["k", 0])[1];
+    return max4 - min4;
+  });
+}
+function alignCoordinates(xss, alignTo) {
+  const alignToVals = values$1(alignTo);
+  const alignToMin = min3(alignToVals);
+  const alignToMax = max3(alignToVals);
+  forEach$1(["u", "d"], function(vert) {
+    forEach$1(["l", "r"], function(horiz) {
+      const alignment = vert + horiz;
+      const xs = xss[alignment];
+      if (xs === alignTo) {
+        return;
+      }
+      const xsVals = values$1(xs);
+      const delta = horiz === "l" ? alignToMin - min3(xsVals) : alignToMax - max3(xsVals);
+      if (delta) {
+        xss[alignment] = mapValues(xs, function(x2) {
+          return x2 + delta;
+        });
+      }
+    });
+  });
+}
+function balance(xss, align) {
+  return mapValues(xss.ul, function(ignore, v) {
+    if (align) {
+      return xss[align.toLowerCase()][v];
+    } else {
+      const xs = sortBy$1(map$1(xss, v));
+      return (xs[1] + xs[2]) / 2;
+    }
+  });
+}
+function positionX(g) {
+  const layering = util2.buildLayerMatrix(g);
+  const conflicts = Object.assign(findType1Conflicts(g, layering), findType2Conflicts(g, layering));
+  const xss = {};
+  let adjustedLayering;
+  forEach$1(["u", "d"], function(vert) {
+    adjustedLayering = vert === "u" ? layering : values$1(layering).reverse();
+    forEach$1(["l", "r"], function(horiz) {
+      if (horiz === "r") {
+        adjustedLayering = map$1(adjustedLayering, function(inner) {
+          return values$1(inner).reverse();
+        });
+      }
+      const neighborFn = (vert === "u" ? g.predecessors : g.successors).bind(g);
+      const verticalAlign = verticalAlignment(g, adjustedLayering, conflicts, neighborFn);
+      let xs = horizontalCompaction(g, adjustedLayering, verticalAlign.root, verticalAlign.align, horiz === "r");
+      if (horiz === "r") {
+        xs = mapValues(xs, function(x2) {
+          return -x2;
+        });
+      }
+      xss[vert + horiz] = xs;
+    });
+  });
+  const smallestWidth = findSmallestWidthAlignment(g, xss);
+  alignCoordinates(xss, smallestWidth);
+  return balance(xss, g.graph().align);
+}
+function makeSepFn(nodeSep, edgeSep, reverseSep) {
+  return function(g, v, w) {
+    const vLabel = g.node(v);
+    const wLabel = g.node(w);
+    if (!(vLabel && wLabel))
+      return 0;
+    let sum = 0;
+    let delta;
+    sum += vLabel.marginr || 0;
+    sum += getNodeWidth(vLabel) / 2;
+    if (has$1(vLabel, "labelpos")) {
+      switch (vLabel.labelpos.toLowerCase()) {
+        case "l":
+          delta = -getNodeWidth(vLabel) / 2;
+          break;
+        case "r":
+          delta = getNodeWidth(vLabel) / 2;
+          break;
+      }
+    }
+    if (delta) {
+      sum += reverseSep ? delta : -delta;
+    }
+    delta = 0;
+    sum += (vLabel.dummy ? edgeSep : nodeSep) / 2;
+    sum += (wLabel.dummy ? edgeSep : nodeSep) / 2;
+    sum += wLabel.marginl || 0;
+    sum += getNodeWidth(wLabel) / 2;
+    if (has$1(wLabel, "labelpos")) {
+      switch (wLabel.labelpos.toLowerCase()) {
+        case "l":
+          delta = getNodeWidth(wLabel) / 2;
+          break;
+        case "r":
+          delta = -getNodeWidth(wLabel) / 2;
+          break;
+      }
+    }
+    if (delta) {
+      sum += reverseSep ? delta : -delta;
+    }
+    delta = 0;
+    return sum;
+  };
+}
+function getNodeWidth(node2) {
+  if (!node2)
+    return 0;
+  return Math.max(node2.minwidth || 0, node2.width);
+}
+function width(g, v) {
+  const node2 = g.node(v);
+  return getNodeWidth(node2);
+}
+function position(g) {
+  doPositionY(g);
+  forEach$1(positionX(g), function(x2, v) {
+    const node2 = g.node(v);
+    if (node2)
+      node2.x = x2;
+  });
+}
+function doPositionY(g) {
+  const layering = util2.buildLayerMatrix(g);
+  const rankSep = g.graph().ranksep;
+  let prevY = 0;
+  const rankOffsets = {};
+  g.nodes().forEach((v) => {
+    const node2 = g.node(v);
+    const rank2 = isNumber(node2.minRank) ? node2.minRank : node2.rank;
+    if (!rankOffsets[rank2]) {
+      rankOffsets[rank2] = {
+        marginTop: 0,
+        marginBottom: 0,
+        paddingTop: 0,
+        paddingBottom: 0
+      };
+    }
+    const item = rankOffsets[rank2];
+    item.marginTop = Math.max(getNum(node2.margint), item.marginTop);
+    item.marginBottom = Math.max(getNum(node2.marginb), item.marginBottom);
+    item.paddingTop = Math.max(getNum(node2.paddingt), item.paddingTop);
+    item.paddingBottom = Math.max(getNum(node2.paddingb), item.paddingBottom);
+  });
+  forEach$1(layering, function(layer, i2) {
+    let yOffsetMarginT = 0;
+    let yOffsetMarginB = 0;
+    let yOffsetPaddingT = 0;
+    let yOffsetPaddingB = 0;
+    let maxHeight = 0;
+    for (const v of layer) {
+      if (v) {
+        const node2 = g.node(v);
+        if (rankOffsets[node2.rank]) {
+          const item = rankOffsets[node2.rank];
+          yOffsetMarginT = Math.max(item.marginTop, yOffsetMarginT);
+          yOffsetMarginB = Math.max(item.marginBottom, yOffsetMarginB);
+          yOffsetPaddingT = Math.max(item.paddingTop, yOffsetPaddingT);
+          yOffsetPaddingB = Math.max(item.paddingBottom, yOffsetPaddingB);
+        }
+        maxHeight = Math.max(maxHeight, node2.height + getNum(node2.margint) + getNum(node2.marginb) + getNum(node2.paddingt) + getNum(node2.paddingb));
+      }
+    }
+    for (const v of layer) {
+      if (v)
+        g.node(v).y = prevY + yOffsetMarginT + maxHeight / 2;
+    }
+    prevY += maxHeight + rankSep + yOffsetMarginT + yOffsetMarginB + yOffsetPaddingT + yOffsetPaddingB;
+  });
+}
+function layout(g, opts) {
+  const time3 = opts && opts.debugTiming ? util2.time : util2.notime;
+  time3("layout", function() {
+    const layoutGraph = time3("  buildLayoutGraph", function() {
+      return buildLayoutGraph(g);
+    });
+    time3("  runLayout", function() {
+      runLayout(layoutGraph, time3);
+    });
+    time3("  updateInputGraph", function() {
+      updateInputGraph(g, layoutGraph);
+    });
+  });
+}
+function runLayout(g, time3) {
+  time3("    makeSpaceForEdgeLabels", function() {
+    makeSpaceForEdgeLabels(g);
+  });
+  time3("    removeSelfEdges", function() {
+    removeSelfEdges(g);
+  });
+  time3("    acyclic", function() {
+    acyclic.run(g);
+  });
+  time3("    nestingGraph.run", function() {
+    nestingGraph.run(g);
+  });
+  time3("    rank", function() {
+    rank(g);
+  });
+  time3("    injectEdgeLabelProxies", function() {
+    injectEdgeLabelProxies(g);
+  });
+  time3("    removeEmptyRanks", function() {
+    removeEmptyRanks(g);
+  });
+  time3("    nestingGraph.cleanup", function() {
+    nestingGraph.cleanup(g);
+  });
+  time3("    normalizeRanks", function() {
+    normalizeRanks(g);
+  });
+  time3("    assignRankMinMax", function() {
+    assignRankMinMax(g);
+  });
+  time3("    removeEdgeLabelProxies", function() {
+    removeEdgeLabelProxies(g);
+  });
+  time3("    normalize.run", function() {
+    normalize2.run(g);
+  });
+  time3("    parentDummyChains", function() {
+    parentDummyChains(g);
+  });
+  time3("    addBorderSegments", function() {
+    addBorderSegments(g);
+  });
+  time3("    order", function() {
+    order(g);
+  });
+  time3("    insertSelfEdges", function() {
+    insertSelfEdges(g);
+  });
+  time3("    adjustCoordinateSystem", function() {
+    coordinateSystem.adjust(g);
+  });
+  time3("    position", function() {
+    position(g);
+  });
+  time3("    positionSelfEdges", function() {
+    positionSelfEdges(g);
+  });
+  time3("    removeBorderNodes", function() {
+    removeBorderNodes(g);
+  });
+  time3("    normalize.undo", function() {
+    normalize2.undo(g);
+  });
+  time3("    fixupEdgeLabelCoords", function() {
+    fixupEdgeLabelCoords(g);
+  });
+  time3("    undoCoordinateSystem", function() {
+    coordinateSystem.undo(g);
+  });
+  time3("    translateGraph", function() {
+    translateGraph(g);
+  });
+  time3("    assignNodeIntersects", function() {
+    assignNodeIntersects(g);
+  });
+  time3("    reversePoints", function() {
+    reversePointsForReversedEdges(g);
+  });
+  time3("    acyclic.undo", function() {
+    acyclic.undo(g);
+  });
+}
+function updateInputGraph(inputGraph, layoutGraph) {
+  forEach$1(inputGraph.nodes(), function(v) {
+    const inputLabel = inputGraph.node(v);
+    const layoutLabel = layoutGraph.node(v);
+    if (inputLabel) {
+      inputLabel.x = layoutLabel.x;
+      inputLabel.y = layoutLabel.y;
+      if (layoutGraph.children(v).length) {
+        inputLabel.width = layoutLabel.width;
+        inputLabel.height = layoutLabel.height;
+      }
+    }
+  });
+  forEach$1(inputGraph.edges(), function(e) {
+    const inputLabel = inputGraph.edge(e);
+    const layoutLabel = layoutGraph.edge(e);
+    inputLabel.points = layoutLabel.points;
+    inputLabel.labelPoint = layoutLabel.labelPoint;
+    if (has$1(layoutLabel, "x")) {
+      inputLabel.x = layoutLabel.x;
+      inputLabel.y = layoutLabel.y;
+    }
+  });
+  inputGraph.graph().width = layoutGraph.graph().width;
+  inputGraph.graph().height = layoutGraph.graph().height;
+}
+var graphNumAttrs = [
+  "nodesep",
+  "edgesep",
+  "ranksep",
+  "marginx",
+  "marginy"
+];
+var graphDefaults = {
+  ranksep: 50,
+  edgesep: 20,
+  nodesep: 50,
+  rankdir: "tb",
+  splines: "polyline",
+  avoid_label_on_border: false
+};
+var graphAttrs = [
+  "acyclicer",
+  "ranker",
+  "rankdir",
+  "align",
+  "splines",
+  "avoid_label_on_border"
+];
+var nodeNumAttrs = [
+  "width",
+  "height",
+  "marginl",
+  "marginr",
+  "margint",
+  "marginb",
+  "paddingt",
+  "paddingb",
+  "minwidth"
+];
+var nodeDefaults = {
+  width: 0,
+  height: 0,
+  marginl: 0,
+  marginr: 0,
+  margint: 0,
+  marginb: 0
+};
+var edgeNumAttrs = ["minlen", "weight", "width", "height", "labeloffset"];
+var edgeDefaults = {
+  minlen: 1,
+  weight: 1,
+  width: 0,
+  height: 0,
+  labeloffset: 10,
+  labelpos: "r"
+};
+var edgeAttrs = ["labelpos"];
+function buildLayoutGraph(inputGraph) {
+  const g = new Graph({
+    multigraph: true,
+    compound: true
+  });
+  const graph = canonicalize(inputGraph.graph());
+  g.setGraph(Object.assign({}, graphDefaults, selectNumberAttrs(graph, graphNumAttrs), pick$1(graph, graphAttrs), {
+    borderRanks: /* @__PURE__ */ new Set()
+  }));
+  forEach$1(inputGraph.nodes(), function(v) {
+    const node2 = canonicalize(inputGraph.node(v));
+    g.setNode(v, defaults$1(selectNumberAttrs(node2, nodeNumAttrs), nodeDefaults));
+    g.setParent(v, inputGraph.parent(v));
+  });
+  forEach$1(inputGraph.edges(), function(e) {
+    const edge = canonicalize(inputGraph.edge(e));
+    g.setEdge(e, Object.assign({}, edgeDefaults, selectNumberAttrs(edge, edgeNumAttrs), pick$1(edge, edgeAttrs)));
+  });
+  return g;
+}
+function makeSpaceForEdgeLabels(g) {
+  const graph = g.graph();
+  graph.ranksep /= 2;
+  forEach$1(g.edges(), function(e) {
+    const edge = g.edge(e);
+    edge.minlen *= 2;
+    if (edge.labelpos.toLowerCase() !== "c") {
+      if (graph.rankdir === "TB" || graph.rankdir === "BT") {
+        edge.width += edge.labeloffset;
+      } else {
+        edge.height += edge.labeloffset;
+      }
+    }
+  });
+}
+function injectEdgeLabelProxies(g) {
+  forEach$1(g.edges(), function(e) {
+    const edge = g.edge(e);
+    if (edge.width && edge.height) {
+      const v = g.node(e.v);
+      const w = g.node(e.w);
+      const label = { rank: (w.rank - v.rank) / 2 + v.rank, e };
+      util2.addDummyNode(g, "edge-proxy", label, "_ep");
+    }
+  });
+}
+function assignRankMinMax(g) {
+  let maxRank2 = 0;
+  forEach$1(g.nodes(), function(v) {
+    const node2 = g.node(v);
+    if (node2.borderTop) {
+      node2.minRank = g.node(node2.borderTop).rank;
+      node2.maxRank = g.node(node2.borderBottom).rank;
+      maxRank2 = Math.max(maxRank2, node2.maxRank);
+    }
+  });
+  g.graph().maxRank = maxRank2;
+}
+function removeEdgeLabelProxies(g) {
+  forEach$1(g.nodes(), function(v) {
+    const node2 = g.node(v);
+    if (node2.dummy === "edge-proxy") {
+      g.edge(node2.e).labelRank = node2.rank;
+      g.removeNode(v);
+    }
+  });
+}
+function translateGraph(g) {
+  let minX = Number.POSITIVE_INFINITY;
+  let maxX = 0;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxY = 0;
+  const graphLabel = g.graph();
+  const marginX = graphLabel.marginx || 0;
+  const marginY = graphLabel.marginy || 0;
+  function getExtremes(attrs) {
+    const x2 = attrs.x;
+    const y2 = attrs.y;
+    const w = Math.max(("minwidth" in attrs ? attrs.minwidth : 0) || 0, attrs.width);
+    const h = attrs.height;
+    minX = Math.min(minX, x2 - w / 2);
+    maxX = Math.max(maxX, x2 + w / 2);
+    minY = Math.min(minY, y2 - h / 2);
+    maxY = Math.max(maxY, y2 + h / 2);
+  }
+  forEach$1(g.nodes(), function(v) {
+    getExtremes(g.node(v));
+  });
+  forEach$1(g.edges(), function(e) {
+    const edge = g.edge(e);
+    if (has$1(edge, "x")) {
+      getExtremes(edge);
+    }
+  });
+  minX -= marginX;
+  minY -= marginY;
+  forEach$1(g.nodes(), function(v) {
+    const node2 = g.node(v);
+    node2.x -= minX;
+    node2.y -= minY;
+  });
+  forEach$1(g.edges(), function(e) {
+    const edge = g.edge(e);
+    forEach$1(edge.points, function(p) {
+      p.x -= minX;
+      p.y -= minY;
+    });
+    if (has$1(edge, "x")) {
+      edge.x -= minX;
+    }
+    if (has$1(edge, "y")) {
+      edge.y -= minY;
+    }
+  });
+  graphLabel.width = maxX - minX + marginX;
+  graphLabel.height = maxY - minY + marginY;
+}
+function assignNodeIntersects(g) {
+  const { rankdir, splines, borderRanks, nodesep, avoid_label_on_border } = g.graph();
+  const isTopBottom = rankdir.toUpperCase() === "TB";
+  const isBottomTop = rankdir.toUpperCase() === "BT";
+  const isVerticalLayout = isBottomTop || isTopBottom;
+  const isOrthogonal = splines === "ortho";
+  forEach$1(g.edges(), function(e) {
+    const edge = g.edge(e);
+    const nodeV = g.node(e.v);
+    const nodeW = g.node(e.w);
+    let p1 = null;
+    let p2 = null;
+    if (!edge.points) {
+      edge.points = [];
+      p1 = nodeW;
+      p2 = nodeV;
+      edge.points.unshift(util2.intersectRect(nodeV, p1));
+      edge.points.push(util2.intersectRect(nodeW, p2));
+    } else {
+      p1 = edge.points[0];
+      p2 = edge.points[edge.points.length - 1];
+      const pointsBetween = edge.points.slice(1, edge.points.length - 1);
+      if (avoid_label_on_border) {
+        const isLabelPointOnBorder = borderRanks.has(nodeV.rank + 1);
+        if (isLabelPointOnBorder) {
+          p1.y += nodesep;
+        }
+      }
+      const labelPoint = { ...p1 };
+      edge.labelPoint = labelPoint;
+      const origInterWithV = util2.intersectRect(nodeV, labelPoint);
+      const origInterWithW = util2.intersectRect(nodeW, p2);
+      let edgePointsArranged = false;
+      if (isOrthogonal) {
+        const nodesInfo = comparePositions(nodeV, nodeW);
+        const { leftOne, rightOne, bottomOne, topOne } = nodesInfo;
+        const lastPointInBetween = pointsBetween.length ? pointsBetween[pointsBetween.length - 1] : null;
+        const rangeOfVWCenter = {
+          x: [leftOne.x, rightOne.x],
+          y: [topOne.y, bottomOne.y]
+        };
+        if (isVerticalLayout && !nodesInfo.isXEqual && isInsideRange(labelPoint.x, rangeOfVWCenter.x)) {
+          const topRectBottomBound = topOne.y + topOne.height / 2;
+          const bottomRectUpperBound = bottomOne.y - bottomOne.height / 2;
+          const newInterWithV = {
+            ...origInterWithV
+          };
+          const newInterWithW = {
+            ...origInterWithW
+          };
+          newInterWithV.y = Math.max(origInterWithV.y, topRectBottomBound);
+          newInterWithW.y = Math.min(origInterWithW.y, bottomRectUpperBound);
+          p1 = { x: newInterWithV.x, y: labelPoint.y };
+          p2 = { x: newInterWithW.x, y: (lastPointInBetween || labelPoint).y };
+          const newPoints = [
+            newInterWithV,
+            p1,
+            labelPoint,
+            ...pointsBetween,
+            p2,
+            newInterWithW
+          ];
+          const overlapXRange = [
+            rightOne.x - rightOne.width / 2,
+            leftOne.x + leftOne.width / 2
+          ];
+          if (overlapXRange[0] < overlapXRange[1]) {
+            const isAllInRange = newPoints.every((p) => {
+              return isInsideRange(p.x, overlapXRange);
+            });
+            if (isAllInRange) {
+              for (const p of newPoints) {
+                p.x = labelPoint.x;
+              }
+            }
+          }
+          edge.points = newPoints;
+          edgePointsArranged = true;
+        } else if (!isVerticalLayout && !nodesInfo.isYEqual && isInsideRange(labelPoint.y, rangeOfVWCenter.y)) {
+          const { leftOne: leftOne2, rightOne: rightOne2 } = nodesInfo;
+          const leftRectRightBound = leftOne2.x + leftOne2.width / 2;
+          const rightRectLeftBound = rightOne2.x - rightOne2.width / 2;
+          const newInterWithV = {
+            ...origInterWithV,
+            x: Math.max(origInterWithV.x, leftRectRightBound)
+          };
+          const newInterWithW = {
+            ...origInterWithW,
+            x: Math.min(origInterWithW.x, rightRectLeftBound)
+          };
+          p1 = { x: labelPoint.x, y: newInterWithV.y };
+          p2 = { x: (lastPointInBetween || labelPoint).x, y: newInterWithW.y };
+          const newPoints = [
+            newInterWithV,
+            p1,
+            labelPoint,
+            ...pointsBetween,
+            p2,
+            newInterWithW
+          ];
+          const overlapYRange = [
+            bottomOne.y - bottomOne.height / 2,
+            topOne.y + topOne.height / 2
+          ];
+          if (overlapYRange[0] < overlapYRange[1]) {
+            const isAllInRange = newPoints.every((p) => {
+              return isInsideRange(p.y, overlapYRange);
+            });
+            if (isAllInRange) {
+              for (const p of newPoints) {
+                p.y = labelPoint.y;
+              }
+            }
+          }
+          edge.points = newPoints;
+          edgePointsArranged = true;
+        }
+      }
+      if (!edgePointsArranged) {
+        const intersectWithV = util2.intersectRect(nodeV, labelPoint);
+        const intersectWithW = util2.intersectRect(nodeW, p2);
+        edge.points.unshift(intersectWithV);
+        edge.points.push(intersectWithW);
+      }
+    }
+  });
+}
+function fixupEdgeLabelCoords(g) {
+  forEach$1(g.edges(), function(e) {
+    const edge = g.edge(e);
+    if (has$1(edge, "x")) {
+      if (edge.labelpos === "l" || edge.labelpos === "r") {
+        edge.width -= edge.labeloffset;
+      }
+      switch (edge.labelpos) {
+        case "l":
+          edge.x -= edge.width / 2 + edge.labeloffset;
+          break;
+        case "r":
+          edge.x += edge.width / 2 + edge.labeloffset;
+          break;
+      }
+    }
+  });
+}
+function reversePointsForReversedEdges(g) {
+  forEach$1(g.edges(), function(e) {
+    const edge = g.edge(e);
+    if (edge.reversed) {
+      edge.points.reverse();
+    }
+  });
+}
+function removeBorderNodes(g) {
+  const { borderRanks } = g.graph();
+  forEach$1(g.nodes(), function(v) {
+    if (g.children(v).length) {
+      const node2 = g.node(v);
+      const t = g.node(node2.borderTop);
+      const b10 = g.node(node2.borderBottom);
+      const l = g.node(last2(node2.borderLeft));
+      const r = g.node(last2(node2.borderRight));
+      borderRanks.add(t.rank);
+      borderRanks.add(b10.rank);
+      const widthBetweenBorder = Math.abs(r.x - l.x);
+      node2.width = Math.max(widthBetweenBorder, node2.minwidth || 0);
+      if (node2.minwidth && node2.minwidth > widthBetweenBorder) {
+        const wOffset = node2.minwidth - widthBetweenBorder;
+        const originalRightEdge = Math.min(l.x, r.x) + widthBetweenBorder;
+        addOffsetFromX(wOffset, originalRightEdge);
+      }
+      node2.height = Math.abs(b10.y - t.y);
+      node2.x = l.x + node2.width / 2;
+      node2.y = t.y + node2.height / 2;
+    }
+  });
+  forEach$1(g.nodes(), function(v) {
+    if (g.node(v).dummy === "border") {
+      g.removeNode(v);
+    }
+  });
+  function addOffsetFromX(wOffset, startX) {
+    const visited = {};
+    const dfs2 = (v) => {
+      if (visited[v])
+        return;
+      visited[v] = true;
+      const node2 = g.node(v);
+      if (node2.x >= startX)
+        node2.x += wOffset;
+      for (const child of g.children(v))
+        dfs2(child);
+    };
+    for (const v of g.nodes())
+      dfs2(v);
+  }
+}
+function removeSelfEdges(g) {
+  forEach$1(g.edges(), function(e) {
+    if (e.v === e.w) {
+      const node2 = g.node(e.v);
+      if (!node2.selfEdges) {
+        node2.selfEdges = [];
+      }
+      node2.selfEdges.push({ e, label: g.edge(e) });
+      g.removeEdge(e);
+    }
+  });
+}
+function insertSelfEdges(g) {
+  const layers = util2.buildLayerMatrix(g);
+  layers.forEach(function(layer) {
+    let orderShift = 0;
+    layer.forEach(function(v, i2) {
+      const node2 = g.node(v);
+      node2.order = i2 + orderShift;
+      forEach$1(node2.selfEdges, function(selfEdge) {
+        util2.addDummyNode(g, "selfedge", {
+          width: selfEdge.label.width,
+          height: selfEdge.label.height,
+          rank: node2.rank,
+          order: i2 + ++orderShift,
+          e: selfEdge.e,
+          label: selfEdge.label
+        }, "_se");
+      });
+      delete node2.selfEdges;
+    });
+  });
+}
+function positionSelfEdges(g) {
+  forEach$1(g.nodes(), function(v) {
+    const node2 = g.node(v);
+    if (node2.dummy === "selfedge") {
+      const selfNode = g.node(node2.e.v);
+      const x2 = selfNode.x + selfNode.width / 2;
+      const y2 = selfNode.y;
+      const dx = node2.x - x2;
+      const dy = selfNode.height / 2;
+      g.setEdge(node2.e, node2.label);
+      g.removeNode(v);
+      node2.label.points = [
+        { x: x2 + 2 * dx / 3, y: y2 - dy },
+        { x: x2 + 5 * dx / 6, y: y2 - dy },
+        { x: x2 + dx, y: y2 },
+        { x: x2 + 5 * dx / 6, y: y2 + dy },
+        { x: x2 + 2 * dx / 3, y: y2 + dy }
+      ];
+      node2.label.x = node2.x;
+      node2.label.y = node2.y;
+    }
+  });
+}
+function selectNumberAttrs(obj, attrs) {
+  return mapValues(pick$1(obj, attrs), Number);
+}
+function canonicalize(attrs) {
+  const newAttrs = {};
+  forEach$1(attrs, function(v, k) {
+    newAttrs[k.toLowerCase()] = v;
+  });
+  return newAttrs;
+}
+var index = {
+  layout,
+  util: util2
+};
+
+// ../../node_modules/.pnpm/@pintora+graphlib@2.2.2/node_modules/@pintora/graphlib/dist/graphlib.esm.js
 var objectProto$d2 = Object.prototype;
 var hasOwnProperty$a2 = objectProto$d2.hasOwnProperty;
 function baseHas2(object, key) {
@@ -24608,7 +27289,7 @@ function forEach3(collection, iteratee) {
 }
 var DataView3 = getNative2(root2, "DataView");
 var Promise$12 = getNative2(root2, "Promise");
-var Set$1 = getNative2(root2, "Set");
+var Set2 = getNative2(root2, "Set");
 var WeakMap3 = getNative2(root2, "WeakMap");
 var mapTag$32 = "[object Map]";
 var objectTag$12 = "[object Object]";
@@ -24619,10 +27300,10 @@ var dataViewTag$12 = "[object DataView]";
 var dataViewCtorString2 = toSource2(DataView3);
 var mapCtorString2 = toSource2(Map3);
 var promiseCtorString2 = toSource2(Promise$12);
-var setCtorString2 = toSource2(Set$1);
+var setCtorString2 = toSource2(Set2);
 var weakMapCtorString2 = toSource2(WeakMap3);
 var getTag2 = baseGetTag2;
-if (DataView3 && getTag2(new DataView3(new ArrayBuffer(1))) != dataViewTag$12 || Map3 && getTag2(new Map3()) != mapTag$32 || Promise$12 && getTag2(Promise$12.resolve()) != promiseTag2 || Set$1 && getTag2(new Set$1()) != setTag$32 || WeakMap3 && getTag2(new WeakMap3()) != weakMapTag2) {
+if (DataView3 && getTag2(new DataView3(new ArrayBuffer(1))) != dataViewTag$12 || Map3 && getTag2(new Map3()) != mapTag$32 || Promise$12 && getTag2(Promise$12.resolve()) != promiseTag2 || Set2 && getTag2(new Set2()) != setTag$32 || WeakMap3 && getTag2(new WeakMap3()) != weakMapTag2) {
   getTag2 = function(value) {
     var result = baseGetTag2(value), Ctor = result == objectTag$12 ? value.constructor : void 0, ctorString = Ctor ? toSource2(Ctor) : "";
     if (ctorString) {
@@ -25290,8 +27971,8 @@ function arrayIncludesWith2(array, value, comparator) {
 function noop2() {
 }
 var INFINITY2 = 1 / 0;
-var createSet2 = !(Set$1 && 1 / setToArray2(new Set$1([, -0]))[1] == INFINITY2) ? noop2 : function(values4) {
-  return new Set$1(values4);
+var createSet2 = !(Set2 && 1 / setToArray2(new Set2([, -0]))[1] == INFINITY2) ? noop2 : function(values4) {
+  return new Set2(values4);
 };
 var LARGE_ARRAY_SIZE2 = 200;
 function baseUniq2(array, iteratee, comparator) {
@@ -25867,26 +28548,6 @@ function edgeArgsToObj2(isDirected, v_, w_, name) {
 function edgeObjToId2(isDirected, edgeObj) {
   return edgeArgsToId2(isDirected, edgeObj.v, edgeObj.w, edgeObj.name);
 }
-function components(g) {
-  const visited = {};
-  const cmpts = [];
-  let cmpt;
-  function dfs2(v) {
-    if (_2.has(visited, v)) return;
-    visited[v] = true;
-    cmpt.push(v);
-    _2.each(g.successors(v), dfs2);
-    _2.each(g.predecessors(v), dfs2);
-  }
-  _2.each(g.nodes(), function(v) {
-    cmpt = [];
-    dfs2(v);
-    if (cmpt.length) {
-      cmpts.push(cmpt);
-    }
-  });
-  return cmpts;
-}
 function PriorityQueue2() {
   this._arr = [];
   this._keyIndices = {};
@@ -25982,142 +28643,7 @@ PriorityQueue2.prototype._swap = function(i2, j) {
   keyIndices[origArrI.key] = j;
 };
 var DEFAULT_WEIGHT_FUNC$12 = _2.constant(1);
-function dijkstra(g, source, weightFn, edgeFn) {
-  return runDijkstra(
-    g,
-    String(source),
-    weightFn || DEFAULT_WEIGHT_FUNC$12,
-    edgeFn || function(v) {
-      return g.outEdges(v);
-    }
-  );
-}
-function runDijkstra(g, source, weightFn, edgeFn) {
-  const results = {};
-  const pq = new PriorityQueue2();
-  let v, vEntry;
-  const updateNeighbors = function(edge) {
-    const w = edge.v !== v ? edge.v : edge.w;
-    const wEntry = results[w];
-    const weight = weightFn(edge);
-    const distance3 = vEntry.distance + weight;
-    if (weight < 0) {
-      throw new Error("dijkstra does not allow negative edge weights. Bad edge: " + edge + " Weight: " + weight);
-    }
-    if (distance3 < wEntry.distance) {
-      wEntry.distance = distance3;
-      wEntry.predecessor = v;
-      pq.decrease(w, distance3);
-    }
-  };
-  g.nodes().forEach(function(v2) {
-    const distance3 = v2 === source ? 0 : Number.POSITIVE_INFINITY;
-    results[v2] = { distance: distance3 };
-    pq.add(v2, distance3);
-  });
-  while (pq.size() > 0) {
-    v = pq.removeMin();
-    vEntry = results[v];
-    if (vEntry.distance === Number.POSITIVE_INFINITY) {
-      break;
-    }
-    edgeFn(v).forEach(updateNeighbors);
-  }
-  return results;
-}
-function dijkstraAll(g, weightFunc, edgeFunc) {
-  return _2.transform(g.nodes(), function(acc, v) {
-    acc[v] = dijkstra(g, v, weightFunc, edgeFunc);
-  }, {});
-}
-function tarjan(g) {
-  let index2 = 0;
-  const stack = [];
-  const visited = {};
-  const results = [];
-  function dfs2(v) {
-    const entry = visited[v] = {
-      onStack: true,
-      lowlink: index2,
-      index: index2++
-    };
-    stack.push(v);
-    g.successors(v).forEach(function(w) {
-      if (!_2.has(visited, w)) {
-        dfs2(w);
-        entry.lowlink = Math.min(entry.lowlink, visited[w].lowlink);
-      } else if (visited[w].onStack) {
-        entry.lowlink = Math.min(entry.lowlink, visited[w].index);
-      }
-    });
-    if (entry.lowlink === entry.index) {
-      const cmpt = [];
-      let w;
-      do {
-        w = stack.pop();
-        visited[w].onStack = false;
-        cmpt.push(w);
-      } while (v !== w);
-      results.push(cmpt);
-    }
-  }
-  g.nodes().forEach(function(v) {
-    if (!_2.has(visited, v)) {
-      dfs2(v);
-    }
-  });
-  return results;
-}
-function findCycles(g) {
-  return _2.filter(tarjan(g), function(cmpt) {
-    return cmpt.length > 1 || cmpt.length === 1 && g.hasEdge(cmpt[0], cmpt[0]);
-  });
-}
 var DEFAULT_WEIGHT_FUNC2 = _2.constant(1);
-function floydWarshall(g, weightFn, edgeFn) {
-  return runFloydWarshall(
-    g,
-    weightFn || DEFAULT_WEIGHT_FUNC2,
-    edgeFn || function(v) {
-      return g.outEdges(v);
-    }
-  );
-}
-function runFloydWarshall(g, weightFn, edgeFn) {
-  const results = {};
-  const nodes = g.nodes();
-  nodes.forEach(function(v) {
-    results[v] = {};
-    results[v][v] = { distance: 0 };
-    nodes.forEach(function(w) {
-      if (v !== w) {
-        results[v][w] = { distance: Number.POSITIVE_INFINITY };
-      }
-    });
-    edgeFn(v).forEach(function(edge) {
-      const w = edge.v === v ? edge.w : edge.v;
-      const d = weightFn(edge);
-      results[v][w] = { distance: d, predecessor: v };
-    });
-  });
-  nodes.forEach(function(k) {
-    const rowK = results[k];
-    nodes.forEach(function(i2) {
-      const rowI = results[i2];
-      nodes.forEach(function(j) {
-        const ik = rowI[k];
-        const kj = rowK[j];
-        const ij = rowI[j];
-        const altDistance = ik.distance + kj.distance;
-        if (altDistance < ij.distance) {
-          ij.distance = altDistance;
-          ij.predecessor = kj.predecessor;
-        }
-      });
-    });
-  });
-  return results;
-}
 topsort2.CycleException = CycleException2;
 function topsort2(g) {
   const visited = {};
@@ -26144,2344 +28670,50 @@ function topsort2(g) {
 function CycleException2() {
 }
 CycleException2.prototype = new Error();
-function isAcyclic(g) {
-  try {
-    topsort2(g);
-  } catch (e) {
-    if (e instanceof topsort2.CycleException) {
-      return false;
-    }
-    throw e;
-  }
-  return true;
+
+// ../pintora-diagrams/lib/util/graph.js
+function createLayoutGraph(opts) {
+  return new Graph2(opts);
 }
-function dfs$1(g, vs, order2) {
-  if (!_2.isArray(vs)) {
-    vs = [vs];
-  }
-  const navigation = (g.isDirected() ? g.successors : g.neighbors).bind(g);
-  const acc = [];
-  const visited = {};
-  _2.each(vs, function(v) {
-    if (!g.hasNode(v)) {
-      throw new Error("Graph does not have node: " + v);
-    }
-    doDfs(g, v, order2 === "post", visited, navigation, acc);
-  });
-  return acc;
-}
-function doDfs(g, v, postorder2, visited, navigation, acc) {
-  if (!_2.has(visited, v)) {
-    visited[v] = true;
-    if (!postorder2) {
-      acc.push(v);
-    }
-    _2.each(navigation(v), function(w) {
-      doDfs(g, w, postorder2, visited, navigation, acc);
-    });
-    if (postorder2) {
-      acc.push(v);
-    }
-  }
-}
-function postorder$2(g, vs) {
-  return dfs$1(g, vs, "post");
-}
-function preorder$1(g, vs) {
-  return dfs$1(g, vs, "pre");
-}
-function prim(g, weightFunc) {
-  const result = new Graph2();
-  const parents = {};
-  const pq = new PriorityQueue2();
-  let v;
-  function updateNeighbors(edge) {
-    const w = edge.v === v ? edge.w : edge.v;
-    const pri = pq.priority(w);
-    if (pri !== void 0) {
-      const edgeWeight = weightFunc(edge);
-      if (edgeWeight < pri) {
-        parents[w] = v;
-        pq.decrease(w, edgeWeight);
-      }
-    }
-  }
-  if (g.nodeCount() === 0) {
-    return result;
-  }
-  _2.each(g.nodes(), function(v2) {
-    pq.add(v2, Number.POSITIVE_INFINITY);
-    result.setNode(v2);
-  });
-  pq.decrease(g.nodes()[0], 0);
-  let init = false;
-  while (pq.size() > 0) {
-    v = pq.removeMin();
-    if (_2.has(parents, v)) {
-      result.setEdge(v, parents[v]);
-    } else if (init) {
-      throw new Error("Input graph is not connected: " + g);
-    } else {
-      init = true;
-    }
-    g.nodeEdges(v).forEach(updateNeighbors);
-  }
-  return result;
-}
-var alg = {
-  components,
-  dijkstra,
-  dijkstraAll,
-  findCycles,
-  floydWarshall,
-  isAcyclic,
-  postorder: postorder$2,
-  preorder: preorder$1,
-  prim,
-  tarjan,
-  topsort: topsort2
-};
-function List() {
-  const sentinel = {};
-  sentinel._next = sentinel._prev = sentinel;
-  this._sentinel = sentinel;
-}
-List.prototype.dequeue = function() {
-  const sentinel = this._sentinel;
-  const entry = sentinel._prev;
-  if (entry !== sentinel) {
-    unlink(entry);
-    return entry;
-  }
-};
-List.prototype.enqueue = function(entry) {
-  const sentinel = this._sentinel;
-  if (entry._prev && entry._next) {
-    unlink(entry);
-  }
-  entry._next = sentinel._next;
-  sentinel._next._prev = entry;
-  sentinel._next = entry;
-  entry._prev = sentinel;
-};
-List.prototype.toString = function() {
-  const strs = [];
-  const sentinel = this._sentinel;
-  let curr = sentinel._prev;
-  while (curr !== sentinel) {
-    strs.push(JSON.stringify(curr, filterOutLinks));
-    curr = curr._prev;
-  }
-  return "[" + strs.join(", ") + "]";
-};
-function unlink(entry) {
-  entry._prev._next = entry._next;
-  entry._next._prev = entry._prev;
-  delete entry._next;
-  delete entry._prev;
-}
-function filterOutLinks(k, v) {
-  if (k !== "_next" && k !== "_prev") {
-    return v;
-  }
-}
-var DEFAULT_WEIGHT_FN = (e) => 1;
-function greedyFAS(g, weightFn) {
-  if (g.nodeCount() <= 1) {
-    return [];
-  }
-  const state = buildState(g, weightFn || DEFAULT_WEIGHT_FN);
-  const results = doGreedyFAS(state.graph, state.buckets, state.zeroIdx);
-  return flatten(map$1(results, function(e) {
-    return g.outEdges(e.v, e.w);
-  }));
-}
-function doGreedyFAS(g, buckets, zeroIdx) {
-  let results = [];
-  const sources = buckets[buckets.length - 1];
-  const sinks = buckets[0];
-  let entry;
-  while (g.nodeCount()) {
-    while (entry = sinks.dequeue()) {
-      removeNode(g, buckets, zeroIdx, entry);
-    }
-    while (entry = sources.dequeue()) {
-      removeNode(g, buckets, zeroIdx, entry);
-    }
-    if (g.nodeCount()) {
-      for (let i2 = buckets.length - 2; i2 > 0; --i2) {
-        entry = buckets[i2].dequeue();
-        if (entry) {
-          results = results.concat(removeNode(g, buckets, zeroIdx, entry, true));
-          break;
-        }
-      }
-    }
-  }
-  return results;
-}
-function removeNode(g, buckets, zeroIdx, entry, collectPredecessors = false) {
-  const results = collectPredecessors ? [] : void 0;
-  forEach$1(g.inEdges(entry.v), function(edge) {
-    const weight = g.edge(edge);
-    const uEntry = g.node(edge.v);
-    if (collectPredecessors) {
-      results.push({ v: edge.v, w: edge.w });
-    }
-    uEntry.out -= weight;
-    assignBucket(buckets, zeroIdx, uEntry);
-  });
-  forEach$1(g.outEdges(entry.v), function(edge) {
-    const weight = g.edge(edge);
-    const w = edge.w;
-    const wEntry = g.node(w);
-    wEntry["in"] -= weight;
-    assignBucket(buckets, zeroIdx, wEntry);
-  });
-  g.removeNode(entry.v);
-  return results;
-}
-function buildState(g, weightFn) {
-  const fasGraph = new Graph2();
-  let maxIn = 0;
-  let maxOut = 0;
-  forEach$1(g.nodes(), function(v) {
-    fasGraph.setNode(v, { v, in: 0, out: 0 });
-  });
-  forEach$1(g.edges(), function(e) {
-    const prevWeight = fasGraph.edge(e.v, e.w) || 0;
-    const weight = weightFn(e);
-    const edgeWeight = prevWeight + weight;
-    fasGraph.setEdge(e.v, e.w, edgeWeight);
-    maxOut = Math.max(maxOut, fasGraph.node(e.v).out += weight);
-    maxIn = Math.max(maxIn, fasGraph.node(e.w)["in"] += weight);
-  });
-  const buckets = range$1(maxOut + maxIn + 3).map(function() {
-    return new List();
-  });
-  const zeroIdx = maxIn + 1;
-  forEach$1(fasGraph.nodes(), function(v) {
-    assignBucket(buckets, zeroIdx, fasGraph.node(v));
-  });
-  return { graph: fasGraph, buckets, zeroIdx };
-}
-function assignBucket(buckets, zeroIdx, entry) {
-  if (!entry.out) {
-    buckets[0].enqueue(entry);
-  } else if (!entry["in"]) {
-    buckets[buckets.length - 1].enqueue(entry);
-  } else {
-    buckets[entry.out - entry["in"] + zeroIdx].enqueue(entry);
-  }
-}
-function run$2(g) {
-  const fas = g.graph().acyclicer === "greedy" ? greedyFAS(g, weightFn(g)) : dfsFAS(g);
-  forEach$1(fas, function(e) {
-    const label = g.edge(e);
-    g.removeEdge(e);
-    label.forwardName = e.name;
-    label.reversed = true;
-    g.setEdge(e.w, e.v, label, uniqueId("rev"));
-  });
-  function weightFn(g2) {
-    return function(e) {
-      return g2.edge(e).weight;
-    };
-  }
-}
-function dfsFAS(g) {
-  const fas = [];
-  const stack = {};
-  const visited = {};
-  function dfs2(v) {
-    if (has$1(visited, v)) {
+function getGraphBounds(g, opts = {}) {
+  let left = opts.startLeft || 0;
+  let right = 0;
+  let top = opts.startTop || 0;
+  let bottom = 0;
+  g.nodes().forEach((k) => {
+    const node2 = g.node(k);
+    if (!node2)
       return;
-    }
-    visited[v] = true;
-    stack[v] = true;
-    forEach$1(g.outEdges(v), function(e) {
-      if (has$1(stack, e.w)) {
-        fas.push(e);
-      } else {
-        dfs2(e.w);
-      }
-    });
-    delete stack[v];
-  }
-  forEach$1(g.nodes(), dfs2);
-  return fas;
-}
-function undo$2(g) {
-  forEach$1(g.edges(), function(e) {
-    const label = g.edge(e);
-    if (label.reversed) {
-      g.removeEdge(e);
-      const forwardName = label.forwardName;
-      delete label.reversed;
-      delete label.forwardName;
-      g.setEdge(e.w, e.v, label, forwardName);
-    }
+    if (opts.filterNode && !opts.filterNode(node2))
+      return;
+    left = Math.min(node2.outerLeft || node2.x, left);
+    const width2 = node2.outerWidth || node2.width || 0;
+    right = Math.max(node2.outerRight || node2.x + width2 / 2, right);
+    top = Math.min(node2.outerTop || node2.y, top);
+    const height = node2.outerHeight || node2.height || 0;
+    bottom = Math.max(node2.outerBottom || node2.y + height / 2, bottom);
   });
-}
-var acyclic = {
-  run: run$2,
-  undo: undo$2
-};
-function addDummyNode(g, type, attrs, name) {
-  let v;
-  do {
-    v = uniqueId(name);
-  } while (g.hasNode(v));
-  attrs.dummy = type;
-  g.setNode(v, attrs);
-  return v;
-}
-function simplify(g) {
-  const simplified = new Graph2().setGraph(g.graph());
-  forEach$1(g.nodes(), function(v) {
-    simplified.setNode(v, g.node(v));
-  });
-  forEach$1(g.edges(), function(e) {
-    const simpleLabel = simplified.edge(e.v, e.w) || { weight: 0, minlen: 1 };
-    const label = g.edge(e);
-    simplified.setEdge(e.v, e.w, {
-      weight: simpleLabel.weight + label.weight,
-      minlen: Math.max(simpleLabel.minlen, label.minlen)
-    });
-  });
-  return simplified;
-}
-function asNonCompoundGraph(g) {
-  const simplified = new Graph2({ multigraph: g.isMultigraph() }).setGraph(g.graph());
-  forEach$1(g.nodes(), function(v) {
-    if (!g.children(v).length) {
-      simplified.setNode(v, g.node(v));
-    }
-  });
-  forEach$1(g.edges(), function(e) {
-    simplified.setEdge(e, g.edge(e));
-  });
-  return simplified;
-}
-function successorWeights(g) {
-  const weightMap = map$1(g.nodes(), function(v) {
-    const sucs = {};
-    forEach$1(g.outEdges(v), function(e) {
-      sucs[e.w] = (sucs[e.w] || 0) + g.edge(e).weight;
-    });
-    return sucs;
-  });
-  return zipObject(g.nodes(), weightMap);
-}
-function predecessorWeights(g) {
-  const weightMap = map$1(g.nodes(), function(v) {
-    const preds = {};
-    forEach$1(g.inEdges(v), function(e) {
-      preds[e.v] = (preds[e.v] || 0) + g.edge(e).weight;
-    });
-    return preds;
-  });
-  return zipObject(g.nodes(), weightMap);
-}
-function intersectRect(rect, point2) {
-  const x2 = rect.x;
-  const y2 = rect.y;
-  const dx = point2.x - x2;
-  const dy = point2.y - y2;
-  let w = rect.width / 2;
-  let h = rect.height / 2;
-  if (!dx && !dy) {
-    throw new Error("Not possible to find intersection inside of the rectangle");
-  }
-  let sx;
-  let sy;
-  if (Math.abs(dy) * w > Math.abs(dx) * h) {
-    if (dy < 0) {
-      h = -h;
-    }
-    sx = h * dx / dy;
-    sy = h;
-  } else {
-    if (dx < 0) {
-      w = -w;
-    }
-    sx = w;
-    sy = w * dy / dx;
-  }
-  return { x: x2 + sx, y: y2 + sy };
-}
-function buildLayerMatrix(g) {
-  const layering = map$1(range$1(maxRank(g) + 1), function() {
-    return [];
-  });
-  forEach$1(g.nodes(), function(v) {
-    const node2 = g.node(v);
-    const rank2 = node2.rank;
-    if (!isUndefined$1(rank2) && typeof node2.order === "number") {
-      layering[rank2][node2.order] = v;
-    }
-  });
-  return layering;
-}
-function normalizeRanks(g) {
-  const min$1 = min3(map$1(g.nodes(), function(v) {
-    return g.node(v).rank;
-  }));
-  forEach$1(g.nodes(), function(v) {
-    const node2 = g.node(v);
-    if (has$1(node2, "rank")) {
-      node2.rank -= min$1;
-    }
-  });
-}
-function removeEmptyRanks(g) {
-  const offset = min3(map$1(g.nodes(), function(v) {
-    return g.node(v).rank;
-  }));
-  const layers = [];
-  forEach$1(g.nodes(), function(v) {
-    const rank2 = g.node(v).rank - offset;
-    if (!layers[rank2]) {
-      layers[rank2] = [];
-    }
-    layers[rank2].push(v);
-  });
-  let delta = 0;
-  const nodeRankFactor = g.graph().nodeRankFactor;
-  forEach$1(layers, function(vs, i2) {
-    if (isUndefined$1(vs) && i2 % nodeRankFactor !== 0) {
-      --delta;
-    } else if (delta) {
-      forEach$1(vs, function(v) {
-        g.node(v).rank += delta;
-      });
-    }
-  });
-}
-function addBorderNode$1(g, prefix, rank2, order2) {
-  const node2 = {
-    width: 0,
-    height: 0
-  };
-  if (arguments.length >= 4) {
-    node2.rank = rank2;
-    node2.order = order2;
-  }
-  return addDummyNode(g, "border", node2, prefix);
-}
-function maxRank(g) {
-  return max3(map$1(g.nodes(), function(v) {
-    const rank2 = g.node(v).rank;
-    if (!isUndefined$1(rank2)) {
-      return rank2;
-    }
-  }));
-}
-function partition(collection, fn) {
-  const result = { lhs: [], rhs: [] };
-  forEach$1(collection, function(value) {
-    if (fn(value)) {
-      result.lhs.push(value);
-    } else {
-      result.rhs.push(value);
-    }
-  });
-  return result;
-}
-function time(name, fn) {
-  const start = Date.now();
-  try {
-    return fn();
-  } finally {
-    console.log(name + " time: " + (Date.now() - start) + "ms");
-  }
-}
-function notime(name, fn) {
-  return fn();
-}
-function comparePositions(p1, p2) {
-  const isXEqual = p1.x === p2.x;
-  const isYEqual = p1.y === p2.y;
-  const leftOne = p2.x < p1.x ? p2 : p1;
-  const topOne = p2.y < p1.y ? p2 : p1;
-  const rightOne = p1 === leftOne ? p2 : p1;
-  const bottomOne = p1 === topOne ? p2 : p1;
-  const dx = rightOne.x - leftOne.x;
-  const dy = bottomOne.y - topOne.y;
+  const graphOpts = g.graph();
+  const marginx = graphOpts.marginx || 0;
+  const marginy = graphOpts.marginy || 0;
   return {
-    isXEqual,
-    isYEqual,
-    leftOne,
-    rightOne,
-    topOne,
-    bottomOne,
-    dx,
-    dy
+    left,
+    right,
+    top,
+    bottom,
+    width: right - left + marginx,
+    height: bottom - top + marginy
   };
 }
-function isInsideRange(v, range2) {
-  const [start, end] = range2;
-  if (v >= start && v <= end)
-    return true;
-  return false;
+function isGraphVertical(g) {
+  return g.graph().rankdir === "TB";
 }
-function getNum(v, defaultValue = 0) {
-  return v || defaultValue;
-}
-function isNumber(v) {
-  return typeof v === "number" && !isNaN(v);
-}
-var util2 = {
-  addDummyNode,
-  simplify,
-  asNonCompoundGraph,
-  successorWeights,
-  predecessorWeights,
-  intersectRect,
-  buildLayerMatrix,
-  normalizeRanks,
-  removeEmptyRanks,
-  addBorderNode: addBorderNode$1,
-  maxRank,
-  partition,
-  time,
-  notime
-};
-function run$1(g) {
-  g.graph().dummyChains = [];
-  forEach$1(g.edges(), function(edge) {
-    normalizeEdge(g, edge);
-  });
-}
-function normalizeEdge(g, e) {
-  let v = e.v;
-  let vRank = g.node(v).rank;
-  const w = e.w;
-  const wRank = g.node(w).rank;
-  const name = e.name;
-  const edgeLabel = g.edge(e);
-  const labelRank = edgeLabel.labelRank;
-  if (wRank === vRank + 1)
-    return;
-  g.removeEdge(e);
-  let dummy;
-  let attrs;
-  let i2;
-  for (i2 = 0, ++vRank; vRank < wRank; ++i2, ++vRank) {
-    edgeLabel.points = [];
-    attrs = {
-      width: 0,
-      height: 0,
-      edgeLabel,
-      edgeObj: e,
-      rank: vRank
-    };
-    dummy = util2.addDummyNode(g, "edge", attrs, "_d");
-    if (vRank === labelRank) {
-      attrs.width = edgeLabel.width;
-      attrs.height = edgeLabel.height;
-      attrs.dummy = "edge-label";
-      attrs.labelpos = edgeLabel.labelpos;
-    }
-    g.setEdge(v, dummy, { weight: edgeLabel.weight }, name);
-    if (i2 === 0) {
-      g.graph().dummyChains.push(dummy);
-    }
-    v = dummy;
+function getGraphSplinesOption(edgeType) {
+  if (["polyline", "ortho"].includes(edgeType)) {
+    return edgeType;
   }
-  g.setEdge(v, w, { weight: edgeLabel.weight }, name);
+  return "polyline";
 }
-function undo$1(g) {
-  forEach$1(g.graph().dummyChains, function(v) {
-    let node2 = g.node(v);
-    const origLabel = node2.edgeLabel;
-    let w = null;
-    g.setEdge(node2.edgeObj, origLabel);
-    while (node2.dummy) {
-      w = g.successors(v)[0];
-      g.removeNode(v);
-      origLabel.points.push({ x: node2.x, y: node2.y });
-      if (node2.dummy === "edge-label") {
-        origLabel.x = node2.x;
-        origLabel.y = node2.y;
-        origLabel.width = node2.width;
-        origLabel.height = node2.height;
-      }
-      v = w;
-      node2 = g.node(v);
-    }
-  });
-}
-var normalize2 = {
-  run: run$1,
-  undo: undo$1
-};
-function longestPath(g) {
-  const visited = {};
-  function dfs2(v) {
-    const label = g.node(v);
-    if (has$1(visited, v)) {
-      return label.rank;
-    }
-    visited[v] = true;
-    const rank2 = min3(map$1(g.outEdges(v), function(e) {
-      return dfs2(e.w) - g.edge(e).minlen;
-    })) || 0;
-    label.rank = rank2;
-    return rank2;
-  }
-  forEach$1(g.sources(), dfs2);
-}
-function slack(g, e) {
-  return g.node(e.w).rank - g.node(e.v).rank - g.edge(e).minlen;
-}
-function feasibleTree(g) {
-  const t = new Graph2({ directed: false });
-  const start = g.nodes()[0];
-  const size4 = g.nodeCount();
-  t.setNode(start, {});
-  let edge;
-  let delta;
-  while (tightTree(t, g) < size4) {
-    edge = findMinSlackEdge(t, g);
-    if (!edge)
-      break;
-    delta = t.hasNode(edge.v) ? slack(g, edge) : -slack(g, edge);
-    shiftRanks(t, g, delta);
-  }
-  return t;
-}
-function tightTree(t, g) {
-  function dfs2(v) {
-    forEach$1(g.nodeEdges(v), function(e) {
-      const edgeV = e.v;
-      const w = v === edgeV ? e.w : edgeV;
-      if (!t.hasNode(w) && !slack(g, e)) {
-        t.setNode(w, {});
-        t.setEdge(v, w, {});
-        dfs2(w);
-      }
-    });
-  }
-  forEach$1(t.nodes(), dfs2);
-  return t.nodeCount();
-}
-function findMinSlackEdge(t, g) {
-  return minBy(g.edges(), function(e) {
-    if (t.hasNode(e.v) !== t.hasNode(e.w)) {
-      return slack(g, e);
-    }
-  });
-}
-function shiftRanks(t, g, delta) {
-  forEach$1(t.nodes(), function(v) {
-    g.node(v).rank += delta;
-  });
-}
-var { preorder, postorder: postorder$1 } = alg;
-networkSimplex.initLowLimValues = initLowLimValues;
-networkSimplex.initCutValues = initCutValues;
-networkSimplex.calcCutValue = calcCutValue;
-networkSimplex.leaveEdge = leaveEdge;
-networkSimplex.enterEdge = enterEdge;
-networkSimplex.exchangeEdges = exchangeEdges;
-function networkSimplex(g) {
-  g = simplify(g);
-  longestPath(g);
-  const t = feasibleTree(g);
-  initLowLimValues(t);
-  initCutValues(t, g);
-  let e;
-  let f;
-  while (e = leaveEdge(t)) {
-    f = enterEdge(t, g, e);
-    exchangeEdges(t, g, e, f);
-  }
-}
-function initCutValues(t, g) {
-  let vs = postorder$1(t, t.nodes());
-  vs = vs.slice(0, vs.length - 1);
-  forEach$1(vs, function(v) {
-    assignCutValue(t, g, v);
-  });
-}
-function assignCutValue(t, g, child) {
-  const childLab = t.node(child);
-  const parent = childLab.parent;
-  t.edge(child, parent).cutvalue = calcCutValue(t, g, child);
-}
-function calcCutValue(t, g, child) {
-  const childLab = t.node(child);
-  const parent = childLab.parent;
-  let childIsTail = true;
-  let graphEdge = g.edge(child, parent);
-  let cutValue = 0;
-  if (!graphEdge) {
-    childIsTail = false;
-    graphEdge = g.edge(parent, child);
-  }
-  cutValue = graphEdge.weight;
-  forEach$1(g.nodeEdges(child), function(e) {
-    const isOutEdge = e.v === child;
-    const other = isOutEdge ? e.w : e.v;
-    if (other !== parent) {
-      const pointsToHead = isOutEdge === childIsTail;
-      const otherWeight = g.edge(e).weight;
-      cutValue += pointsToHead ? otherWeight : -otherWeight;
-      if (isTreeEdge(t, child, other)) {
-        const otherCutValue = t.edge(child, other).cutvalue;
-        cutValue += pointsToHead ? -otherCutValue : otherCutValue;
-      }
-    }
-  });
-  return cutValue;
-}
-function initLowLimValues(tree, root3) {
-  if (arguments.length < 2) {
-    root3 = tree.nodes()[0];
-  }
-  dfsAssignLowLim(tree, {}, 1, root3);
-}
-function dfsAssignLowLim(tree, visited, nextLim, v, parent) {
-  const low = nextLim;
-  const label = tree.node(v);
-  visited[v] = true;
-  forEach$1(tree.neighbors(v), function(w) {
-    if (!has$1(visited, w)) {
-      nextLim = dfsAssignLowLim(tree, visited, nextLim, w, v);
-    }
-  });
-  label.low = low;
-  label.lim = nextLim++;
-  if (parent) {
-    label.parent = parent;
-  } else {
-    delete label.parent;
-  }
-  return nextLim;
-}
-function leaveEdge(tree) {
-  return find$1(tree.edges(), function(e) {
-    return tree.edge(e).cutvalue < 0;
-  });
-}
-function enterEdge(t, g, edge) {
-  let v = edge.v;
-  let w = edge.w;
-  if (!g.hasEdge(v, w)) {
-    v = edge.w;
-    w = edge.v;
-  }
-  const vLabel = t.node(v);
-  const wLabel = t.node(w);
-  let tailLabel = vLabel;
-  let flip = false;
-  if (vLabel.lim > wLabel.lim) {
-    tailLabel = wLabel;
-    flip = true;
-  }
-  const candidates = filter$1(g.edges(), function(edge2) {
-    return flip === isDescendant(t, t.node(edge2.v), tailLabel) && flip !== isDescendant(t, t.node(edge2.w), tailLabel);
-  });
-  return minBy(candidates, function(edge2) {
-    return slack(g, edge2);
-  });
-}
-function exchangeEdges(t, g, e, f) {
-  const v = e.v;
-  const w = e.w;
-  t.removeEdge(v, w);
-  t.setEdge(f.v, f.w, {});
-  initLowLimValues(t);
-  initCutValues(t, g);
-  updateRanks(t, g);
-}
-function updateRanks(t, g) {
-  const root3 = find$1(t.nodes(), function(v) {
-    return !g.node(v).parent;
-  });
-  let vs = preorder(t, root3);
-  vs = vs.slice(1);
-  forEach$1(vs, function(v) {
-    const parent = t.node(v).parent;
-    let edge = g.edge(v, parent);
-    let flipped = false;
-    if (!edge) {
-      edge = g.edge(parent, v);
-      flipped = true;
-    }
-    g.node(v).rank = g.node(parent).rank + (flipped ? edge.minlen : -edge.minlen);
-  });
-}
-function isTreeEdge(tree, u, v) {
-  return tree.hasEdge(u, v);
-}
-function isDescendant(tree, vLabel, rootLabel) {
-  return rootLabel.low <= vLabel.lim && vLabel.lim <= rootLabel.lim;
-}
-function rank(g) {
-  switch (g.graph().ranker) {
-    case "network-simplex":
-      networkSimplexRanker(g);
-      break;
-    case "tight-tree":
-      tightTreeRanker(g);
-      break;
-    case "longest-path":
-      longestPathRanker(g);
-      break;
-    default:
-      networkSimplexRanker(g);
-  }
-}
-var longestPathRanker = longestPath;
-function tightTreeRanker(g) {
-  longestPath(g);
-  feasibleTree(g);
-}
-function networkSimplexRanker(g) {
-  networkSimplex(g);
-}
-function parentDummyChains(g) {
-  const postorderNums = postorder(g);
-  forEach$1(g.graph().dummyChains, function(v) {
-    let node2 = g.node(v);
-    const edgeObj = node2.edgeObj;
-    const pathData = findPath(g, postorderNums, edgeObj.v, edgeObj.w);
-    const path4 = pathData.path;
-    const lca = pathData.lca;
-    let pathIdx = 0;
-    let pathV = path4[pathIdx];
-    let ascending2 = true;
-    while (v !== edgeObj.w) {
-      node2 = g.node(v);
-      if (ascending2) {
-        while ((pathV = path4[pathIdx]) !== lca && g.node(pathV).maxRank < node2.rank) {
-          pathIdx++;
-        }
-        if (pathV === lca) {
-          ascending2 = false;
-        }
-      }
-      if (!ascending2) {
-        while (pathIdx < path4.length - 1 && g.node(pathV = path4[pathIdx + 1]).minRank <= node2.rank) {
-          pathIdx++;
-        }
-        pathV = path4[pathIdx];
-      }
-      g.setParent(v, pathV);
-      v = g.successors(v)[0];
-    }
-  });
-}
-function findPath(g, postorderNums, v, w) {
-  const vPath = [];
-  const wPath = [];
-  const low = Math.min(postorderNums[v].low, postorderNums[w].low);
-  const lim = Math.max(postorderNums[v].lim, postorderNums[w].lim);
-  let parent;
-  let lca;
-  parent = v;
-  do {
-    parent = g.parent(parent);
-    vPath.push(parent);
-  } while (parent && (postorderNums[parent].low > low || lim > postorderNums[parent].lim));
-  lca = parent;
-  parent = w;
-  while ((parent = g.parent(parent)) !== lca) {
-    wPath.push(parent);
-  }
-  return { path: vPath.concat(wPath.reverse()), lca };
-}
-function postorder(g) {
-  const result = {};
-  let lim = 0;
-  function dfs2(v) {
-    const low = lim;
-    forEach$1(g.children(v), dfs2);
-    result[v] = { low, lim: lim++ };
-  }
-  forEach$1(g.children(), dfs2);
-  return result;
-}
-function run(g) {
-  const root3 = util2.addDummyNode(g, "root", {}, "_root");
-  const depths = treeDepths(g);
-  const height = Math.max.apply(null, values$1(depths)) - 1;
-  const nodeSep = 2 * height + 1;
-  g.graph().nestingRoot = root3;
-  forEach$1(g.edges(), function(e) {
-    g.edge(e).minlen *= nodeSep;
-  });
-  const weight = sumWeights(g) + 1;
-  forEach$1(g.children(), function(child) {
-    dfs(g, root3, nodeSep, weight, height, depths, child);
-  });
-  g.graph().nodeRankFactor = nodeSep;
-}
-function dfs(g, root3, nodeSep, weight, height, depths, v) {
-  const children = g.children(v);
-  if (!children.length) {
-    if (v !== root3) {
-      g.setEdge(root3, v, { weight: 0, minlen: nodeSep });
-    }
-    return;
-  }
-  const top = util2.addBorderNode(g, "_bt");
-  const bottom = util2.addBorderNode(g, "_bb");
-  const label = g.node(v);
-  g.setParent(top, v);
-  label.borderTop = top;
-  g.setParent(bottom, v);
-  label.borderBottom = bottom;
-  forEach$1(children, function(child) {
-    dfs(g, root3, nodeSep, weight, height, depths, child);
-    const childNode = g.node(child);
-    const childTop = childNode.borderTop ? childNode.borderTop : child;
-    const childBottom = childNode.borderBottom ? childNode.borderBottom : child;
-    const thisWeight = childNode.borderTop ? weight : 2 * weight;
-    const minlen = childTop !== childBottom ? 1 : height - depths[v] + 1;
-    g.setEdge(top, childTop, {
-      weight: thisWeight,
-      minlen,
-      nestingEdge: true
-    });
-    g.setEdge(childBottom, bottom, {
-      weight: thisWeight,
-      minlen,
-      nestingEdge: true
-    });
-  });
-  if (!g.parent(v)) {
-    g.setEdge(root3, top, { weight: 0, minlen: height + depths[v] });
-  }
-}
-function treeDepths(g) {
-  const depths = {};
-  function dfs2(v, depth) {
-    const children = g.children(v);
-    if (children && children.length) {
-      forEach$1(children, function(child) {
-        dfs2(child, depth + 1);
-      });
-    }
-    depths[v] = depth;
-  }
-  forEach$1(g.children(), function(v) {
-    dfs2(v, 1);
-  });
-  return depths;
-}
-function sumWeights(g) {
-  return reduce$1(g.edges(), function(acc, e) {
-    return acc + g.edge(e).weight;
-  }, 0);
-}
-function cleanup(g) {
-  const graphLabel = g.graph();
-  g.removeNode(graphLabel.nestingRoot);
-  delete graphLabel.nestingRoot;
-  forEach$1(g.edges(), function(e) {
-    const edge = g.edge(e);
-    if (edge.nestingEdge) {
-      g.removeEdge(e);
-    }
-  });
-}
-var nestingGraph = {
-  run,
-  cleanup
-};
-function addBorderSegments(g) {
-  function dfs2(v) {
-    const children = g.children(v);
-    const node2 = g.node(v);
-    if (children.length) {
-      forEach$1(children, dfs2);
-    }
-    if (has$1(node2, "minRank")) {
-      node2.borderLeft = [];
-      node2.borderRight = [];
-      for (let rank2 = node2.minRank, maxRank2 = node2.maxRank + 1; rank2 < maxRank2; ++rank2) {
-        addBorderNode(g, "borderLeft", "_bl", v, node2, rank2);
-        addBorderNode(g, "borderRight", "_br", v, node2, rank2);
-      }
-    }
-  }
-  forEach$1(g.children(), dfs2);
-}
-function addBorderNode(g, prop, prefix, sg, sgNode, rank2) {
-  const label = { width: 0, height: 0, rank: rank2, borderType: prop };
-  const prev = sgNode[prop][rank2 - 1];
-  const curr = util2.addDummyNode(g, "border", label, prefix);
-  sgNode[prop][rank2] = curr;
-  g.setParent(curr, sg);
-  if (prev) {
-    g.setEdge(prev, curr, { weight: 1 });
-  }
-}
-function adjust(g) {
-  const rankDir = g.graph().rankdir.toLowerCase();
-  if (rankDir === "lr" || rankDir === "rl") {
-    swapWidthHeight(g);
-  }
-}
-function undo(g) {
-  const rankDir = g.graph().rankdir.toLowerCase();
-  if (rankDir === "bt" || rankDir === "rl") {
-    reverseY(g);
-  }
-  if (rankDir === "lr" || rankDir === "rl") {
-    swapXY(g);
-    swapWidthHeight(g);
-  }
-}
-function swapWidthHeight(g) {
-  forEach$1(g.nodes(), function(v) {
-    swapWidthHeightOne(g.node(v));
-  });
-  forEach$1(g.edges(), function(e) {
-    swapWidthHeightOne(g.edge(e));
-  });
-}
-function swapWidthHeightOne(attrs) {
-  const w = attrs.width;
-  attrs.width = attrs.height;
-  attrs.height = w;
-}
-function reverseY(g) {
-  forEach$1(g.nodes(), function(v) {
-    reverseYOne(g.node(v));
-  });
-  forEach$1(g.edges(), function(e) {
-    const edge = g.edge(e);
-    forEach$1(edge.points, reverseYOne);
-    if (has$1(edge, "y")) {
-      reverseYOne(edge);
-    }
-  });
-}
-function reverseYOne(attrs) {
-  attrs.y = -attrs.y;
-}
-function swapXY(g) {
-  forEach$1(g.nodes(), function(v) {
-    swapXYOne(g.node(v));
-  });
-  forEach$1(g.edges(), function(e) {
-    const edge = g.edge(e);
-    forEach$1(edge.points, swapXYOne);
-    if (has$1(edge, "x")) {
-      swapXYOne(edge);
-    }
-  });
-}
-function swapXYOne(attrs) {
-  const x2 = attrs.x;
-  attrs.x = attrs.y;
-  attrs.y = x2;
-}
-var coordinateSystem = {
-  adjust,
-  undo
-};
-function initOrder(g) {
-  const visited = {};
-  const simpleNodes = filter$1(g.nodes(), function(v) {
-    return !g.children(v).length;
-  });
-  const maxRank2 = max3(map$1(simpleNodes, function(v) {
-    return g.node(v).rank;
-  }));
-  const layers = map$1(range$1(maxRank2 + 1), function() {
-    return [];
-  });
-  function dfs2(v) {
-    if (has$1(visited, v))
-      return;
-    visited[v] = true;
-    const node2 = g.node(v);
-    layers[node2.rank].push(v);
-    forEach$1(g.successors(v).filter((n2) => {
-      return !g.children(n2).length;
-    }), dfs2);
-  }
-  const orderedVs = sortBy$1(simpleNodes, function(v) {
-    return g.node(v).rank;
-  });
-  forEach$1(orderedVs, dfs2);
-  return layers;
-}
-function crossCount(g, layering) {
-  let cc = 0;
-  for (let i2 = 1; i2 < layering.length; ++i2) {
-    cc += twoLayerCrossCount(g, layering[i2 - 1], layering[i2]);
-  }
-  return cc;
-}
-function twoLayerCrossCount(g, northLayer, southLayer) {
-  const southPos = zipObject(southLayer, southLayer.map(function(v, i2) {
-    return i2;
-  }));
-  const southEntries = flatten(map$1(northLayer, function(v) {
-    const list = (g.outEdges(v) || []).map(function(e) {
-      return { pos: southPos[e.w], weight: g.edge(e).weight };
-    });
-    return sortBy$1(list, "pos");
-  }));
-  let firstIndex = 1;
-  while (firstIndex < southLayer.length) {
-    firstIndex <<= 1;
-  }
-  const treeSize = 2 * firstIndex - 1;
-  firstIndex -= 1;
-  const tree = map$1(new Array(treeSize), function() {
-    return 0;
-  });
-  let cc = 0;
-  southEntries.forEach(function(entry) {
-    let index2 = entry.pos + firstIndex;
-    tree[index2] += entry.weight;
-    let weightSum = 0;
-    while (index2 > 0) {
-      if (index2 % 2) {
-        weightSum += tree[index2 + 1];
-      }
-      index2 = index2 - 1 >> 1;
-      tree[index2] += entry.weight;
-    }
-    cc += entry.weight * weightSum;
-  });
-  return cc;
-}
-function barycenter(g, movable) {
-  return map$1(movable, function(v) {
-    const inV = g.inEdges(v);
-    if (!inV.length) {
-      return { v };
-    } else {
-      const result = reduce$1(inV, function(acc, e) {
-        const edge = g.edge(e);
-        const nodeU = g.node(e.v);
-        return {
-          sum: acc.sum + edge.weight * nodeU.order,
-          weight: acc.weight + edge.weight
-        };
-      }, { sum: 0, weight: 0 });
-      return {
-        v,
-        barycenter: result.sum / result.weight,
-        weight: result.weight
-      };
-    }
-  });
-}
-function resolveConflicts(entries, cg) {
-  const mappedEntries = {};
-  forEach$1(entries, function(entry, i2) {
-    const tmp = mappedEntries[entry.v] = {
-      indegree: 0,
-      in: [],
-      out: [],
-      vs: [entry.v],
-      i: i2
-    };
-    if (!isUndefined$1(entry.barycenter)) {
-      tmp.barycenter = entry.barycenter;
-      tmp.weight = entry.weight;
-    }
-  });
-  forEach$1(cg.edges(), function(e) {
-    const entryV = mappedEntries[e.v];
-    const entryW = mappedEntries[e.w];
-    if (!isUndefined$1(entryV) && !isUndefined$1(entryW)) {
-      entryW.indegree++;
-      entryV.out.push(mappedEntries[e.w]);
-    }
-  });
-  const sourceSet = filter$1(mappedEntries, function(entry) {
-    return !entry.indegree;
-  });
-  return doResolveConflicts(sourceSet);
-}
-function doResolveConflicts(sourceSet) {
-  const entries = [];
-  function handleIn(vEntry) {
-    return function(uEntry) {
-      if (uEntry.merged) {
-        return;
-      }
-      if (isUndefined$1(uEntry.barycenter) || isUndefined$1(vEntry.barycenter) || uEntry.barycenter >= vEntry.barycenter) {
-        mergeEntries(vEntry, uEntry);
-      }
-    };
-  }
-  function handleOut(vEntry) {
-    return function(wEntry) {
-      wEntry["in"].push(vEntry);
-      if (--wEntry.indegree === 0) {
-        sourceSet.push(wEntry);
-      }
-    };
-  }
-  while (sourceSet.length) {
-    const entry = sourceSet.pop();
-    entries.push(entry);
-    forEach$1(entry["in"].reverse(), handleIn(entry));
-    forEach$1(entry.out, handleOut(entry));
-  }
-  return entries.filter(function(entry) {
-    return !entry.merged;
-  }).map(function(entry) {
-    return pick$1(entry, ["vs", "i", "barycenter", "weight"]);
-  });
-}
-function mergeEntries(target, source) {
-  let sum = 0;
-  let weight = 0;
-  if (target.weight) {
-    sum += target.barycenter * target.weight;
-    weight += target.weight;
-  }
-  if (source.weight) {
-    sum += source.barycenter * source.weight;
-    weight += source.weight;
-  }
-  target.vs = source.vs.concat(target.vs);
-  target.barycenter = sum / weight;
-  target.weight = weight;
-  target.i = Math.min(source.i, target.i);
-  source.merged = true;
-}
-function sort(entries, biasRight) {
-  const parts = util2.partition(entries, function(entry) {
-    return has$1(entry, "barycenter");
-  });
-  const sortable = parts.lhs;
-  const unsortable = sortBy$1(parts.rhs, function(entry) {
-    return -entry.i;
-  });
-  const vs = [];
-  let sum = 0;
-  let weight = 0;
-  let vsIndex = 0;
-  sortable.sort(compareWithBias(!!biasRight));
-  vsIndex = consumeUnsortable(vs, unsortable, vsIndex);
-  forEach$1(sortable, function(entry) {
-    vsIndex += entry.vs.length;
-    vs.push(entry.vs);
-    sum += entry.barycenter * entry.weight;
-    weight += entry.weight;
-    vsIndex = consumeUnsortable(vs, unsortable, vsIndex);
-  });
-  const result = { vs: flatten(vs) };
-  if (weight) {
-    result.barycenter = sum / weight;
-    result.weight = weight;
-  }
-  return result;
-}
-function consumeUnsortable(vs, unsortable, index2) {
-  let last$1;
-  while (unsortable.length && (last$1 = last2(unsortable)).i <= index2) {
-    unsortable.pop();
-    vs.push(last$1.vs);
-    index2++;
-  }
-  return index2;
-}
-function compareWithBias(bias) {
-  return function(entryV, entryW) {
-    if (entryV.barycenter < entryW.barycenter) {
-      return -1;
-    } else if (entryV.barycenter > entryW.barycenter) {
-      return 1;
-    }
-    return !bias ? entryV.i - entryW.i : entryW.i - entryV.i;
-  };
-}
-function sortSubgraph(g, v, cg, biasRight) {
-  let movable = g.children(v);
-  const node2 = g.node(v);
-  const bl = node2 ? node2.borderLeft : void 0;
-  const br = node2 ? node2.borderRight : void 0;
-  const subgraphs = {};
-  if (bl) {
-    movable = filter$1(movable, function(w) {
-      return w !== bl && w !== br;
-    });
-  }
-  const barycenters = barycenter(g, movable);
-  forEach$1(barycenters, function(entry) {
-    if (g.children(entry.v).length) {
-      const subgraphResult = sortSubgraph(g, entry.v, cg, biasRight);
-      subgraphs[entry.v] = subgraphResult;
-      if (has$1(subgraphResult, "barycenter")) {
-        mergeBarycenters(entry, subgraphResult);
-      }
-    }
-  });
-  const entries = resolveConflicts(barycenters, cg);
-  expandSubgraphs(entries, subgraphs);
-  const result = sort(entries, biasRight);
-  if (bl) {
-    result.vs = flatten([bl, result.vs, br]);
-    if (g.predecessors(bl).length) {
-      const blPred = g.node(g.predecessors(bl)[0]);
-      const brPred = g.node(g.predecessors(br)[0]);
-      if (!has$1(result, "barycenter")) {
-        result.barycenter = 0;
-        result.weight = 0;
-      }
-      result.barycenter = (result.barycenter * result.weight + blPred.order + brPred.order) / (result.weight + 2);
-      result.weight += 2;
-    }
-  }
-  return result;
-}
-function expandSubgraphs(entries, subgraphs) {
-  forEach$1(entries, function(entry) {
-    entry.vs = flatten(entry.vs.map(function(v) {
-      if (subgraphs[v]) {
-        return subgraphs[v].vs;
-      }
-      return v;
-    }));
-  });
-}
-function mergeBarycenters(target, other) {
-  if (!isUndefined$1(target.barycenter)) {
-    target.barycenter = (target.barycenter * target.weight + other.barycenter * other.weight) / (target.weight + other.weight);
-    target.weight += other.weight;
-  } else {
-    target.barycenter = other.barycenter;
-    target.weight = other.weight;
-  }
-}
-function buildLayerGraph(g, rank2, relationship) {
-  const root3 = createRootNode(g);
-  const result = new Graph2({ compound: true }).setGraph({ root: root3 }).setDefaultNodeLabel(function(v) {
-    return g.node(v);
-  });
-  forEach$1(g.nodes(), function(v) {
-    const node2 = g.node(v);
-    const parent = g.parent(v);
-    if (node2.rank === rank2 || node2.minRank <= rank2 && rank2 <= node2.maxRank) {
-      result.setNode(v);
-      result.setParent(v, parent || root3);
-      forEach$1(g[relationship](v), function(e) {
-        const u = e.v === v ? e.w : e.v;
-        const edge = result.edge(u, v);
-        const weight = !isUndefined$1(edge) ? edge.weight : 0;
-        result.setEdge(u, v, { weight: g.edge(e).weight + weight });
-      });
-      if (has$1(node2, "minRank")) {
-        result.setNode(v, {
-          borderLeft: node2.borderLeft[rank2],
-          borderRight: node2.borderRight[rank2]
-        });
-      }
-    }
-  });
-  return result;
-}
-function createRootNode(g) {
-  let v;
-  while (g.hasNode(v = uniqueId("_root")))
-    ;
-  return v;
-}
-function addSubgraphConstraints(g, cg, vs) {
-  const prev = {};
-  let rootPrev;
-  forEach$1(vs, function(v) {
-    let child = g.parent(v);
-    let parent;
-    let prevChild;
-    while (child) {
-      parent = g.parent(child);
-      if (parent) {
-        prevChild = prev[parent];
-        prev[parent] = child;
-      } else {
-        prevChild = rootPrev;
-        rootPrev = child;
-      }
-      if (prevChild && prevChild !== child) {
-        cg.setEdge(prevChild, child);
-        return;
-      }
-      child = parent;
-    }
-  });
-}
-function order(g) {
-  const maxRank2 = util2.maxRank(g);
-  const downLayerGraphs = buildLayerGraphs(g, range$1(1, maxRank2 + 1), "inEdges");
-  const upLayerGraphs = buildLayerGraphs(g, range$1(maxRank2 - 1, -1, -1), "outEdges");
-  let layering = initOrder(g);
-  assignOrder(g, layering);
-  let bestCC = Number.POSITIVE_INFINITY;
-  let best;
-  for (let i2 = 0, lastBest = 0; lastBest < 4; ++i2, ++lastBest) {
-    sweepLayerGraphs(i2 % 2 ? downLayerGraphs : upLayerGraphs, i2 % 4 >= 2);
-    layering = util2.buildLayerMatrix(g);
-    const cc = crossCount(g, layering);
-    if (cc < bestCC) {
-      lastBest = 0;
-      best = cloneDeep2(layering);
-      bestCC = cc;
-    }
-  }
-  assignOrder(g, best);
-}
-function buildLayerGraphs(g, ranks, relationship) {
-  return map$1(ranks, function(rank2) {
-    return buildLayerGraph(g, rank2, relationship);
-  });
-}
-function sweepLayerGraphs(layerGraphs, biasRight) {
-  const cg = new Graph2();
-  forEach$1(layerGraphs, function(lg) {
-    const root3 = lg.graph().root;
-    const sorted = sortSubgraph(lg, root3, cg, biasRight);
-    forEach$1(sorted.vs, function(v, i2) {
-      lg.node(v).order = i2;
-    });
-    addSubgraphConstraints(lg, cg, sorted.vs);
-  });
-}
-function assignOrder(g, layering) {
-  layering.forEach(function(layer) {
-    forEach$1(layer, function(v, i2) {
-      if (v) {
-        g.node(v).order = i2;
-      }
-    });
-  });
-}
-function findType1Conflicts(g, layering) {
-  const conflicts = {};
-  function visitLayer(prevLayer, layer) {
-    let k0 = 0;
-    let scanPos = 0;
-    const prevLayerLength = prevLayer.length;
-    const lastNode = last2(layer);
-    forEach$1(layer, function(v, i2) {
-      if (!v)
-        return;
-      const w = findOtherInnerSegmentNode(g, v);
-      const k1 = w ? g.node(w).order : prevLayerLength;
-      if (w || v === lastNode) {
-        forEach$1(layer.slice(scanPos, i2 + 1), function(scanNode) {
-          forEach$1(g.predecessors(scanNode), function(u) {
-            const uLabel = g.node(u);
-            const uPos = uLabel.order;
-            if ((uPos < k0 || k1 < uPos) && !(uLabel.dummy && g.node(scanNode).dummy)) {
-              addConflict(conflicts, u, scanNode);
-            }
-          });
-        });
-        scanPos = i2 + 1;
-        k0 = k1;
-      }
-    });
-    return layer;
-  }
-  reduce$1(layering, visitLayer);
-  return conflicts;
-}
-function findType2Conflicts(g, layering) {
-  const conflicts = {};
-  function scan(south, southPos, southEnd, prevNorthBorder, nextNorthBorder) {
-    let v;
-    forEach$1(range$1(southPos, southEnd), function(i2) {
-      v = south[i2];
-      if (!v)
-        return;
-      if (g.node(v).dummy) {
-        forEach$1(g.predecessors(v), function(u) {
-          const uNode = g.node(u);
-          if (uNode.dummy && (uNode.order < prevNorthBorder || uNode.order > nextNorthBorder)) {
-            addConflict(conflicts, u, v);
-          }
-        });
-      }
-    });
-  }
-  function visitLayer(north, south) {
-    let prevNorthPos = -1;
-    let nextNorthPos;
-    let southPos = 0;
-    forEach$1(south, function(v, southLookahead) {
-      if (!v)
-        return;
-      if (g.node(v).dummy === "border") {
-        const predecessors = g.predecessors(v);
-        if (predecessors.length) {
-          nextNorthPos = g.node(predecessors[0]).order;
-          scan(south, southPos, southLookahead, prevNorthPos, nextNorthPos);
-          southPos = southLookahead;
-          prevNorthPos = nextNorthPos;
-        }
-      }
-      scan(south, southPos, south.length, nextNorthPos, north.length);
-    });
-    return south;
-  }
-  reduce$1(layering, visitLayer);
-  return conflicts;
-}
-function findOtherInnerSegmentNode(g, v) {
-  if (g.node(v).dummy) {
-    return find$1(g.predecessors(v), function(u) {
-      return g.node(u).dummy;
-    });
-  }
-}
-function addConflict(conflicts, v, w) {
-  if (v > w) {
-    const tmp = v;
-    v = w;
-    w = tmp;
-  }
-  let conflictsV = conflicts[v];
-  if (!conflictsV) {
-    conflicts[v] = conflictsV = {};
-  }
-  conflictsV[w] = true;
-}
-function hasConflict(conflicts, v, w) {
-  if (v > w) {
-    const tmp = v;
-    v = w;
-    w = tmp;
-  }
-  return has$1(conflicts[v], w);
-}
-function verticalAlignment(g, layering, conflicts, neighborFn) {
-  const root3 = {};
-  const align = {};
-  const pos = {};
-  forEach$1(layering, function(layer) {
-    forEach$1(layer, function(v, order2) {
-      root3[v] = v;
-      align[v] = v;
-      pos[v] = order2;
-    });
-  });
-  forEach$1(layering, function(layer) {
-    let prevIdx = -1;
-    forEach$1(layer, function(v) {
-      if (!v)
-        return;
-      let ws = neighborFn(v);
-      if (ws.length) {
-        ws = sortBy$1(ws, function(w) {
-          return pos[w];
-        });
-        const mp = (ws.length - 1) / 2;
-        for (let i2 = Math.floor(mp), il = Math.ceil(mp); i2 <= il; ++i2) {
-          const w = ws[i2];
-          if (align[v] === v && prevIdx < pos[w] && !hasConflict(conflicts, v, w)) {
-            align[w] = v;
-            align[v] = root3[v] = root3[w];
-            prevIdx = pos[w];
-          }
-        }
-      }
-    });
-  });
-  return { root: root3, align };
-}
-function horizontalCompaction(g, layering, root3, alignMap, reverseSep) {
-  const xs = {};
-  const blockG = buildBlockGraph(g, layering, root3, reverseSep);
-  const visited = {};
-  function pass1(v) {
-    if (!has$1(visited, v)) {
-      visited[v] = true;
-      xs[v] = reduce$1(blockG.inEdges(v) || [], function(max4, e) {
-        pass1(e.v);
-        return Math.max(max4, xs[e.v] + blockG.edge(e));
-      }, 0);
-    }
-  }
-  forEach$1(blockG.nodes(), pass1);
-  const borderType = reverseSep ? "borderLeft" : "borderRight";
-  function pass2(v) {
-    if (visited[v] !== 2) {
-      visited[v]++;
-      const node2 = g.node(v);
-      const min4 = reduce$1(blockG.outEdges(v) || [], (min5, e) => {
-        pass2(e.w);
-        return Math.min(min5, xs[e.w] - blockG.edge(e));
-      }, Number.POSITIVE_INFINITY);
-      if (min4 !== Number.POSITIVE_INFINITY && node2.borderType !== borderType) {
-        xs[v] = Math.max(xs[v], min4);
-      }
-    }
-  }
-  forEach$1(blockG.nodes(), pass2);
-  forEach$1(alignMap, function(v) {
-    xs[v] = xs[root3[v]];
-  });
-  return xs;
-}
-function buildBlockGraph(g, layering, root3, reverseSep) {
-  const blockGraph = new Graph2();
-  const graphLabel = g.graph();
-  const sepFn = makeSepFn(graphLabel.nodesep, graphLabel.edgesep, reverseSep);
-  forEach$1(layering, function(layer) {
-    let u;
-    forEach$1(layer, function(v) {
-      const vRoot = root3[v];
-      blockGraph.setNode(vRoot);
-      if (u) {
-        const uRoot = root3[u];
-        const prevMax = blockGraph.edge(uRoot, vRoot);
-        blockGraph.setEdge(uRoot, vRoot, Math.max(sepFn(g, v, u), prevMax || 0));
-      }
-      u = v;
-    });
-  });
-  return blockGraph;
-}
-function findSmallestWidthAlignment(g, xss) {
-  return minBy(values$1(xss), function(xs) {
-    const min4 = (minBy(toPairs$1(xs), (pair) => pair[1] - width(g, pair[0]) / 2) || ["k", 0])[1];
-    const max4 = (maxBy(toPairs$1(xs), (pair) => pair[1] + width(g, pair[0]) / 2) || ["k", 0])[1];
-    return max4 - min4;
-  });
-}
-function alignCoordinates(xss, alignTo) {
-  const alignToVals = values$1(alignTo);
-  const alignToMin = min3(alignToVals);
-  const alignToMax = max3(alignToVals);
-  forEach$1(["u", "d"], function(vert) {
-    forEach$1(["l", "r"], function(horiz) {
-      const alignment = vert + horiz;
-      const xs = xss[alignment];
-      if (xs === alignTo) {
-        return;
-      }
-      const xsVals = values$1(xs);
-      const delta = horiz === "l" ? alignToMin - min3(xsVals) : alignToMax - max3(xsVals);
-      if (delta) {
-        xss[alignment] = mapValues(xs, function(x2) {
-          return x2 + delta;
-        });
-      }
-    });
-  });
-}
-function balance(xss, align) {
-  return mapValues(xss.ul, function(ignore, v) {
-    if (align) {
-      return xss[align.toLowerCase()][v];
-    } else {
-      const xs = sortBy$1(map$1(xss, v));
-      return (xs[1] + xs[2]) / 2;
-    }
-  });
-}
-function positionX(g) {
-  const layering = util2.buildLayerMatrix(g);
-  const conflicts = Object.assign(findType1Conflicts(g, layering), findType2Conflicts(g, layering));
-  const xss = {};
-  let adjustedLayering;
-  forEach$1(["u", "d"], function(vert) {
-    adjustedLayering = vert === "u" ? layering : values$1(layering).reverse();
-    forEach$1(["l", "r"], function(horiz) {
-      if (horiz === "r") {
-        adjustedLayering = map$1(adjustedLayering, function(inner) {
-          return values$1(inner).reverse();
-        });
-      }
-      const neighborFn = (vert === "u" ? g.predecessors : g.successors).bind(g);
-      const verticalAlign = verticalAlignment(g, adjustedLayering, conflicts, neighborFn);
-      let xs = horizontalCompaction(g, adjustedLayering, verticalAlign.root, verticalAlign.align, horiz === "r");
-      if (horiz === "r") {
-        xs = mapValues(xs, function(x2) {
-          return -x2;
-        });
-      }
-      xss[vert + horiz] = xs;
-    });
-  });
-  const smallestWidth = findSmallestWidthAlignment(g, xss);
-  alignCoordinates(xss, smallestWidth);
-  return balance(xss, g.graph().align);
-}
-function makeSepFn(nodeSep, edgeSep, reverseSep) {
-  return function(g, v, w) {
-    const vLabel = g.node(v);
-    const wLabel = g.node(w);
-    if (!(vLabel && wLabel))
-      return 0;
-    let sum = 0;
-    let delta;
-    sum += vLabel.marginr || 0;
-    sum += getNodeWidth(vLabel) / 2;
-    if (has$1(vLabel, "labelpos")) {
-      switch (vLabel.labelpos.toLowerCase()) {
-        case "l":
-          delta = -getNodeWidth(vLabel) / 2;
-          break;
-        case "r":
-          delta = getNodeWidth(vLabel) / 2;
-          break;
-      }
-    }
-    if (delta) {
-      sum += reverseSep ? delta : -delta;
-    }
-    delta = 0;
-    sum += (vLabel.dummy ? edgeSep : nodeSep) / 2;
-    sum += (wLabel.dummy ? edgeSep : nodeSep) / 2;
-    sum += wLabel.marginl || 0;
-    sum += getNodeWidth(wLabel) / 2;
-    if (has$1(wLabel, "labelpos")) {
-      switch (wLabel.labelpos.toLowerCase()) {
-        case "l":
-          delta = getNodeWidth(wLabel) / 2;
-          break;
-        case "r":
-          delta = -getNodeWidth(wLabel) / 2;
-          break;
-      }
-    }
-    if (delta) {
-      sum += reverseSep ? delta : -delta;
-    }
-    delta = 0;
-    return sum;
-  };
-}
-function getNodeWidth(node2) {
-  if (!node2)
-    return 0;
-  return Math.max(node2.minwidth || 0, node2.width);
-}
-function width(g, v) {
-  const node2 = g.node(v);
-  return getNodeWidth(node2);
-}
-function position(g) {
-  doPositionY(g);
-  forEach$1(positionX(g), function(x2, v) {
-    const node2 = g.node(v);
-    if (node2)
-      node2.x = x2;
-  });
-}
-function doPositionY(g) {
-  const layering = util2.buildLayerMatrix(g);
-  const rankSep = g.graph().ranksep;
-  let prevY = 0;
-  const rankOffsets = {};
-  g.nodes().forEach((v) => {
-    const node2 = g.node(v);
-    const rank2 = isNumber(node2.minRank) ? node2.minRank : node2.rank;
-    if (!rankOffsets[rank2]) {
-      rankOffsets[rank2] = {
-        marginTop: 0,
-        marginBottom: 0,
-        paddingTop: 0,
-        paddingBottom: 0
-      };
-    }
-    const item = rankOffsets[rank2];
-    item.marginTop = Math.max(getNum(node2.margint), item.marginTop);
-    item.marginBottom = Math.max(getNum(node2.marginb), item.marginBottom);
-    item.paddingTop = Math.max(getNum(node2.paddingt), item.paddingTop);
-    item.paddingBottom = Math.max(getNum(node2.paddingb), item.paddingBottom);
-  });
-  forEach$1(layering, function(layer, i2) {
-    let yOffsetMarginT = 0;
-    let yOffsetMarginB = 0;
-    let yOffsetPaddingT = 0;
-    let yOffsetPaddingB = 0;
-    let maxHeight = 0;
-    for (const v of layer) {
-      if (v) {
-        const node2 = g.node(v);
-        if (rankOffsets[node2.rank]) {
-          const item = rankOffsets[node2.rank];
-          yOffsetMarginT = Math.max(item.marginTop, yOffsetMarginT);
-          yOffsetMarginB = Math.max(item.marginBottom, yOffsetMarginB);
-          yOffsetPaddingT = Math.max(item.paddingTop, yOffsetPaddingT);
-          yOffsetPaddingB = Math.max(item.paddingBottom, yOffsetPaddingB);
-        }
-        maxHeight = Math.max(maxHeight, node2.height + getNum(node2.margint) + getNum(node2.marginb) + getNum(node2.paddingt) + getNum(node2.paddingb));
-      }
-    }
-    for (const v of layer) {
-      if (v)
-        g.node(v).y = prevY + yOffsetMarginT + maxHeight / 2;
-    }
-    prevY += maxHeight + rankSep + yOffsetMarginT + yOffsetMarginB + yOffsetPaddingT + yOffsetPaddingB;
-  });
-}
-function layout(g, opts) {
-  const time3 = opts && opts.debugTiming ? util2.time : util2.notime;
-  time3("layout", function() {
-    const layoutGraph = time3("  buildLayoutGraph", function() {
-      return buildLayoutGraph(g);
-    });
-    time3("  runLayout", function() {
-      runLayout(layoutGraph, time3);
-    });
-    time3("  updateInputGraph", function() {
-      updateInputGraph(g, layoutGraph);
-    });
-  });
-}
-function runLayout(g, time3) {
-  time3("    makeSpaceForEdgeLabels", function() {
-    makeSpaceForEdgeLabels(g);
-  });
-  time3("    removeSelfEdges", function() {
-    removeSelfEdges(g);
-  });
-  time3("    acyclic", function() {
-    acyclic.run(g);
-  });
-  time3("    nestingGraph.run", function() {
-    nestingGraph.run(g);
-  });
-  time3("    rank", function() {
-    rank(g);
-  });
-  time3("    injectEdgeLabelProxies", function() {
-    injectEdgeLabelProxies(g);
-  });
-  time3("    removeEmptyRanks", function() {
-    removeEmptyRanks(g);
-  });
-  time3("    nestingGraph.cleanup", function() {
-    nestingGraph.cleanup(g);
-  });
-  time3("    normalizeRanks", function() {
-    normalizeRanks(g);
-  });
-  time3("    assignRankMinMax", function() {
-    assignRankMinMax(g);
-  });
-  time3("    removeEdgeLabelProxies", function() {
-    removeEdgeLabelProxies(g);
-  });
-  time3("    normalize.run", function() {
-    normalize2.run(g);
-  });
-  time3("    parentDummyChains", function() {
-    parentDummyChains(g);
-  });
-  time3("    addBorderSegments", function() {
-    addBorderSegments(g);
-  });
-  time3("    order", function() {
-    order(g);
-  });
-  time3("    insertSelfEdges", function() {
-    insertSelfEdges(g);
-  });
-  time3("    adjustCoordinateSystem", function() {
-    coordinateSystem.adjust(g);
-  });
-  time3("    position", function() {
-    position(g);
-  });
-  time3("    positionSelfEdges", function() {
-    positionSelfEdges(g);
-  });
-  time3("    removeBorderNodes", function() {
-    removeBorderNodes(g);
-  });
-  time3("    normalize.undo", function() {
-    normalize2.undo(g);
-  });
-  time3("    fixupEdgeLabelCoords", function() {
-    fixupEdgeLabelCoords(g);
-  });
-  time3("    undoCoordinateSystem", function() {
-    coordinateSystem.undo(g);
-  });
-  time3("    translateGraph", function() {
-    translateGraph(g);
-  });
-  time3("    assignNodeIntersects", function() {
-    assignNodeIntersects(g);
-  });
-  time3("    reversePoints", function() {
-    reversePointsForReversedEdges(g);
-  });
-  time3("    acyclic.undo", function() {
-    acyclic.undo(g);
-  });
-}
-function updateInputGraph(inputGraph, layoutGraph) {
-  forEach$1(inputGraph.nodes(), function(v) {
-    const inputLabel = inputGraph.node(v);
-    const layoutLabel = layoutGraph.node(v);
-    if (inputLabel) {
-      inputLabel.x = layoutLabel.x;
-      inputLabel.y = layoutLabel.y;
-      if (layoutGraph.children(v).length) {
-        inputLabel.width = layoutLabel.width;
-        inputLabel.height = layoutLabel.height;
-      }
-    }
-  });
-  forEach$1(inputGraph.edges(), function(e) {
-    const inputLabel = inputGraph.edge(e);
-    const layoutLabel = layoutGraph.edge(e);
-    inputLabel.points = layoutLabel.points;
-    inputLabel.labelPoint = layoutLabel.labelPoint;
-    if (has$1(layoutLabel, "x")) {
-      inputLabel.x = layoutLabel.x;
-      inputLabel.y = layoutLabel.y;
-    }
-  });
-  inputGraph.graph().width = layoutGraph.graph().width;
-  inputGraph.graph().height = layoutGraph.graph().height;
-}
-var graphNumAttrs = [
-  "nodesep",
-  "edgesep",
-  "ranksep",
-  "marginx",
-  "marginy"
-];
-var graphDefaults = {
-  ranksep: 50,
-  edgesep: 20,
-  nodesep: 50,
-  rankdir: "tb",
-  splines: "polyline",
-  avoid_label_on_border: false
-};
-var graphAttrs = [
-  "acyclicer",
-  "ranker",
-  "rankdir",
-  "align",
-  "splines",
-  "avoid_label_on_border"
-];
-var nodeNumAttrs = [
-  "width",
-  "height",
-  "marginl",
-  "marginr",
-  "margint",
-  "marginb",
-  "paddingt",
-  "paddingb",
-  "minwidth"
-];
-var nodeDefaults = {
-  width: 0,
-  height: 0,
-  marginl: 0,
-  marginr: 0,
-  margint: 0,
-  marginb: 0
-};
-var edgeNumAttrs = ["minlen", "weight", "width", "height", "labeloffset"];
-var edgeDefaults = {
-  minlen: 1,
-  weight: 1,
-  width: 0,
-  height: 0,
-  labeloffset: 10,
-  labelpos: "r"
-};
-var edgeAttrs = ["labelpos"];
-function buildLayoutGraph(inputGraph) {
-  const g = new Graph2({
-    multigraph: true,
-    compound: true
-  });
-  const graph = canonicalize(inputGraph.graph());
-  g.setGraph(Object.assign({}, graphDefaults, selectNumberAttrs(graph, graphNumAttrs), pick$1(graph, graphAttrs), {
-    borderRanks: /* @__PURE__ */ new Set()
-  }));
-  forEach$1(inputGraph.nodes(), function(v) {
-    const node2 = canonicalize(inputGraph.node(v));
-    g.setNode(v, defaults$1(selectNumberAttrs(node2, nodeNumAttrs), nodeDefaults));
-    g.setParent(v, inputGraph.parent(v));
-  });
-  forEach$1(inputGraph.edges(), function(e) {
-    const edge = canonicalize(inputGraph.edge(e));
-    g.setEdge(e, Object.assign({}, edgeDefaults, selectNumberAttrs(edge, edgeNumAttrs), pick$1(edge, edgeAttrs)));
-  });
-  return g;
-}
-function makeSpaceForEdgeLabels(g) {
-  const graph = g.graph();
-  graph.ranksep /= 2;
-  forEach$1(g.edges(), function(e) {
-    const edge = g.edge(e);
-    edge.minlen *= 2;
-    if (edge.labelpos.toLowerCase() !== "c") {
-      if (graph.rankdir === "TB" || graph.rankdir === "BT") {
-        edge.width += edge.labeloffset;
-      } else {
-        edge.height += edge.labeloffset;
-      }
-    }
-  });
-}
-function injectEdgeLabelProxies(g) {
-  forEach$1(g.edges(), function(e) {
-    const edge = g.edge(e);
-    if (edge.width && edge.height) {
-      const v = g.node(e.v);
-      const w = g.node(e.w);
-      const label = { rank: (w.rank - v.rank) / 2 + v.rank, e };
-      util2.addDummyNode(g, "edge-proxy", label, "_ep");
-    }
-  });
-}
-function assignRankMinMax(g) {
-  let maxRank2 = 0;
-  forEach$1(g.nodes(), function(v) {
-    const node2 = g.node(v);
-    if (node2.borderTop) {
-      node2.minRank = g.node(node2.borderTop).rank;
-      node2.maxRank = g.node(node2.borderBottom).rank;
-      maxRank2 = Math.max(maxRank2, node2.maxRank);
-    }
-  });
-  g.graph().maxRank = maxRank2;
-}
-function removeEdgeLabelProxies(g) {
-  forEach$1(g.nodes(), function(v) {
-    const node2 = g.node(v);
-    if (node2.dummy === "edge-proxy") {
-      g.edge(node2.e).labelRank = node2.rank;
-      g.removeNode(v);
-    }
-  });
-}
-function translateGraph(g) {
-  let minX = Number.POSITIVE_INFINITY;
-  let maxX = 0;
-  let minY = Number.POSITIVE_INFINITY;
-  let maxY = 0;
-  const graphLabel = g.graph();
-  const marginX = graphLabel.marginx || 0;
-  const marginY = graphLabel.marginy || 0;
-  function getExtremes(attrs) {
-    const x2 = attrs.x;
-    const y2 = attrs.y;
-    const w = Math.max(("minwidth" in attrs ? attrs.minwidth : 0) || 0, attrs.width);
-    const h = attrs.height;
-    minX = Math.min(minX, x2 - w / 2);
-    maxX = Math.max(maxX, x2 + w / 2);
-    minY = Math.min(minY, y2 - h / 2);
-    maxY = Math.max(maxY, y2 + h / 2);
-  }
-  forEach$1(g.nodes(), function(v) {
-    getExtremes(g.node(v));
-  });
-  forEach$1(g.edges(), function(e) {
-    const edge = g.edge(e);
-    if (has$1(edge, "x")) {
-      getExtremes(edge);
-    }
-  });
-  minX -= marginX;
-  minY -= marginY;
-  forEach$1(g.nodes(), function(v) {
-    const node2 = g.node(v);
-    node2.x -= minX;
-    node2.y -= minY;
-  });
-  forEach$1(g.edges(), function(e) {
-    const edge = g.edge(e);
-    forEach$1(edge.points, function(p) {
-      p.x -= minX;
-      p.y -= minY;
-    });
-    if (has$1(edge, "x")) {
-      edge.x -= minX;
-    }
-    if (has$1(edge, "y")) {
-      edge.y -= minY;
-    }
-  });
-  graphLabel.width = maxX - minX + marginX;
-  graphLabel.height = maxY - minY + marginY;
-}
-function assignNodeIntersects(g) {
-  const { rankdir, splines, borderRanks, nodesep, avoid_label_on_border } = g.graph();
-  const isTopBottom = rankdir.toUpperCase() === "TB";
-  const isBottomTop = rankdir.toUpperCase() === "BT";
-  const isVerticalLayout = isBottomTop || isTopBottom;
-  const isOrthogonal = splines === "ortho";
-  forEach$1(g.edges(), function(e) {
-    const edge = g.edge(e);
-    const nodeV = g.node(e.v);
-    const nodeW = g.node(e.w);
-    let p1 = null;
-    let p2 = null;
-    if (!edge.points) {
-      edge.points = [];
-      p1 = nodeW;
-      p2 = nodeV;
-      edge.points.unshift(util2.intersectRect(nodeV, p1));
-      edge.points.push(util2.intersectRect(nodeW, p2));
-    } else {
-      p1 = edge.points[0];
-      p2 = edge.points[edge.points.length - 1];
-      const pointsBetween = edge.points.slice(1, edge.points.length - 1);
-      if (avoid_label_on_border) {
-        const isLabelPointOnBorder = borderRanks.has(nodeV.rank + 1);
-        if (isLabelPointOnBorder) {
-          p1.y += nodesep;
-        }
-      }
-      const labelPoint = { ...p1 };
-      edge.labelPoint = labelPoint;
-      const origInterWithV = util2.intersectRect(nodeV, labelPoint);
-      const origInterWithW = util2.intersectRect(nodeW, p2);
-      let edgePointsArranged = false;
-      if (isOrthogonal) {
-        const nodesInfo = comparePositions(nodeV, nodeW);
-        const { leftOne, rightOne, bottomOne, topOne } = nodesInfo;
-        const lastPointInBetween = pointsBetween.length ? pointsBetween[pointsBetween.length - 1] : null;
-        const rangeOfVWCenter = {
-          x: [leftOne.x, rightOne.x],
-          y: [topOne.y, bottomOne.y]
-        };
-        if (isVerticalLayout && !nodesInfo.isXEqual && isInsideRange(labelPoint.x, rangeOfVWCenter.x)) {
-          const topRectBottomBound = topOne.y + topOne.height / 2;
-          const bottomRectUpperBound = bottomOne.y - bottomOne.height / 2;
-          const newInterWithV = {
-            ...origInterWithV
-          };
-          const newInterWithW = {
-            ...origInterWithW
-          };
-          newInterWithV.y = Math.max(origInterWithV.y, topRectBottomBound);
-          newInterWithW.y = Math.min(origInterWithW.y, bottomRectUpperBound);
-          p1 = { x: newInterWithV.x, y: labelPoint.y };
-          p2 = { x: newInterWithW.x, y: (lastPointInBetween || labelPoint).y };
-          const newPoints = [
-            newInterWithV,
-            p1,
-            labelPoint,
-            ...pointsBetween,
-            p2,
-            newInterWithW
-          ];
-          const overlapXRange = [
-            rightOne.x - rightOne.width / 2,
-            leftOne.x + leftOne.width / 2
-          ];
-          if (overlapXRange[0] < overlapXRange[1]) {
-            const isAllInRange = newPoints.every((p) => {
-              return isInsideRange(p.x, overlapXRange);
-            });
-            if (isAllInRange) {
-              for (const p of newPoints) {
-                p.x = labelPoint.x;
-              }
-            }
-          }
-          edge.points = newPoints;
-          edgePointsArranged = true;
-        } else if (!isVerticalLayout && !nodesInfo.isYEqual && isInsideRange(labelPoint.y, rangeOfVWCenter.y)) {
-          const { leftOne: leftOne2, rightOne: rightOne2 } = nodesInfo;
-          const leftRectRightBound = leftOne2.x + leftOne2.width / 2;
-          const rightRectLeftBound = rightOne2.x - rightOne2.width / 2;
-          const newInterWithV = {
-            ...origInterWithV,
-            x: Math.max(origInterWithV.x, leftRectRightBound)
-          };
-          const newInterWithW = {
-            ...origInterWithW,
-            x: Math.min(origInterWithW.x, rightRectLeftBound)
-          };
-          p1 = { x: labelPoint.x, y: newInterWithV.y };
-          p2 = { x: (lastPointInBetween || labelPoint).x, y: newInterWithW.y };
-          const newPoints = [
-            newInterWithV,
-            p1,
-            labelPoint,
-            ...pointsBetween,
-            p2,
-            newInterWithW
-          ];
-          const overlapYRange = [
-            bottomOne.y - bottomOne.height / 2,
-            topOne.y + topOne.height / 2
-          ];
-          if (overlapYRange[0] < overlapYRange[1]) {
-            const isAllInRange = newPoints.every((p) => {
-              return isInsideRange(p.y, overlapYRange);
-            });
-            if (isAllInRange) {
-              for (const p of newPoints) {
-                p.y = labelPoint.y;
-              }
-            }
-          }
-          edge.points = newPoints;
-          edgePointsArranged = true;
-        }
-      }
-      if (!edgePointsArranged) {
-        const intersectWithV = util2.intersectRect(nodeV, labelPoint);
-        const intersectWithW = util2.intersectRect(nodeW, p2);
-        edge.points.unshift(intersectWithV);
-        edge.points.push(intersectWithW);
-      }
-    }
-  });
-}
-function fixupEdgeLabelCoords(g) {
-  forEach$1(g.edges(), function(e) {
-    const edge = g.edge(e);
-    if (has$1(edge, "x")) {
-      if (edge.labelpos === "l" || edge.labelpos === "r") {
-        edge.width -= edge.labeloffset;
-      }
-      switch (edge.labelpos) {
-        case "l":
-          edge.x -= edge.width / 2 + edge.labeloffset;
-          break;
-        case "r":
-          edge.x += edge.width / 2 + edge.labeloffset;
-          break;
-      }
-    }
-  });
-}
-function reversePointsForReversedEdges(g) {
-  forEach$1(g.edges(), function(e) {
-    const edge = g.edge(e);
-    if (edge.reversed) {
-      edge.points.reverse();
-    }
-  });
-}
-function removeBorderNodes(g) {
-  const { borderRanks } = g.graph();
-  forEach$1(g.nodes(), function(v) {
-    if (g.children(v).length) {
-      const node2 = g.node(v);
-      const t = g.node(node2.borderTop);
-      const b10 = g.node(node2.borderBottom);
-      const l = g.node(last2(node2.borderLeft));
-      const r = g.node(last2(node2.borderRight));
-      borderRanks.add(t.rank);
-      borderRanks.add(b10.rank);
-      const widthBetweenBorder = Math.abs(r.x - l.x);
-      node2.width = Math.max(widthBetweenBorder, node2.minwidth || 0);
-      if (node2.minwidth && node2.minwidth > widthBetweenBorder) {
-        const wOffset = node2.minwidth - widthBetweenBorder;
-        const originalRightEdge = Math.min(l.x, r.x) + widthBetweenBorder;
-        addOffsetFromX(wOffset, originalRightEdge);
-      }
-      node2.height = Math.abs(b10.y - t.y);
-      node2.x = l.x + node2.width / 2;
-      node2.y = t.y + node2.height / 2;
-    }
-  });
-  forEach$1(g.nodes(), function(v) {
-    if (g.node(v).dummy === "border") {
-      g.removeNode(v);
-    }
-  });
-  function addOffsetFromX(wOffset, startX) {
-    const visited = {};
-    const dfs2 = (v) => {
-      if (visited[v])
-        return;
-      visited[v] = true;
-      const node2 = g.node(v);
-      if (node2.x >= startX)
-        node2.x += wOffset;
-      for (const child of g.children(v))
-        dfs2(child);
-    };
-    for (const v of g.nodes())
-      dfs2(v);
-  }
-}
-function removeSelfEdges(g) {
-  forEach$1(g.edges(), function(e) {
-    if (e.v === e.w) {
-      const node2 = g.node(e.v);
-      if (!node2.selfEdges) {
-        node2.selfEdges = [];
-      }
-      node2.selfEdges.push({ e, label: g.edge(e) });
-      g.removeEdge(e);
-    }
-  });
-}
-function insertSelfEdges(g) {
-  const layers = util2.buildLayerMatrix(g);
-  layers.forEach(function(layer) {
-    let orderShift = 0;
-    layer.forEach(function(v, i2) {
-      const node2 = g.node(v);
-      node2.order = i2 + orderShift;
-      forEach$1(node2.selfEdges, function(selfEdge) {
-        util2.addDummyNode(g, "selfedge", {
-          width: selfEdge.label.width,
-          height: selfEdge.label.height,
-          rank: node2.rank,
-          order: i2 + ++orderShift,
-          e: selfEdge.e,
-          label: selfEdge.label
-        }, "_se");
-      });
-      delete node2.selfEdges;
-    });
-  });
-}
-function positionSelfEdges(g) {
-  forEach$1(g.nodes(), function(v) {
-    const node2 = g.node(v);
-    if (node2.dummy === "selfedge") {
-      const selfNode = g.node(node2.e.v);
-      const x2 = selfNode.x + selfNode.width / 2;
-      const y2 = selfNode.y;
-      const dx = node2.x - x2;
-      const dy = selfNode.height / 2;
-      g.setEdge(node2.e, node2.label);
-      g.removeNode(v);
-      node2.label.points = [
-        { x: x2 + 2 * dx / 3, y: y2 - dy },
-        { x: x2 + 5 * dx / 6, y: y2 - dy },
-        { x: x2 + dx, y: y2 },
-        { x: x2 + 5 * dx / 6, y: y2 + dy },
-        { x: x2 + 2 * dx / 3, y: y2 + dy }
-      ];
-      node2.label.x = node2.x;
-      node2.label.y = node2.y;
-    }
-  });
-}
-function selectNumberAttrs(obj, attrs) {
-  return mapValues(pick$1(obj, attrs), Number);
-}
-function canonicalize(attrs) {
-  const newAttrs = {};
-  forEach$1(attrs, function(v, k) {
-    newAttrs[k.toLowerCase()] = v;
-  });
-  return newAttrs;
-}
-var index = {
-  layout,
-  util: util2
-};
 
 // ../pintora-diagrams/lib/util/dagre-wrapper.js
 var DagreWrapper = class {
@@ -28518,10 +28750,438 @@ var DagreWrapper = class {
   }
 };
 
+// ../../node_modules/.pnpm/d3-path@3.0.1/node_modules/d3-path/src/path.js
+var pi = Math.PI;
+var tau = 2 * pi;
+var epsilon = 1e-6;
+var tauEpsilon = tau - epsilon;
+function Path() {
+  this._x0 = this._y0 = // start of current subpath
+  this._x1 = this._y1 = null;
+  this._ = "";
+}
+function path() {
+  return new Path();
+}
+Path.prototype = path.prototype = {
+  constructor: Path,
+  moveTo: function(x2, y2) {
+    this._ += "M" + (this._x0 = this._x1 = +x2) + "," + (this._y0 = this._y1 = +y2);
+  },
+  closePath: function() {
+    if (this._x1 !== null) {
+      this._x1 = this._x0, this._y1 = this._y0;
+      this._ += "Z";
+    }
+  },
+  lineTo: function(x2, y2) {
+    this._ += "L" + (this._x1 = +x2) + "," + (this._y1 = +y2);
+  },
+  quadraticCurveTo: function(x1, y1, x2, y2) {
+    this._ += "Q" + +x1 + "," + +y1 + "," + (this._x1 = +x2) + "," + (this._y1 = +y2);
+  },
+  bezierCurveTo: function(x1, y1, x2, y2, x3, y3) {
+    this._ += "C" + +x1 + "," + +y1 + "," + +x2 + "," + +y2 + "," + (this._x1 = +x3) + "," + (this._y1 = +y3);
+  },
+  arcTo: function(x1, y1, x2, y2, r) {
+    x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
+    var x0 = this._x1, y0 = this._y1, x21 = x2 - x1, y21 = y2 - y1, x01 = x0 - x1, y01 = y0 - y1, l01_2 = x01 * x01 + y01 * y01;
+    if (r < 0) throw new Error("negative radius: " + r);
+    if (this._x1 === null) {
+      this._ += "M" + (this._x1 = x1) + "," + (this._y1 = y1);
+    } else if (!(l01_2 > epsilon)) ;
+    else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon) || !r) {
+      this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1);
+    } else {
+      var x20 = x2 - x0, y20 = y2 - y0, l21_2 = x21 * x21 + y21 * y21, l20_2 = x20 * x20 + y20 * y20, l21 = Math.sqrt(l21_2), l01 = Math.sqrt(l01_2), l = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2), t01 = l / l01, t21 = l / l21;
+      if (Math.abs(t01 - 1) > epsilon) {
+        this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01);
+      }
+      this._ += "A" + r + "," + r + ",0,0," + +(y01 * x20 > x01 * y20) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
+    }
+  },
+  arc: function(x2, y2, r, a0, a1, ccw) {
+    x2 = +x2, y2 = +y2, r = +r, ccw = !!ccw;
+    var dx = r * Math.cos(a0), dy = r * Math.sin(a0), x0 = x2 + dx, y0 = y2 + dy, cw = 1 ^ ccw, da = ccw ? a0 - a1 : a1 - a0;
+    if (r < 0) throw new Error("negative radius: " + r);
+    if (this._x1 === null) {
+      this._ += "M" + x0 + "," + y0;
+    } else if (Math.abs(this._x1 - x0) > epsilon || Math.abs(this._y1 - y0) > epsilon) {
+      this._ += "L" + x0 + "," + y0;
+    }
+    if (!r) return;
+    if (da < 0) da = da % tau + tau;
+    if (da > tauEpsilon) {
+      this._ += "A" + r + "," + r + ",0,1," + cw + "," + (x2 - dx) + "," + (y2 - dy) + "A" + r + "," + r + ",0,1," + cw + "," + (this._x1 = x0) + "," + (this._y1 = y0);
+    } else if (da > epsilon) {
+      this._ += "A" + r + "," + r + ",0," + +(da >= pi) + "," + cw + "," + (this._x1 = x2 + r * Math.cos(a1)) + "," + (this._y1 = y2 + r * Math.sin(a1));
+    }
+  },
+  rect: function(x2, y2, w, h) {
+    this._ += "M" + (this._x0 = this._x1 = +x2) + "," + (this._y0 = this._y1 = +y2) + "h" + +w + "v" + +h + "h" + -w + "Z";
+  },
+  toString: function() {
+    return this._;
+  }
+};
+var path_default = path;
+
+// ../../node_modules/.pnpm/d3-shape@3.1.0/node_modules/d3-shape/src/constant.js
+function constant_default(x2) {
+  return function constant3() {
+    return x2;
+  };
+}
+
+// ../../node_modules/.pnpm/d3-shape@3.1.0/node_modules/d3-shape/src/array.js
+var slice = Array.prototype.slice;
+function array_default(x2) {
+  return typeof x2 === "object" && "length" in x2 ? x2 : Array.from(x2);
+}
+
+// ../../node_modules/.pnpm/d3-shape@3.1.0/node_modules/d3-shape/src/curve/linear.js
+function Linear(context) {
+  this._context = context;
+}
+Linear.prototype = {
+  areaStart: function() {
+    this._line = 0;
+  },
+  areaEnd: function() {
+    this._line = NaN;
+  },
+  lineStart: function() {
+    this._point = 0;
+  },
+  lineEnd: function() {
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function(x2, y2) {
+    x2 = +x2, y2 = +y2;
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        this._line ? this._context.lineTo(x2, y2) : this._context.moveTo(x2, y2);
+        break;
+      case 1:
+        this._point = 2;
+      // falls through
+      default:
+        this._context.lineTo(x2, y2);
+        break;
+    }
+  }
+};
+function linear_default(context) {
+  return new Linear(context);
+}
+
+// ../../node_modules/.pnpm/d3-shape@3.1.0/node_modules/d3-shape/src/point.js
+function x(p) {
+  return p[0];
+}
+function y(p) {
+  return p[1];
+}
+
+// ../../node_modules/.pnpm/d3-shape@3.1.0/node_modules/d3-shape/src/line.js
+function line_default(x2, y2) {
+  var defined = constant_default(true), context = null, curve = linear_default, output = null;
+  x2 = typeof x2 === "function" ? x2 : x2 === void 0 ? x : constant_default(x2);
+  y2 = typeof y2 === "function" ? y2 : y2 === void 0 ? y : constant_default(y2);
+  function line(data) {
+    var i2, n2 = (data = array_default(data)).length, d, defined0 = false, buffer;
+    if (context == null) output = curve(buffer = path_default());
+    for (i2 = 0; i2 <= n2; ++i2) {
+      if (!(i2 < n2 && defined(d = data[i2], i2, data)) === defined0) {
+        if (defined0 = !defined0) output.lineStart();
+        else output.lineEnd();
+      }
+      if (defined0) output.point(+x2(d, i2, data), +y2(d, i2, data));
+    }
+    if (buffer) return output = null, buffer + "" || null;
+  }
+  line.x = function(_3) {
+    return arguments.length ? (x2 = typeof _3 === "function" ? _3 : constant_default(+_3), line) : x2;
+  };
+  line.y = function(_3) {
+    return arguments.length ? (y2 = typeof _3 === "function" ? _3 : constant_default(+_3), line) : y2;
+  };
+  line.defined = function(_3) {
+    return arguments.length ? (defined = typeof _3 === "function" ? _3 : constant_default(!!_3), line) : defined;
+  };
+  line.curve = function(_3) {
+    return arguments.length ? (curve = _3, context != null && (output = curve(context)), line) : curve;
+  };
+  line.context = function(_3) {
+    return arguments.length ? (_3 == null ? context = output = null : output = curve(context = _3), line) : context;
+  };
+  return line;
+}
+
+// ../../node_modules/.pnpm/d3-shape@3.1.0/node_modules/d3-shape/src/curve/basis.js
+function point(that, x2, y2) {
+  that._context.bezierCurveTo(
+    (2 * that._x0 + that._x1) / 3,
+    (2 * that._y0 + that._y1) / 3,
+    (that._x0 + 2 * that._x1) / 3,
+    (that._y0 + 2 * that._y1) / 3,
+    (that._x0 + 4 * that._x1 + x2) / 6,
+    (that._y0 + 4 * that._y1 + y2) / 6
+  );
+}
+function Basis(context) {
+  this._context = context;
+}
+Basis.prototype = {
+  areaStart: function() {
+    this._line = 0;
+  },
+  areaEnd: function() {
+    this._line = NaN;
+  },
+  lineStart: function() {
+    this._x0 = this._x1 = this._y0 = this._y1 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function() {
+    switch (this._point) {
+      case 3:
+        point(this, this._x1, this._y1);
+      // falls through
+      case 2:
+        this._context.lineTo(this._x1, this._y1);
+        break;
+    }
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function(x2, y2) {
+    x2 = +x2, y2 = +y2;
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        this._line ? this._context.lineTo(x2, y2) : this._context.moveTo(x2, y2);
+        break;
+      case 1:
+        this._point = 2;
+        break;
+      case 2:
+        this._point = 3;
+        this._context.lineTo((5 * this._x0 + this._x1) / 6, (5 * this._y0 + this._y1) / 6);
+      // falls through
+      default:
+        point(this, x2, y2);
+        break;
+    }
+    this._x0 = this._x1, this._x1 = x2;
+    this._y0 = this._y1, this._y1 = y2;
+  }
+};
+function basis_default(context) {
+  return new Basis(context);
+}
+
+// ../pintora-diagrams/lib/util/line-util.js
+function getPointsCurvePath(points, factory = basis_default) {
+  const pathString = line_default().curve(factory)(points.map((o) => [o.x, o.y]));
+  return pathString;
+}
+function getPointsLinearPath(points) {
+  const [startPoint, ...restPoints] = points;
+  return [
+    ["M", startPoint.x, startPoint.y],
+    ...restPoints.map((point2) => {
+      return ["L", point2.x, point2.y];
+    })
+  ];
+}
+function getMedianPoint(points) {
+  const len2 = points.length;
+  const index2 = Math.floor(len2 / 2);
+  return { index: index2, point: points[index2] };
+}
+
+// ../pintora-diagrams/lib/er/artist-util.js
+var MARKER_GENERATORS = {
+  [Cardinality.ONLY_ONE]() {
+    const mark = makeMark("path", {
+      path: "M9,-9 L9,9 M15,-9 L15,9"
+    }, { class: "er-marker--only-one" });
+    return mark;
+  },
+  [Cardinality.ZERO_OR_ONE](attrs) {
+    const circle = makeMark("circle", {
+      ...attrs,
+      fill: "#fff",
+      x: 28,
+      y: 0,
+      r: 6
+    });
+    const path4 = makeMark("path", {
+      ...attrs,
+      path: "M14,-9 L14,9"
+    });
+    const group = {
+      type: "group",
+      class: "er-marker--zero-or-one",
+      children: [circle, path4]
+    };
+    return group;
+  },
+  [Cardinality.ONE_OR_MORE]() {
+    const mark = makeMark("path", {
+      path: "M-18,0 Q 0,18 18,0 Q 0,-18 -18,0 M24,-9 L24,9"
+    }, { class: "er-marker--one-or-more" });
+    return mark;
+  },
+  [Cardinality.ZERO_OR_MORE](attrs) {
+    const circle = makeMark("circle", {
+      ...attrs,
+      fill: "#fff",
+      x: 28,
+      y: 0,
+      r: 6
+    });
+    const path4 = makeMark("path", {
+      ...attrs,
+      path: "M-18,0 Q 0,18 18,0 Q 0,-18 -18,0"
+    });
+    const group = {
+      type: "group",
+      class: "er-marker--zero-or-more",
+      children: [circle, path4]
+    };
+    return group;
+  }
+};
+function drawMarkerTo(dest, type, rad, attrs) {
+  const generator = MARKER_GENERATORS[type];
+  if (!generator)
+    return;
+  const mark = generator(attrs || {});
+  safeAssign(mark.attrs, attrs || {});
+  const finalMatrix = mat3_exports.create();
+  mat3_exports.translate(finalMatrix, mat3_exports.create(), [dest.x, dest.y]);
+  mat3_exports.rotate(finalMatrix, finalMatrix, rad);
+  mark.matrix = finalMatrix;
+  if (mark.class)
+    mark.class = `er-marker ${mark.class}`;
+  return mark;
+}
+var TableCell = class _TableCell {
+  constructor() {
+    this.width = 0;
+    this.height = 0;
+    this.order = 0;
+  }
+  static fromMark(mark, name, opts = {}) {
+    const cell = new _TableCell();
+    cell.mark = mark;
+    cell.name = name;
+    cell.width = mark.attrs.width;
+    cell.height = mark.attrs.height;
+    Object.assign(cell, opts);
+    if (!("order" in opts)) {
+      if (name in CELL_ORDER) {
+        cell.order = CELL_ORDER[name];
+      }
+    }
+    return cell;
+  }
+};
+var TableRow = class {
+  constructor() {
+    this.cellMap = /* @__PURE__ */ new Map();
+  }
+  addCells(cells) {
+    const validCells = cells.filter((o) => Boolean(o));
+    validCells.forEach((cell) => {
+      this.cellMap.set(cell.name, cell);
+    });
+  }
+  getCell(name) {
+    return this.cellMap.get(name);
+  }
+  map(fn) {
+    return Array.from(this.cellMap.values()).map(fn);
+  }
+};
+var TableBuilder = class {
+  constructor() {
+    this.rows = [];
+  }
+  addRow(row) {
+    this.rows.push(row);
+  }
+};
+var CELL_ORDER = {
+  key: 1,
+  type: 2,
+  name: 3,
+  comment: 4
+};
+
+// ../pintora-diagrams/lib/er/config.js
+var defaultConfig2 = {
+  ...defaultFontConfig,
+  diagramPadding: 15,
+  layoutDirection: "TB",
+  ranksep: 100,
+  edgesep: 80,
+  edgeType: "polyline",
+  useMaxWidth: false,
+  minEntityWidth: 80,
+  minEntityHeight: 50,
+  entityPaddingX: 15,
+  entityPaddingY: 15,
+  borderRadius: 2,
+  stroke: PALETTE.normalDark,
+  fill: PALETTE.orange,
+  edgeColor: PALETTE.normalDark,
+  attributeFill: "#fffbf9",
+  textColor: PALETTE.normalDark,
+  labelBackground: PALETTE.white
+};
+var ER_PARAM_DIRECTIVE_RULES = {
+  ...getParamRulesFromConfig(defaultConfig2),
+  ...getFontConfigRules(),
+  useMaxWidth: { valueType: "boolean" },
+  layoutDirection: { valueType: "string" },
+  borderRadius: { valueType: "size" },
+  stroke: { valueType: "color" },
+  fill: { valueType: "color" },
+  edgeColor: { valueType: "color" },
+  attributeFill: { valueType: "color" },
+  textColor: { valueType: "color" },
+  labelBackground: { valueType: "color" }
+};
+var configKey2 = "er";
+var configurator2 = makeConfigurator({
+  defaultConfig: defaultConfig2,
+  configKey: configKey2,
+  getConfigFromParamDirectives(configParams) {
+    return interpreteConfigs(ER_PARAM_DIRECTIVE_RULES, configParams);
+  },
+  getConfigFromTheme(t, conf5) {
+    return {
+      stroke: t.primaryBorderColor,
+      fill: t.primaryColor,
+      // fill: 'transparent', // for debugging markers
+      edgeColor: t.primaryLineColor,
+      textColor: t.textColor,
+      labelBackground: t.canvasBackground || t.background1,
+      attributeFill: t.lightestBackground || conf5.attributeFill
+    };
+  }
+});
+var getConf2 = configurator2.getConfig;
+
 // ../pintora-diagrams/lib/er/artist.js
 var conf2;
-var erArtist = {
-  draw(ir, config2, opts) {
+var ErArtist = class extends BaseArtist {
+  customDraw(ir, config2, opts) {
     conf2 = getConf2(ir);
     const rootMark = {
       type: "group",
@@ -28562,18 +29222,14 @@ var erArtist = {
     const bounds = dagreWrapper.getGraphBounds();
     tryExpandBounds(bounds, relationshipsBounds);
     const pad2 = conf2.diagramPadding;
-    const { title } = ir;
-    let titleSize = void 0;
-    let titleMark = void 0;
-    if (title) {
-      const titleFont = { fontSize: conf2.fontSize, fontFamily: conf2.fontFamily };
-      const titleResult = makeTitleMark(title, titleFont, { fill: conf2.textColor });
-      titleSize = titleResult.titleSize;
-      titleMark = titleResult.mark;
-      titleMark.class = "er__title";
-      rootMark.children.push(titleMark);
-      titleSize.height += conf2.fontSize;
-    }
+    const titleFont = getFontConfig(conf2);
+    const titleMaker = new DiagramTitleMaker({
+      title: ir.title,
+      titleFont,
+      fill: conf2.textColor,
+      className: "er__title"
+    });
+    const titleResult = titleMaker.appendTitleMark(rootMark);
     const { width: width2, height } = adjustRootMarkBounds({
       rootMark,
       gBounds: bounds,
@@ -28581,8 +29237,7 @@ var erArtist = {
       padY: pad2,
       useMaxWidth: conf2.useMaxWidth,
       containerSize: opts === null || opts === void 0 ? void 0 : opts.containerSize,
-      titleSize,
-      titleMark
+      ...titleResult
     });
     return {
       mark: rootMark,
@@ -28591,12 +29246,7 @@ var erArtist = {
     };
   }
 };
-function getFontConfig(conf5) {
-  return {
-    fontSize: conf5.fontSize,
-    fontFamily: conf5.fontFamily
-  };
-}
+var erArtist = new ErArtist();
 var drawAttributes = (group, entityText, attributes) => {
   const attribPaddingY = conf2.entityPaddingY / 2;
   const attribPaddingX = conf2.entityPaddingX / 2;
@@ -28612,16 +29262,18 @@ var drawAttributes = (group, entityText, attributes) => {
     const attrPrefix = `${entityText.attrs.id}-attr-${attrNum}`;
     const makeLabelTextMark = (name, text) => {
       return makeMark("text", {
-        ...getTextDimensionsInPresicion(text, fontConfig),
+        ...getTextDimensionsInPresicion(text, fontConfig2),
         ...getBaseText(),
         id: `${attrPrefix}-${name}`,
         text,
         textAlign: "left",
         textBaseline: "middle",
-        ...fontConfig
+        ...fontConfig2
       }, { class: "er__entity-label" });
     };
-    const fontConfig = { ...getFontConfig(conf2), fontSize: attrFontSize };
+    const fontConfig2 = getFontConfig(conf2, {
+      fontSize: attrFontSize
+    });
     let keyCell;
     if (item.attributeKey) {
       keyCell = TableCell.fromMark(makeLabelTextMark("key", item.attributeKey), "key");
@@ -28734,24 +29386,26 @@ var drawAttributes = (group, entityText, attributes) => {
 var drawEntities = function(rootMark, ir, graph) {
   const keys3 = Object.keys(ir.entities);
   const groups = [];
-  keys3.forEach(function(id9) {
-    const entity = ir.entities[id9];
+  keys3.forEach(function(id10) {
+    const entity = ir.entities[id10];
     const itemId = entity.itemId;
     const group = makeMark("group", {
-      id: id9
-    }, { children: [], class: "er__entity" });
+      id: id10
+    }, { children: [], class: "er__entity", itemId });
     groups.push(group);
-    const fontConfig = { ...getFontConfig(conf2), fontWeight: "bold" };
+    const fontConfig2 = getFontConfig(conf2, {
+      fontWeight: "bold"
+    });
     const textMark = makeMark("text", {
       ...getBaseText(),
-      ...getTextDimensionsInPresicion(id9, fontConfig),
-      text: id9,
+      ...getTextDimensionsInPresicion(id10, fontConfig2),
+      text: id10,
       id: itemId,
       textAlign: "center",
       textBaseline: "middle",
       fill: conf2.textColor,
-      ...fontConfig
-    }, { itemId, class: "er__entity-label" });
+      ...fontConfig2
+    }, { class: "er__entity-label" });
     const rectMark = makeMark("rect", {
       ...getBaseText(),
       fill: conf2.fill,
@@ -28759,18 +29413,17 @@ var drawEntities = function(rootMark, ir, graph) {
       x: 0,
       y: 0,
       radius: conf2.borderRadius
-    }, { itemId, class: "er__entity-box" });
+    }, { class: "er__entity-box" });
     group.children.push(rectMark, textMark);
-    const { width: entityWidth, height: entityHeight, attributeGroup } = drawAttributes(group, textMark, ir.entities[id9].attributes);
+    const { width: entityWidth, height: entityHeight, attributeGroup } = drawAttributes(group, textMark, ir.entities[id10].attributes);
     safeAssign(rectMark.attrs, {
       width: entityWidth,
       height: entityHeight
     });
-    attributeGroup.itemId = itemId;
-    graph.setNode(id9, {
+    graph.setNode(id10, {
       width: entityWidth,
       height: entityHeight,
-      id: id9,
+      id: id10,
       onLayout(data) {
         const x2 = Math.floor(data.x);
         const y2 = Math.floor(data.y);
@@ -28842,7 +29495,9 @@ var drawRelationshipFromLayout = function(group, rel, g) {
   const labelX = labelPoint.x;
   const labelY = labelPoint.y;
   const labelId = "rel" + relCnt;
-  const fontConfig = { ...getFontConfig(conf2), fontWeight: 400 };
+  const fontConfig2 = getFontConfig(conf2, {
+    fontWeight: 400
+  });
   const labelMark = makeMark("text", {
     text: rel.roleA,
     id: labelId,
@@ -28851,9 +29506,9 @@ var drawRelationshipFromLayout = function(group, rel, g) {
     x: labelX,
     y: labelY,
     fill: conf2.textColor,
-    ...fontConfig
+    ...fontConfig2
   }, { itemId, class: "er__relationship-label" });
-  const labelDims = getTextDimensionsInPresicion(rel.roleA, fontConfig);
+  const labelDims = getTextDimensionsInPresicion(rel.roleA, fontConfig2);
   labelDims.width += conf2.fontSize / 2;
   labelDims.height += conf2.fontSize / 2;
   const labelBg = makeLabelBg(labelDims, { x: labelX, y: labelY }, { id: `#${labelId}`, fill: conf2.labelBackground });
@@ -28864,18 +29519,18 @@ var drawRelationshipFromLayout = function(group, rel, g) {
   return { bounds };
 };
 function drawInheritances(ir, g, rootMark) {
-  const fontConfig = getFontConfig(conf2);
+  const fontConfig2 = getFontConfig(conf2);
   const inheritanceGroup = makeEmptyGroup();
   rootMark.children.push(inheritanceGroup);
   ir.inheritances.forEach((inh) => {
     const LABEL_TEXT = "ISA";
-    const labelDims = getTextDimensionsInPresicion(LABEL_TEXT, fontConfig);
+    const labelDims = getTextDimensionsInPresicion(LABEL_TEXT, fontConfig2);
     const labelMark = makeMark("text", {
       text: LABEL_TEXT,
       textAlign: "center",
       textBaseline: "middle",
       fill: conf2.textColor,
-      ...fontConfig
+      ...fontConfig2
     }, { class: "er__relationship-label" });
     inheritanceGroup.children.push(labelMark);
     const labelId = `inherit-${inh.sup}-${inh.sub}`;
@@ -28936,24 +29591,24 @@ function makeLinePath(edge, conf5) {
 var artist_default2 = erArtist;
 
 // ../pintora-diagrams/lib/er/parser/erDiagram.js
-var moo2 = __toESM(require_moo());
-function id2(d) {
+var moo3 = __toESM(require_moo());
+function id3(d) {
   return d[0];
 }
-var COLOR2 = /#[a-zA-Z0-9]+/;
-var PARAM_DIRECTIVE2 = /@param/;
-var CONFIG_DIRECTIVE3 = /@config/;
-var L_PAREN2 = /\(/;
-var R_PAREN2 = /\)/;
-function getTokenValue2(token) {
+var _COLOR3 = /#[a-zA-Z0-9]+/;
+var PARAM_DIRECTIVE3 = /@param/;
+var CONFIG_DIRECTIVE4 = /@config/;
+var L_PAREN3 = /\(/;
+var R_PAREN3 = /\)/;
+function getTokenValue3(token) {
   if (token && "value" in token)
     return token.value;
   return token;
 }
-function handleConfigOpenCloseStatement2(d) {
+function handleConfigOpenCloseStatement3(d) {
   const text = d[2].map((v) => {
     if (v.type)
-      return getTokenValue2(v);
+      return getTokenValue3(v);
     return v;
   }).join("");
   try {
@@ -28963,8 +29618,9 @@ function handleConfigOpenCloseStatement2(d) {
     return { type: "overrideConfig", error };
   }
 }
-var COMMENT_LINE2 = /%%.*/;
-var lexer2 = moo2.compile({
+var COMMENT_LINE3 = /%%.*/;
+var BIND_CLASS2 = /@bindClass/;
+var lexer3 = moo3.compile({
   NL: MOO_NEWLINE,
   WS: { match: / +/, lineBreaks: false },
   QUOTED_WORD: QUOTED_WORD_REGEXP,
@@ -28980,15 +29636,12 @@ var lexer2 = moo2.compile({
   INHERIT: /inherit/,
   PARAM_DIRECTIVE: /@param/,
   COMMENT_LINE: COMMENT_LINE_REGEXP,
-  CONFIG_DIRECTIVE: CONFIG_DIRECTIVE3,
+  CONFIG_DIRECTIVE: CONFIG_DIRECTIVE4,
+  ...BIND_REGEXPS,
   VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
 });
-var yy2;
-function setYY2(v) {
-  yy2 = v;
-}
-var grammar2 = {
-  Lexer: lexer2,
+var grammar3 = {
+  Lexer: lexer3,
   ParserRules: [
     { "name": "_$ebnf$1", "symbols": [] },
     { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", "wschar"], "postprocess": (d) => d[0].concat([d[1]]) },
@@ -29000,11 +29653,11 @@ var grammar2 = {
     { "name": "__", "symbols": ["__$ebnf$1"], "postprocess": function(d) {
       return null;
     } },
-    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id2 },
-    { "name": "color", "symbols": [COLOR2], "postprocess": (d) => tv(d[0]) },
+    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id3 },
+    { "name": "color", "symbols": [_COLOR3], "postprocess": (d) => tv(d[0]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE2, "__", "paramPart"],
+      "symbols": [PARAM_DIRECTIVE3, "__", "paramPart"],
       "postprocess": function(d) {
         return d[2];
       }
@@ -29014,7 +29667,7 @@ var grammar2 = {
     { "name": "paramStatement$ebnf$1", "symbols": ["paramStatement$ebnf$1", "paramStatement$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE2, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
+      "symbols": [PARAM_DIRECTIVE3, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
       "postprocess": function(d) {
         const params = [];
         d[4].forEach((seg) => {
@@ -29036,80 +29689,100 @@ var grammar2 = {
     } },
     { "name": "configStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configStatement$ebnf$1", "symbols": ["configStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE3, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement2 },
+    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE4, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement3 },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": ["configOpenCloseStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE3, L_PAREN2, "configOpenCloseStatement$ebnf$1", R_PAREN2], "postprocess": handleConfigOpenCloseStatement2 },
-    { "name": "comment", "symbols": [COMMENT_LINE2], "postprocess": (d) => null },
+    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE4, L_PAREN3, "configOpenCloseStatement$ebnf$1", R_PAREN3], "postprocess": handleConfigOpenCloseStatement3 },
+    { "name": "comment", "symbols": [COMMENT_LINE3], "postprocess": (d) => null },
+    { "name": "bindClassStatement$ebnf$1", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS] },
+    { "name": "bindClassStatement$ebnf$1", "symbols": ["bindClassStatement$ebnf$1", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "bindClassStatement$ebnf$2", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS] },
+    { "name": "bindClassStatement$ebnf$2", "symbols": ["bindClassStatement$ebnf$2", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "bindClassStatement$ebnf$3", "symbols": [] },
+    { "name": "bindClassStatement$ebnf$3", "symbols": ["bindClassStatement$ebnf$3", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "bindClassStatement",
+      "symbols": [lexer3.has("BIND_CLASS") ? { type: "BIND_CLASS" } : BIND_CLASS2, "bindClassStatement$ebnf$1", "nodeList", "bindClassStatement$ebnf$2", lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "bindClassStatement$ebnf$3", lexer3.has("NL") ? { type: "NL" } : NL],
+      "postprocess": (d) => ({
+        type: "bindClass",
+        nodes: d[2],
+        className: tv(d[4])
+      })
+    },
+    { "name": "nodeList", "symbols": [lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => [tv(d[0])] },
+    { "name": "nodeList$ebnf$1", "symbols": [] },
+    { "name": "nodeList$ebnf$1", "symbols": ["nodeList$ebnf$1", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "nodeList",
+      "symbols": ["nodeList", lexer3.has("COMMA") ? { type: "COMMA" } : COMMA, "nodeList$ebnf$1", lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT],
+      "postprocess": (d) => {
+        const list = d[0];
+        list.push(tv(d[3]));
+        return list;
+      }
+    },
     { "name": "start", "symbols": ["__", "start"] },
     { "name": "start", "symbols": [{ "literal": "erDiagram" }, "document"] },
     { "name": "document", "symbols": [] },
     { "name": "document", "symbols": ["document", "line"] },
-    { "name": "line$ebnf$1", "symbols": [lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": id2 },
+    { "name": "line$ebnf$1", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": id3 },
     { "name": "line$ebnf$1", "symbols": [], "postprocess": () => null },
     { "name": "line", "symbols": ["line$ebnf$1", "statement"] },
-    { "name": "line", "symbols": [lexer2.has("NL") ? { type: "NL" } : NL], "postprocess": null },
+    { "name": "line", "symbols": [lexer3.has("NL") ? { type: "NL" } : NL], "postprocess": null },
     { "name": "statement$ebnf$1", "symbols": [] },
-    { "name": "statement$ebnf$1", "symbols": ["statement$ebnf$1", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "statement$ebnf$1", "symbols": ["statement$ebnf$1", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "statement$ebnf$2", "symbols": [] },
-    { "name": "statement$ebnf$2", "symbols": ["statement$ebnf$2", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "statement$ebnf$2", "symbols": ["statement$ebnf$2", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "statement",
-      "symbols": ["entityName", "statement$ebnf$1", "relSpec", "statement$ebnf$2", "entityName", lexer2.has("COLON") ? { type: "COLON" } : COLON, "role", lexer2.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["entityName", "statement$ebnf$1", "relSpec", "statement$ebnf$2", "entityName", lexer3.has("COLON") ? { type: "COLON" } : COLON, "role", lexer3.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
-        yy2.addEntity(d[0]);
-        yy2.addEntity(d[4]);
-        yy2.addRelationship(d[0], d[6], d[4], d[2]);
+        return {
+          type: "addRelationship",
+          entityA: d[0],
+          entityB: d[4],
+          relSpec: d[2],
+          roleA: d[6]
+        };
       }
     },
     { "name": "statement$ebnf$3", "symbols": [] },
-    { "name": "statement$ebnf$3", "symbols": ["statement$ebnf$3", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "statement", "symbols": ["entityName", lexer2.has("WS") ? { type: "WS" } : WS, lexer2.has("INHERIT") ? { type: "INHERIT" } : INHERIT, lexer2.has("WS") ? { type: "WS" } : WS, "entityName", "statement$ebnf$3", lexer2.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => {
-      yy2.addEntity(d[4]);
-      yy2.addEntity(d[0]);
-      const sup = d[4];
-      const sub3 = d[0];
-      yy2.addInheritance(sup, sub3);
+    { "name": "statement$ebnf$3", "symbols": ["statement$ebnf$3", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "statement", "symbols": ["entityName", lexer3.has("WS") ? { type: "WS" } : WS, lexer3.has("INHERIT") ? { type: "INHERIT" } : INHERIT, lexer3.has("WS") ? { type: "WS" } : WS, "entityName", "statement$ebnf$3", lexer3.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => {
+      return {
+        type: "addInheritance",
+        sup: d[4],
+        sub: d[0]
+      };
     } },
-    { "name": "statement$ebnf$4", "symbols": ["attributes"], "postprocess": id2 },
+    { "name": "statement$ebnf$4", "symbols": ["attributes"], "postprocess": id3 },
     { "name": "statement$ebnf$4", "symbols": [], "postprocess": () => null },
     {
       "name": "statement",
-      "symbols": ["entityName", "__", { "literal": "{" }, "__", "statement$ebnf$4", "_", { "literal": "}" }, lexer2.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["entityName", "__", { "literal": "{" }, "__", "statement$ebnf$4", "_", { "literal": "}" }, lexer3.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
-        yy2.addEntity(d[0]);
-        if (d[4]) {
-          yy2.addAttributes(d[0], d[4]);
-        }
+        return {
+          type: "addEntity",
+          name: d[0],
+          attributes: d[4] || []
+        };
       }
     },
-    { "name": "statement", "symbols": ["entityName", { "literal": "{" }, { "literal": "}" }, lexer2.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => yy2.addEntity(d[0]) },
+    { "name": "statement", "symbols": ["entityName", { "literal": "{" }, { "literal": "}" }, lexer3.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => ({ type: "addEntity", name: d[0] }) },
     { "name": "statement$ebnf$5", "symbols": [] },
-    { "name": "statement$ebnf$5", "symbols": ["statement$ebnf$5", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "statement", "symbols": ["entityName", "statement$ebnf$5", lexer2.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => yy2.addEntity(d[0]) },
+    { "name": "statement$ebnf$5", "symbols": ["statement$ebnf$5", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "statement", "symbols": ["entityName", "statement$ebnf$5", lexer3.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => ({ type: "addEntity", name: d[0] }) },
     { "name": "statement", "symbols": ["titleStatement"] },
     { "name": "statement$ebnf$6", "symbols": [] },
-    { "name": "statement$ebnf$6", "symbols": ["statement$ebnf$6", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
-    {
-      "name": "statement",
-      "symbols": ["paramStatement", "statement$ebnf$6", lexer2.has("NL") ? { type: "NL" } : NL],
-      "postprocess": function(d) {
-        const { type, ...styleParam } = d[0];
-        yy2.addParam(styleParam);
-      }
-    },
+    { "name": "statement$ebnf$6", "symbols": ["statement$ebnf$6", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "statement", "symbols": ["paramStatement", "statement$ebnf$6", lexer3.has("NL") ? { type: "NL" } : NL] },
     { "name": "statement$ebnf$7", "symbols": [] },
-    { "name": "statement$ebnf$7", "symbols": ["statement$ebnf$7", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
-    {
-      "name": "statement",
-      "symbols": ["configStatement", "statement$ebnf$7", lexer2.has("NL") ? { type: "NL" } : NL],
-      "postprocess": function(d) {
-        yy2.addOverrideConfig(d[0]);
-      }
-    },
-    { "name": "statement", "symbols": ["comment", lexer2.has("NL") ? { type: "NL" } : NL] },
-    { "name": "statement", "symbols": [lexer2.has("NL") ? { type: "NL" } : NL] },
-    { "name": "entityName", "symbols": [lexer2.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => tv(d[0]) },
+    { "name": "statement$ebnf$7", "symbols": ["statement$ebnf$7", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "statement", "symbols": ["configStatement", "statement$ebnf$7", lexer3.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["bindClassStatement"] },
+    { "name": "statement", "symbols": ["comment", lexer3.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": [lexer3.has("NL") ? { type: "NL" } : NL] },
+    { "name": "entityName", "symbols": [lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => tv(d[0]) },
     { "name": "attributes", "symbols": ["attribute"], "postprocess": (d) => {
       return [d[0]];
     } },
@@ -29121,33 +29794,33 @@ var grammar2 = {
       }
     },
     { "name": "attribute$ebnf$1", "symbols": [] },
-    { "name": "attribute$ebnf$1", "symbols": ["attribute$ebnf$1", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "attribute$ebnf$2", "symbols": [lexer2.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD], "postprocess": id2 },
+    { "name": "attribute$ebnf$1", "symbols": ["attribute$ebnf$1", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "attribute$ebnf$2", "symbols": [lexer3.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD], "postprocess": id3 },
     { "name": "attribute$ebnf$2", "symbols": [], "postprocess": () => null },
     {
       "name": "attribute",
-      "symbols": ["attributeType", lexer2.has("WS") ? { type: "WS" } : WS, "attributeName", lexer2.has("WS") ? { type: "WS" } : WS, lexer2.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "attribute$ebnf$1", "attribute$ebnf$2", lexer2.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["attributeType", lexer3.has("WS") ? { type: "WS" } : WS, "attributeName", lexer3.has("WS") ? { type: "WS" } : WS, lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "attribute$ebnf$1", "attribute$ebnf$2", lexer3.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const comment2 = d[6] ? getQuotedWord(d[6]) : "";
         return { attributeType: d[0], attributeName: d[2], attributeKey: tv(d[4]), comment: comment2 };
       }
     },
     { "name": "attribute$ebnf$3", "symbols": [] },
-    { "name": "attribute$ebnf$3", "symbols": ["attribute$ebnf$3", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "attribute$ebnf$4", "symbols": [lexer2.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD], "postprocess": id2 },
+    { "name": "attribute$ebnf$3", "symbols": ["attribute$ebnf$3", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "attribute$ebnf$4", "symbols": [lexer3.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD], "postprocess": id3 },
     { "name": "attribute$ebnf$4", "symbols": [], "postprocess": () => null },
     { "name": "attribute$ebnf$5", "symbols": [] },
-    { "name": "attribute$ebnf$5", "symbols": ["attribute$ebnf$5", lexer2.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "attribute$ebnf$5", "symbols": ["attribute$ebnf$5", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "attribute",
-      "symbols": ["attributeType", lexer2.has("WS") ? { type: "WS" } : WS, "attributeName", "attribute$ebnf$3", "attribute$ebnf$4", "attribute$ebnf$5", lexer2.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["attributeType", lexer3.has("WS") ? { type: "WS" } : WS, "attributeName", "attribute$ebnf$3", "attribute$ebnf$4", "attribute$ebnf$5", lexer3.has("NL") ? { type: "NL" } : NL],
       "postprocess": (d) => {
         const comment2 = d[4] ? getQuotedWord(d[4]) : "";
         return { attributeType: d[0], attributeName: d[2], comment: comment2 };
       }
     },
-    { "name": "attributeType", "symbols": [lexer2.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => tv(d[0]) },
-    { "name": "attributeName", "symbols": [lexer2.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => tv(d[0]) },
+    { "name": "attributeType", "symbols": [lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => tv(d[0]) },
+    { "name": "attributeName", "symbols": [lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => tv(d[0]) },
     {
       "name": "relSpec",
       "symbols": ["cardinality", "relType", "cardinality"],
@@ -29159,24 +29832,22 @@ var grammar2 = {
         };
       }
     },
-    { "name": "cardinality", "symbols": [lexer2.has("ZERO_OR_ONE") ? { type: "ZERO_OR_ONE" } : ZERO_OR_ONE], "postprocess": (d) => yy2.Cardinality.ZERO_OR_ONE },
-    { "name": "cardinality", "symbols": [lexer2.has("ZERO_OR_MORE") ? { type: "ZERO_OR_MORE" } : ZERO_OR_MORE], "postprocess": (d) => yy2.Cardinality.ZERO_OR_MORE },
-    { "name": "cardinality", "symbols": [lexer2.has("ONE_OR_MORE") ? { type: "ONE_OR_MORE" } : ONE_OR_MORE], "postprocess": (d) => yy2.Cardinality.ONE_OR_MORE },
-    { "name": "cardinality", "symbols": [lexer2.has("ONLY_ONE") ? { type: "ONLY_ONE" } : ONLY_ONE], "postprocess": (d) => yy2.Cardinality.ONLY_ONE },
-    { "name": "relType", "symbols": [lexer2.has("NON_IDENTIFYING") ? { type: "NON_IDENTIFYING" } : NON_IDENTIFYING], "postprocess": (d) => yy2.Identification.NON_IDENTIFYING },
-    { "name": "relType", "symbols": [lexer2.has("IDENTIFYING") ? { type: "IDENTIFYING" } : IDENTIFYING], "postprocess": (d) => yy2.Identification.IDENTIFYING },
-    { "name": "role", "symbols": [lexer2.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD], "postprocess": (d) => {
+    { "name": "cardinality", "symbols": [lexer3.has("ZERO_OR_ONE") ? { type: "ZERO_OR_ONE" } : ZERO_OR_ONE], "postprocess": (d) => "ZERO_OR_ONE" },
+    { "name": "cardinality", "symbols": [lexer3.has("ZERO_OR_MORE") ? { type: "ZERO_OR_MORE" } : ZERO_OR_MORE], "postprocess": (d) => "ZERO_OR_MORE" },
+    { "name": "cardinality", "symbols": [lexer3.has("ONE_OR_MORE") ? { type: "ONE_OR_MORE" } : ONE_OR_MORE], "postprocess": (d) => "ONE_OR_MORE" },
+    { "name": "cardinality", "symbols": [lexer3.has("ONLY_ONE") ? { type: "ONLY_ONE" } : ONLY_ONE], "postprocess": (d) => "ONLY_ONE" },
+    { "name": "relType", "symbols": [lexer3.has("NON_IDENTIFYING") ? { type: "NON_IDENTIFYING" } : NON_IDENTIFYING], "postprocess": (d) => "NON_IDENTIFYING" },
+    { "name": "relType", "symbols": [lexer3.has("IDENTIFYING") ? { type: "IDENTIFYING" } : IDENTIFYING], "postprocess": (d) => "IDENTIFYING" },
+    { "name": "role", "symbols": [lexer3.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD], "postprocess": (d) => {
       return getQuotedWord(d[0]);
     } },
-    { "name": "role", "symbols": [lexer2.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => tv(d[0]) },
-    { "name": "titleStatement", "symbols": [{ "literal": "title" }, lexer2.has("COLON") ? { type: "COLON" } : COLON, "words", lexer2.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => {
-      yy2.addTitle(d[2].trim());
-    } },
-    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer2.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer2.has("WS") ? { type: "WS" } : WS] },
+    { "name": "role", "symbols": [lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => tv(d[0]) },
+    { "name": "titleStatement", "symbols": [{ "literal": "title" }, lexer3.has("COLON") ? { type: "COLON" } : COLON, "words", lexer3.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => ({ type: "setTitle", text: d[2].trim() }) },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS] },
     { "name": "words$ebnf$1", "symbols": ["words$ebnf$1$subexpression$1"] },
-    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer2.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer2.has("WS") ? { type: "WS" } : WS] },
+    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS] },
     { "name": "words$ebnf$1", "symbols": ["words$ebnf$1", "words$ebnf$1$subexpression$2"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "words",
@@ -29187,13 +29858,18 @@ var grammar2 = {
     }
   ],
   ParserStart: "start",
-  ParserOptions: { skipUnmatchSymbols: [lexer2.has("WS") ? { type: "WS" } : WS] }
+  ParserOptions: { skipUnmatchSymbols: [lexer3.has("WS") ? { type: "WS" } : WS] }
 };
-var erDiagram_default = grammar2;
+var erDiagram_default = grammar3;
 
 // ../pintora-diagrams/lib/er/parser.js
-setYY2(db_default2);
-var parse2 = genParserWithRules(erDiagram_default);
+var parse2 = genParserWithRules(erDiagram_default, {
+  dedupeAmbigousResults: true,
+  postProcess(results) {
+    db_default2.apply(results);
+    return results;
+  }
+});
 
 // ../pintora-diagrams/lib/er/event-recognizer.js
 var ENTITY_ITEM_PATTERN = /^entity\-/;
@@ -29210,12 +29886,10 @@ var eventRecognizer2 = new BaseEventRecognizer().addPatternRecognizerRule(ENTITY
 // ../pintora-diagrams/lib/er/index.js
 var erDiagram = {
   pattern: /^\s*erDiagram/,
-  parser: {
-    parse(text) {
-      parse2(text);
-      return db_default2.getDiagramIR();
-    }
-  },
+  parser: new ParserWithPreprocessor({
+    db: db_default2,
+    parse: parse2
+  }),
   artist: artist_default2,
   configKey: configKey2,
   eventRecognizer: eventRecognizer2,
@@ -29246,22 +29920,26 @@ var ComponentDb = class extends BaseDb {
     if (this.components[name])
       return;
     this.components[name] = comp;
-    this.aliases[name] = comp;
+    this.onNodeAdd(comp);
   }
   addInterface(name, interf) {
     if (this.interfaces[name])
       return;
     this.interfaces[name] = interf;
-    this.aliases[name] = interf;
+    this.onNodeAdd(interf);
   }
   addGroup(name, group) {
     if (this.groups[name])
       return;
     this.groups[name] = group;
-    this.aliases[name] = group;
+    this.onNodeAdd(group);
   }
   addRelationship(r) {
     this.relationships.push(r);
+  }
+  onNodeAdd(node2) {
+    node2.itemId = `node-${node2.name}`;
+    this.aliases[node2.name] = node2;
   }
   apply(part) {
     if (Array.isArray(part)) {
@@ -29280,6 +29958,10 @@ var ComponentDb = class extends BaseDb {
       }
       case "setTitle": {
         this.title = part.text;
+        break;
+      }
+      case "bindClass": {
+        STYLE_ACTION_HANDLERS.bindClass.call(this, part);
         break;
       }
       default: {
@@ -29362,6 +30044,7 @@ var db_default3 = db3;
 
 // ../pintora-diagrams/lib/component/config.js
 var defaultConfig3 = {
+  ...defaultFontConfig,
   diagramPadding: 15,
   edgeType: "polyline",
   edgesep: 20,
@@ -29374,8 +30057,6 @@ var defaultConfig3 = {
   groupBorderWidth: 2,
   relationLineColor: PALETTE.orange,
   textColor: PALETTE.normalDark,
-  fontSize: 14,
-  fontFamily: DEFAULT_FONT_FAMILY,
   lineWidth: 1,
   labelBackground: PALETTE.white,
   interfaceSize: 16,
@@ -29384,6 +30065,7 @@ var defaultConfig3 = {
 };
 var COMPONENT_PARAM_DIRECTIVE_RULES = {
   ...getParamRulesFromConfig(defaultConfig3),
+  ...getFontConfigRules(),
   componentBackground: { valueType: "color" },
   componentBorderColor: { valueType: "color" },
   groupBackground: { valueType: "color" },
@@ -29416,12 +30098,14 @@ var getConf3 = configurator3.getConfig;
 
 // ../pintora-diagrams/lib/component/artist.js
 var conf3;
+var fontConfig;
 function getEdgeName2(relationship) {
   return `${relationship.from.name}_${relationship.to.name}_${relationship.message}`;
 }
-var componentArtist = {
-  draw(ir, config2, opts) {
+var ComponentArtist = class extends BaseArtist {
+  customDraw(ir, config2, opts) {
     conf3 = getConf3(ir, config2);
+    fontConfig = getFontConfig(conf3);
     const rootMark = {
       type: "group",
       attrs: {},
@@ -29447,18 +30131,14 @@ var componentArtist = {
     const { labelBounds } = adjustMarkInGraph(dagreWrapper);
     const gBounds = tryExpandBounds(dagreWrapper.getGraphBounds(), labelBounds);
     const pad2 = conf3.diagramPadding;
-    const { title } = ir;
-    let titleSize = void 0;
-    let titleMark = void 0;
-    if (title) {
-      const titleFont = { fontSize: conf3.fontSize, fontFamily: conf3.fontFamily };
-      const titleResult = makeTitleMark(title, titleFont, { fill: conf3.textColor });
-      titleSize = titleResult.titleSize;
-      titleMark = titleResult.mark;
-      titleMark.class = "component__title";
-      rootMark.children.push(titleMark);
-      titleSize.height += conf3.fontSize;
-    }
+    const titleFont = fontConfig;
+    const titleMaker = new DiagramTitleMaker({
+      title: ir.title,
+      titleFont,
+      fill: conf3.textColor,
+      className: "component__title"
+    });
+    const titleResult = titleMaker.appendTitleMark(rootMark);
     const { width: width2, height } = adjustRootMarkBounds({
       rootMark,
       gBounds,
@@ -29466,8 +30146,7 @@ var componentArtist = {
       padY: pad2,
       useMaxWidth: conf3.useMaxWidth,
       containerSize: opts === null || opts === void 0 ? void 0 : opts.containerSize,
-      titleSize,
-      titleMark
+      ...titleResult
     });
     return {
       mark: rootMark,
@@ -29476,11 +30155,12 @@ var componentArtist = {
     };
   }
 };
+var componentArtist = new ComponentArtist();
 function drawComponentsTo(parentMark, ir, g) {
   const groups = [];
-  const fontConfig = getFontConfig2(conf3);
   for (const component of Object.values(ir.components)) {
-    const id9 = component.name;
+    const id10 = component.name;
+    const itemId = component.itemId;
     const label = component.label || component.name;
     const componentLabelDims = calculateTextDimensions(label || "", fontConfig);
     const compWidth = Math.round(componentLabelDims.width + conf3.componentPadding * 2);
@@ -29502,14 +30182,15 @@ function drawComponentsTo(parentMark, ir, g) {
     });
     const group = makeMark("group", {}, {
       children: [rectMark, textMark],
-      class: "component__component"
+      class: "component__component",
+      itemId
     });
     groups.push(group);
     parentMark.children.push(group);
-    g.setNode(id9, {
+    g.setNode(id10, {
       width: compWidth,
       height: compHeight,
-      id: id9,
+      id: id10,
       onLayout(data) {
         const { x: x2, y: y2 } = data;
         safeAssign(rectMark.attrs, { x: x2 - compWidth / 2, y: y2 - compHeight / 2 });
@@ -29520,9 +30201,9 @@ function drawComponentsTo(parentMark, ir, g) {
 }
 function drawInterfacesTo(parentMark, ir, g) {
   const groups = [];
-  const fontConfig = getFontConfig2(conf3);
   for (const interf of Object.values(ir.interfaces)) {
-    const id9 = interf.name;
+    const id10 = interf.name;
+    const itemId = interf.itemId;
     const label = interf.label || interf.name;
     const labelDims = calculateTextDimensions(label, fontConfig);
     const interfaceSize = conf3.interfaceSize;
@@ -29543,7 +30224,8 @@ function drawInterfacesTo(parentMark, ir, g) {
     });
     const group = makeMark("group", {}, {
       children: [circleMark, textMark],
-      class: "component__group"
+      class: "component__group",
+      itemId
     });
     groups.push(group);
     parentMark.children.push(group);
@@ -29552,7 +30234,7 @@ function drawInterfacesTo(parentMark, ir, g) {
     const layoutNode = {
       width: interfaceSize,
       height: nodeHeight,
-      id: id9,
+      id: id10,
       outerWidth,
       onLayout(data) {
         const { x: x2, y: y2 } = data;
@@ -29560,7 +30242,7 @@ function drawInterfacesTo(parentMark, ir, g) {
         safeAssign(textMark.attrs, { x: x2, y: y2 + 2 });
       }
     };
-    g.setNode(id9, layoutNode);
+    g.setNode(id10, layoutNode);
     if (labelDims.width > interfaceSize) {
       const marginH = (labelDims.width - interfaceSize) / 2;
       layoutNode.marginl = marginH;
@@ -29571,6 +30253,7 @@ function drawInterfacesTo(parentMark, ir, g) {
 function drawGroupsTo(parentMark, ir, g) {
   for (const cGroup of Object.values(ir.groups)) {
     const groupId = cGroup.name;
+    const itemId = cGroup.itemId;
     const groupType = cGroup.groupType;
     let bgMark;
     const symbolDef = symbolRegistry.get(groupType);
@@ -29583,7 +30266,6 @@ function drawGroupsTo(parentMark, ir, g) {
         radius: 2
       }, { class: "component__group-rect" });
     }
-    const fontConfig = getFontConfig2(conf3);
     const groupLabel = cGroup.label || cGroup.name;
     const labelMark = makeMark("text", {
       text: groupLabel,
@@ -29662,7 +30344,8 @@ function drawGroupsTo(parentMark, ir, g) {
       }
     }
     const group = makeMark("group", {}, {
-      children: compact([labelMark, typeMark])
+      children: compact([labelMark, typeMark]),
+      itemId
     });
     parentMark.children.unshift(group);
   }
@@ -29681,7 +30364,6 @@ function drawRelationshipsTo(parentMark, ir, g) {
     let relTextBg;
     let labelDims;
     if (r.message) {
-      const fontConfig = getFontConfig2(conf3);
       labelDims = calculateTextDimensions(r.message, fontConfig);
       relText = makeMark("text", {
         text: r.message,
@@ -29769,33 +30451,27 @@ var adjustMarkInGraph = function(dagreWrapper) {
   });
   return { labelBounds };
 };
-function getFontConfig2(conf5) {
-  return {
-    fontSize: conf5.fontSize,
-    fontFamily: conf5.fontFamily
-  };
-}
 var artist_default3 = componentArtist;
 
 // ../pintora-diagrams/lib/component/parser/componentDiagram.js
-var moo3 = __toESM(require_moo());
-function id3(d) {
+var moo4 = __toESM(require_moo());
+function id4(d) {
   return d[0];
 }
-var COLOR3 = /#[a-zA-Z0-9]+/;
-var PARAM_DIRECTIVE3 = /@param/;
-var CONFIG_DIRECTIVE4 = /@config/;
-var L_PAREN3 = /\(/;
-var R_PAREN3 = /\)/;
-function getTokenValue3(token) {
+var _COLOR4 = /#[a-zA-Z0-9]+/;
+var PARAM_DIRECTIVE4 = /@param/;
+var CONFIG_DIRECTIVE5 = /@config/;
+var L_PAREN4 = /\(/;
+var R_PAREN4 = /\)/;
+function getTokenValue4(token) {
   if (token && "value" in token)
     return token.value;
   return token;
 }
-function handleConfigOpenCloseStatement3(d) {
+function handleConfigOpenCloseStatement4(d) {
   const text = d[2].map((v) => {
     if (v.type)
-      return getTokenValue3(v);
+      return getTokenValue4(v);
     return v;
   }).join("");
   try {
@@ -29805,19 +30481,21 @@ function handleConfigOpenCloseStatement3(d) {
     return { type: "overrideConfig", error };
   }
 }
-var COMMENT_LINE3 = /%%.*/;
+var COMMENT_LINE4 = /%%.*/;
+var BIND_CLASS3 = /@bindClass/;
 var commonTopRules = {
   NL: MOO_NEWLINE,
   WS: { match: / +/, lineBreaks: true },
   L_SQ_BRACKET: { match: /\[/ },
   R_SQ_BRACKET: { match: /\]/ },
-  COMMENT_LINE: COMMENT_LINE_REGEXP
+  COMMENT_LINE: COMMENT_LINE_REGEXP,
+  ...BIND_REGEXPS
 };
 var commonTextRules = {
   QUOTED_WORD: QUOTED_WORD_REGEXP,
   VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
 };
-var lexer3 = moo3.states({
+var lexer4 = moo4.states({
   main: {
     ...commonTopRules,
     L_BRACKET: { match: /\{/ },
@@ -29831,12 +30509,12 @@ var lexer3 = moo3.states({
     ...commonTextRules
   }
 });
-var yy3;
-function setYY3(v) {
-  yy3 = v;
+var yy2;
+function setYY2(v) {
+  yy2 = v;
 }
-var grammar3 = {
-  Lexer: lexer3,
+var grammar4 = {
+  Lexer: lexer4,
   ParserRules: [
     { "name": "_$ebnf$1", "symbols": [] },
     { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", "wschar"], "postprocess": (d) => d[0].concat([d[1]]) },
@@ -29848,11 +30526,11 @@ var grammar3 = {
     { "name": "__", "symbols": ["__$ebnf$1"], "postprocess": function(d) {
       return null;
     } },
-    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id3 },
-    { "name": "color", "symbols": [COLOR3], "postprocess": (d) => tv(d[0]) },
+    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id4 },
+    { "name": "color", "symbols": [_COLOR4], "postprocess": (d) => tv(d[0]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE3, "__", "paramPart"],
+      "symbols": [PARAM_DIRECTIVE4, "__", "paramPart"],
       "postprocess": function(d) {
         return d[2];
       }
@@ -29862,7 +30540,7 @@ var grammar3 = {
     { "name": "paramStatement$ebnf$1", "symbols": ["paramStatement$ebnf$1", "paramStatement$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE3, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
+      "symbols": [PARAM_DIRECTIVE4, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
       "postprocess": function(d) {
         const params = [];
         d[4].forEach((seg) => {
@@ -29884,11 +30562,38 @@ var grammar3 = {
     } },
     { "name": "configStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configStatement$ebnf$1", "symbols": ["configStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE4, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement3 },
+    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE5, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement4 },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": ["configOpenCloseStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE4, L_PAREN3, "configOpenCloseStatement$ebnf$1", R_PAREN3], "postprocess": handleConfigOpenCloseStatement3 },
-    { "name": "comment", "symbols": [COMMENT_LINE3], "postprocess": (d) => null },
+    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE5, L_PAREN4, "configOpenCloseStatement$ebnf$1", R_PAREN4], "postprocess": handleConfigOpenCloseStatement4 },
+    { "name": "comment", "symbols": [COMMENT_LINE4], "postprocess": (d) => null },
+    { "name": "bindClassStatement$ebnf$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS] },
+    { "name": "bindClassStatement$ebnf$1", "symbols": ["bindClassStatement$ebnf$1", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "bindClassStatement$ebnf$2", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS] },
+    { "name": "bindClassStatement$ebnf$2", "symbols": ["bindClassStatement$ebnf$2", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "bindClassStatement$ebnf$3", "symbols": [] },
+    { "name": "bindClassStatement$ebnf$3", "symbols": ["bindClassStatement$ebnf$3", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "bindClassStatement",
+      "symbols": [lexer4.has("BIND_CLASS") ? { type: "BIND_CLASS" } : BIND_CLASS3, "bindClassStatement$ebnf$1", "nodeList", "bindClassStatement$ebnf$2", lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "bindClassStatement$ebnf$3", lexer4.has("NL") ? { type: "NL" } : NL],
+      "postprocess": (d) => ({
+        type: "bindClass",
+        nodes: d[2],
+        className: tv(d[4])
+      })
+    },
+    { "name": "nodeList", "symbols": [lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => [tv(d[0])] },
+    { "name": "nodeList$ebnf$1", "symbols": [] },
+    { "name": "nodeList$ebnf$1", "symbols": ["nodeList$ebnf$1", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "nodeList",
+      "symbols": ["nodeList", lexer4.has("COMMA") ? { type: "COMMA" } : COMMA, "nodeList$ebnf$1", lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT],
+      "postprocess": (d) => {
+        const list = d[0];
+        list.push(tv(d[3]));
+        return list;
+      }
+    },
     { "name": "start", "symbols": ["__", "start"] },
     {
       "name": "start",
@@ -29896,7 +30601,7 @@ var grammar3 = {
       "postprocess": function(d) {
         if (!d[1])
           return;
-        yy3.apply(d[1]);
+        yy2.apply(d[1]);
         return d[1];
       }
     },
@@ -29908,12 +30613,12 @@ var grammar3 = {
         return d[1];
       }
     },
-    { "name": "line$ebnf$1", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": id3 },
+    { "name": "line$ebnf$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
     { "name": "line$ebnf$1", "symbols": [], "postprocess": () => null },
     { "name": "line", "symbols": ["line$ebnf$1", "statement"] },
-    { "name": "line$ebnf$2", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": id3 },
+    { "name": "line$ebnf$2", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
     { "name": "line$ebnf$2", "symbols": [], "postprocess": () => null },
-    { "name": "line", "symbols": ["line$ebnf$2", lexer3.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => null },
+    { "name": "line", "symbols": ["line$ebnf$2", lexer4.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => null },
     {
       "name": "statement",
       "symbols": ["UMLElement"],
@@ -29921,17 +30626,18 @@ var grammar3 = {
         return d[0];
       }
     },
-    { "name": "statement", "symbols": ["paramStatement", lexer3.has("NL") ? { type: "NL" } : NL] },
-    { "name": "statement", "symbols": [{ "literal": "title" }, lexer3.has("COLON") ? { type: "COLON" } : COLON, "words", lexer3.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => ({ type: "setTitle", text: d[2].trim() }) },
-    { "name": "statement", "symbols": ["configOpenCloseStatement", lexer3.has("NL") ? { type: "NL" } : NL] },
-    { "name": "statement", "symbols": ["comment", lexer3.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["paramStatement", lexer4.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["bindClassStatement"] },
+    { "name": "statement", "symbols": [{ "literal": "title" }, lexer4.has("COLON") ? { type: "COLON" } : COLON, "words", lexer4.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => ({ type: "setTitle", text: d[2].trim() }) },
+    { "name": "statement", "symbols": ["configOpenCloseStatement", lexer4.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["comment", lexer4.has("NL") ? { type: "NL" } : NL] },
     {
       "name": "UMLElement",
       "symbols": ["group"],
       "postprocess": function(d) {
         const obj = d[0];
         if (obj)
-          yy3.addGroup(obj.name, obj);
+          yy2.addGroup(obj.name, obj);
         return obj;
       }
     },
@@ -29940,7 +30646,7 @@ var grammar3 = {
       "symbols": ["component"],
       "postprocess": function(d) {
         const obj = d[0];
-        yy3.addComponent(obj.name, obj);
+        yy2.addComponent(obj.name, obj);
         return obj;
       }
     },
@@ -29949,19 +30655,19 @@ var grammar3 = {
       "symbols": ["interface"],
       "postprocess": function(d) {
         const obj = d[0];
-        yy3.addInterface(obj.name, obj);
+        yy2.addInterface(obj.name, obj);
         return obj;
       }
     },
-    { "name": "UMLElement", "symbols": ["relationship"], "postprocess": id3 },
-    { "name": "group$ebnf$1", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": id3 },
+    { "name": "UMLElement", "symbols": ["relationship"], "postprocess": id4 },
+    { "name": "group$ebnf$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
     { "name": "group$ebnf$1", "symbols": [], "postprocess": () => null },
     { "name": "group$ebnf$2", "symbols": [] },
     { "name": "group$ebnf$2$subexpression$1", "symbols": ["_", "UMLElement"] },
     { "name": "group$ebnf$2", "symbols": ["group$ebnf$2", "group$ebnf$2$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "group",
-      "symbols": ["groupType", "group$ebnf$1", "textInsideQuote", "_", lexer3.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "group$ebnf$2", "_", lexer3.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET, lexer3.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["groupType", "group$ebnf$1", "textInsideQuote", "_", lexer4.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "group$ebnf$2", "_", lexer4.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET, lexer4.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const groupType = tv(d[0][0]);
         const label = d[2] || groupType;
@@ -29979,40 +30685,40 @@ var grammar3 = {
     { "name": "groupType", "symbols": [{ "literal": "database" }] },
     { "name": "groupType", "symbols": [{ "literal": "rectangle" }] },
     { "name": "groupType", "symbols": [{ "literal": "component" }] },
-    { "name": "component$ebnf$1", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": id3 },
+    { "name": "component$ebnf$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
     { "name": "component$ebnf$1", "symbols": [], "postprocess": () => null },
     {
       "name": "component",
-      "symbols": [{ "literal": "component" }, "component$ebnf$1", lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer3.has("NL") ? { type: "NL" } : NL],
+      "symbols": [{ "literal": "component" }, "component$ebnf$1", lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer4.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const name = tv(d[2]);
         return { type: "component", name };
       }
     },
-    { "name": "component$ebnf$2", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": id3 },
+    { "name": "component$ebnf$2", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
     { "name": "component$ebnf$2", "symbols": [], "postprocess": () => null },
-    { "name": "component$ebnf$3", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": id3 },
+    { "name": "component$ebnf$3", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
     { "name": "component$ebnf$3", "symbols": [], "postprocess": () => null },
     { "name": "component$ebnf$4", "symbols": ["elementLabel"] },
     { "name": "component$ebnf$4", "symbols": ["component$ebnf$4", "elementLabel"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "component",
-      "symbols": [{ "literal": "component" }, "component$ebnf$2", lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "component$ebnf$3", lexer3.has("L_SQ_BRACKET") ? { type: "L_SQ_BRACKET" } : L_SQ_BRACKET, "component$ebnf$4", lexer3.has("R_SQ_BRACKET") ? { type: "R_SQ_BRACKET" } : R_SQ_BRACKET, lexer3.has("NL") ? { type: "NL" } : NL],
+      "symbols": [{ "literal": "component" }, "component$ebnf$2", lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "component$ebnf$3", lexer4.has("L_SQ_BRACKET") ? { type: "L_SQ_BRACKET" } : L_SQ_BRACKET, "component$ebnf$4", lexer4.has("R_SQ_BRACKET") ? { type: "R_SQ_BRACKET" } : R_SQ_BRACKET, lexer4.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const name = tv(d[2]);
         const label = d[5].join("").trim();
         return { type: "component", name, label };
       }
     },
-    { "name": "component$ebnf$5", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": id3 },
+    { "name": "component$ebnf$5", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
     { "name": "component$ebnf$5", "symbols": [], "postprocess": () => null },
     { "name": "component$subexpression$1", "symbols": ["textInsideQuote"] },
-    { "name": "component$subexpression$1", "symbols": [lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "component$subexpression$1", "symbols": [lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
     { "name": "component$ebnf$6", "symbols": [] },
-    { "name": "component$ebnf$6", "symbols": ["component$ebnf$6", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "component$ebnf$6", "symbols": ["component$ebnf$6", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "component",
-      "symbols": [{ "literal": "component" }, "component$ebnf$5", "component$subexpression$1", "component$ebnf$6", { "literal": "as" }, "__", lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer3.has("NL") ? { type: "NL" } : NL],
+      "symbols": [{ "literal": "component" }, "component$ebnf$5", "component$subexpression$1", "component$ebnf$6", { "literal": "as" }, "__", lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer4.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const _l = d[2][0];
         const label = typeof _l === "string" ? _l : tv(_l);
@@ -30020,14 +30726,14 @@ var grammar3 = {
         return { type: "component", name, label };
       }
     },
-    { "name": "component", "symbols": ["shortComponent", lexer3.has("NL") ? { type: "NL" } : NL], "postprocess": id3 },
-    { "name": "component$ebnf$7", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": id3 },
+    { "name": "component", "symbols": ["shortComponent", lexer4.has("NL") ? { type: "NL" } : NL], "postprocess": id4 },
+    { "name": "component$ebnf$7", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
     { "name": "component$ebnf$7", "symbols": [], "postprocess": () => null },
-    { "name": "component$ebnf$8", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": id3 },
+    { "name": "component$ebnf$8", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
     { "name": "component$ebnf$8", "symbols": [], "postprocess": () => null },
     {
       "name": "component",
-      "symbols": ["shortComponent", "component$ebnf$7", { "literal": "as" }, "component$ebnf$8", lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer3.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["shortComponent", "component$ebnf$7", { "literal": "as" }, "component$ebnf$8", lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer4.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const comp = d[0];
         const name = tv(d[4]);
@@ -30038,46 +30744,46 @@ var grammar3 = {
     { "name": "shortComponent$ebnf$1", "symbols": ["shortComponent$ebnf$1", "elementLabel"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "shortComponent",
-      "symbols": [lexer3.has("L_SQ_BRACKET") ? { type: "L_SQ_BRACKET" } : L_SQ_BRACKET, "shortComponent$ebnf$1", lexer3.has("R_SQ_BRACKET") ? { type: "R_SQ_BRACKET" } : R_SQ_BRACKET],
+      "symbols": [lexer4.has("L_SQ_BRACKET") ? { type: "L_SQ_BRACKET" } : L_SQ_BRACKET, "shortComponent$ebnf$1", lexer4.has("R_SQ_BRACKET") ? { type: "R_SQ_BRACKET" } : R_SQ_BRACKET],
       "postprocess": function(d) {
         const name = d[1].join("");
         return { type: "component", name };
       }
     },
-    { "name": "elementLabel$subexpression$1", "symbols": [lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "elementLabel$subexpression$1", "symbols": [lexer3.has("NL") ? { type: "NL" } : NL] },
-    { "name": "elementLabel$subexpression$1", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS] },
+    { "name": "elementLabel$subexpression$1", "symbols": [lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "elementLabel$subexpression$1", "symbols": [lexer4.has("NL") ? { type: "NL" } : NL] },
+    { "name": "elementLabel$subexpression$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS] },
     { "name": "elementLabel", "symbols": ["elementLabel$subexpression$1"], "postprocess": (d) => tv(d[0][0]) },
     {
       "name": "textInsideQuote",
-      "symbols": [lexer3.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD],
+      "symbols": [lexer4.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD],
       "postprocess": function(d) {
         const v = getQuotedWord(d[0]);
         return v;
       }
     },
-    { "name": "interface$ebnf$1", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": id3 },
+    { "name": "interface$ebnf$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
     { "name": "interface$ebnf$1", "symbols": [], "postprocess": () => null },
     { "name": "interface$subexpression$1", "symbols": ["textInsideQuote"] },
-    { "name": "interface$subexpression$1", "symbols": [lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "interface$subexpression$1", "symbols": [lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
     {
       "name": "interface",
-      "symbols": ["interfaceStart", "interface$ebnf$1", "interface$subexpression$1", lexer3.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["interfaceStart", "interface$ebnf$1", "interface$subexpression$1", lexer4.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const _l = d[2][0];
         const name = typeof _l === "string" ? _l : tv(_l);
         return { type: "interface", name };
       }
     },
-    { "name": "interface$ebnf$2", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": id3 },
+    { "name": "interface$ebnf$2", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
     { "name": "interface$ebnf$2", "symbols": [], "postprocess": () => null },
     { "name": "interface$subexpression$2", "symbols": ["textInsideQuote"] },
-    { "name": "interface$subexpression$2", "symbols": [lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "interface$subexpression$2", "symbols": [lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
     { "name": "interface$ebnf$3", "symbols": [] },
-    { "name": "interface$ebnf$3", "symbols": ["interface$ebnf$3", lexer3.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "interface$ebnf$3", "symbols": ["interface$ebnf$3", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "interface",
-      "symbols": ["interfaceStart", "interface$ebnf$2", "interface$subexpression$2", "interface$ebnf$3", { "literal": "as" }, "__", lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer3.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["interfaceStart", "interface$ebnf$2", "interface$subexpression$2", "interface$ebnf$3", { "literal": "as" }, "__", lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer4.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const _l = d[2][0];
         const label = typeof _l === "string" ? _l : tv(_l);
@@ -30088,12 +30794,12 @@ var grammar3 = {
     { "name": "interfaceStart$subexpression$1", "symbols": [{ "literal": "interface" }] },
     { "name": "interfaceStart$subexpression$1", "symbols": [{ "literal": "()" }] },
     { "name": "interfaceStart", "symbols": ["interfaceStart$subexpression$1"] },
-    { "name": "relationship$ebnf$1$subexpression$1", "symbols": ["__", lexer3.has("COLON") ? { type: "COLON" } : COLON, "__", "words"] },
-    { "name": "relationship$ebnf$1", "symbols": ["relationship$ebnf$1$subexpression$1"], "postprocess": id3 },
+    { "name": "relationship$ebnf$1$subexpression$1", "symbols": ["__", lexer4.has("COLON") ? { type: "COLON" } : COLON, "__", "words"] },
+    { "name": "relationship$ebnf$1", "symbols": ["relationship$ebnf$1$subexpression$1"], "postprocess": id4 },
     { "name": "relationship$ebnf$1", "symbols": [], "postprocess": () => null },
     {
       "name": "relationship",
-      "symbols": ["elementReference", "_", "relationLine", "_", "elementReference", "relationship$ebnf$1", lexer3.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["elementReference", "_", "relationLine", "_", "elementReference", "relationship$ebnf$1", lexer4.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const from = d[0];
         const to = d[4];
@@ -30103,15 +30809,15 @@ var grammar3 = {
         }
         const line = d[2];
         const obj = { from, to, line, message };
-        yy3.addRelationship(obj);
+        yy2.addRelationship(obj);
         return obj;
       }
     },
-    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS] },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS] },
     { "name": "words$ebnf$1", "symbols": ["words$ebnf$1$subexpression$1"] },
-    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer3.has("WS") ? { type: "WS" } : WS] },
+    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS] },
     { "name": "words$ebnf$1", "symbols": ["words$ebnf$1", "words$ebnf$1$subexpression$2"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "words",
@@ -30120,44 +30826,44 @@ var grammar3 = {
         return d[0].map((o) => tv(o[0])).join("").trim();
       }
     },
-    { "name": "elementReference", "symbols": ["shortComponent"], "postprocess": id3 },
+    { "name": "elementReference", "symbols": ["shortComponent"], "postprocess": id4 },
     { "name": "elementReference$ebnf$1$subexpression$1", "symbols": [{ "literal": "()" }, "__"] },
-    { "name": "elementReference$ebnf$1", "symbols": ["elementReference$ebnf$1$subexpression$1"], "postprocess": id3 },
+    { "name": "elementReference$ebnf$1", "symbols": ["elementReference$ebnf$1$subexpression$1"], "postprocess": id4 },
     { "name": "elementReference$ebnf$1", "symbols": [], "postprocess": () => null },
     {
       "name": "elementReference",
-      "symbols": ["elementReference$ebnf$1", lexer3.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT],
+      "symbols": ["elementReference$ebnf$1", lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT],
       "postprocess": function(d) {
         const interf = { type: "interface", name: tv(d[1]) };
         return interf;
       }
     },
-    { "name": "relationLine", "symbols": [{ "literal": "-->" }], "postprocess": (d) => ({ lineType: yy3.LineType.SOLID_ARROW }) },
-    { "name": "relationLine", "symbols": [{ "literal": "<--" }], "postprocess": (d) => ({ lineType: yy3.LineType.SOLID_ARROW, isReversed: true }) },
-    { "name": "relationLine", "symbols": [{ "literal": "..>" }], "postprocess": (d) => ({ lineType: yy3.LineType.DOTTED_ARROW }) },
-    { "name": "relationLine", "symbols": [{ "literal": "<.." }], "postprocess": (d) => ({ lineType: yy3.LineType.DOTTED_ARROW, isReversed: true }) },
-    { "name": "relationLine", "symbols": [{ "literal": "--" }], "postprocess": (d) => ({ lineType: yy3.LineType.STRAIGHT }) },
-    { "name": "relationLine", "symbols": [{ "literal": ".." }], "postprocess": (d) => ({ lineType: yy3.LineType.DOTTED }) }
+    { "name": "relationLine", "symbols": [{ "literal": "-->" }], "postprocess": (d) => ({ lineType: yy2.LineType.SOLID_ARROW }) },
+    { "name": "relationLine", "symbols": [{ "literal": "<--" }], "postprocess": (d) => ({ lineType: yy2.LineType.SOLID_ARROW, isReversed: true }) },
+    { "name": "relationLine", "symbols": [{ "literal": "..>" }], "postprocess": (d) => ({ lineType: yy2.LineType.DOTTED_ARROW }) },
+    { "name": "relationLine", "symbols": [{ "literal": "<.." }], "postprocess": (d) => ({ lineType: yy2.LineType.DOTTED_ARROW, isReversed: true }) },
+    { "name": "relationLine", "symbols": [{ "literal": "--" }], "postprocess": (d) => ({ lineType: yy2.LineType.STRAIGHT }) },
+    { "name": "relationLine", "symbols": [{ "literal": ".." }], "postprocess": (d) => ({ lineType: yy2.LineType.DOTTED }) }
   ],
   ParserStart: "start",
-  ParserOptions: { skipUnmatchSymbols: [lexer3.has("WS") ? { type: "WS" } : WS] }
+  ParserOptions: { skipUnmatchSymbols: [lexer4.has("WS") ? { type: "WS" } : WS] }
 };
-var componentDiagram_default = grammar3;
+var componentDiagram_default = grammar4;
 
 // ../pintora-diagrams/lib/component/parser.js
-setYY3(db_default3);
+setYY2(db_default3);
 var parse3 = genParserWithRules(componentDiagram_default);
 
 // ../pintora-diagrams/lib/component/index.js
 var componentDiagram = {
   pattern: /^\s*componentDiagram/,
-  parser: {
+  parser: new ParserWithPreprocessor({
+    db: db_default3,
     parse(text) {
       parse3(text);
       db_default3.fillMissingElements();
-      return db_default3.getDiagramIR();
     }
-  },
+  }),
   artist: artist_default3,
   configKey: configKey3,
   clear() {
@@ -30203,10 +30909,10 @@ var ActivityDb = class extends BaseDb {
         break;
       case "condition":
         {
-          const id9 = this.makeId();
-          const thenResult = this.apply(part.then.children, true, { ...state, parentId: id9 });
+          const id10 = this.makeId();
+          const thenResult = this.apply(part.then.children, true, { ...state, parentId: id10 });
           const condition = {
-            id: id9,
+            id: id10,
             message: part.message,
             then: {
               label: part.then.label,
@@ -30214,7 +30920,7 @@ var ActivityDb = class extends BaseDb {
             }
           };
           if (part.else) {
-            const elseResult = this.apply(part.else.children, true, { ...state, parentId: id9 });
+            const elseResult = this.apply(part.else.children, true, { ...state, parentId: id10 });
             condition.else = {
               label: part.else.label,
               children: elseResult
@@ -30224,10 +30930,10 @@ var ActivityDb = class extends BaseDb {
         }
         break;
       case "while": {
-        const id9 = this.makeId();
-        const loopResult = this.apply(part.children, true, { ...state, parentId: id9 });
+        const id10 = this.makeId();
+        const loopResult = this.apply(part.children, true, { ...state, parentId: id10 });
         const whileSentence = {
-          id: id9,
+          id: id10,
           message: part.message,
           children: loopResult,
           confirmLabel: part.confirmLabel,
@@ -30237,10 +30943,10 @@ var ActivityDb = class extends BaseDb {
         break;
       }
       case "repeat": {
-        const id9 = this.makeId();
-        const loopResult = this.apply(part.children, true, { ...state, parentId: id9 });
+        const id10 = this.makeId();
+        const loopResult = this.apply(part.children, true, { ...state, parentId: id10 });
         const sentence = {
-          id: id9,
+          id: id10,
           message: part.message,
           children: loopResult,
           confirmLabel: part.confirmLabel,
@@ -30251,10 +30957,10 @@ var ActivityDb = class extends BaseDb {
         break;
       }
       case "switch": {
-        const id9 = this.makeId();
-        const cases = this.apply(part.children, true, { ...state, parentId: id9 });
+        const id10 = this.makeId();
+        const cases = this.apply(part.children, true, { ...state, parentId: id10 });
         const switchSentence = {
-          id: id9,
+          id: id10,
           message: part.message,
           children: cases
         };
@@ -30262,10 +30968,10 @@ var ActivityDb = class extends BaseDb {
         break;
       }
       case "case": {
-        const id9 = this.makeId();
-        const children = this.apply(part.children, true, { ...state, parentId: id9 });
+        const id10 = this.makeId();
+        const children = this.apply(part.children, true, { ...state, parentId: id10 });
         const caseClause = {
-          id: id9,
+          id: id10,
           confirmLabel: part.confirmLabel,
           children
         };
@@ -30273,10 +30979,10 @@ var ActivityDb = class extends BaseDb {
         break;
       }
       case "fork": {
-        const id9 = this.makeId();
-        const branches = this.apply(part.branches, true, { ...state, parentId: id9 });
+        const id10 = this.makeId();
+        const branches = this.apply(part.branches, true, { ...state, parentId: id10 });
         const forkSentence = {
-          id: id9,
+          id: id10,
           shouldMerge: part.shouldMerge,
           branches
         };
@@ -30284,10 +30990,10 @@ var ActivityDb = class extends BaseDb {
         break;
       }
       case "forkBranch": {
-        const id9 = this.makeId();
-        const children = this.apply(part.children, true, { ...state, parentId: id9 });
+        const id10 = this.makeId();
+        const children = this.apply(part.children, true, { ...state, parentId: id10 });
         const forkBranch = {
-          id: id9,
+          id: id10,
           children
         };
         step = { type: "forkBranch", value: forkBranch };
@@ -30298,9 +31004,9 @@ var ActivityDb = class extends BaseDb {
         break;
       }
       case "group": {
-        const id9 = this.makeId();
-        const childrenResult = this.apply(part.children, true, { ...state, parentId: id9 });
-        step = { type: "group", value: { id: id9, ...part, children: childrenResult } };
+        const id10 = this.makeId();
+        const childrenResult = this.apply(part.children, true, { ...state, parentId: id10 });
+        step = { type: "group", value: { id: id10, ...part, children: childrenResult } };
         break;
       }
       case "note": {
@@ -30331,6 +31037,10 @@ var ActivityDb = class extends BaseDb {
       }
       case "overrideConfig": {
         this.addOverrideConfig(part);
+        break;
+      }
+      case "bindClass": {
+        STYLE_ACTION_HANDLERS.bindClass.call(this, part);
         break;
       }
       default: {
@@ -30381,6 +31091,7 @@ function makeTextMark(conf5, text, textDims, attrs) {
 
 // ../pintora-diagrams/lib/activity/config.js
 var defaultConfig4 = {
+  ...defaultFontConfig,
   diagramPadding: 15,
   edgesep: 30,
   edgeType: "polyline",
@@ -30397,12 +31108,11 @@ var defaultConfig4 = {
   noteTextColor: PALETTE.normalDark,
   noteMargin: 10,
   labelTextColor: PALETTE.normalDark,
-  labelBackground: PALETTE.white,
-  fontSize: 14,
-  fontFamily: DEFAULT_FONT_FAMILY
+  labelBackground: PALETTE.white
 };
 var ACTIVITY_PARAM_DIRECTIVE_RULES = {
   ...getParamRulesFromConfig(defaultConfig4),
+  ...getFontConfigRules(),
   actionPaddingX: { valueType: "size" },
   actionPaddingY: { valueType: "size" },
   actionBackground: { valueType: "color" },
@@ -30415,9 +31125,7 @@ var ACTIVITY_PARAM_DIRECTIVE_RULES = {
   noteTextColor: { valueType: "color" },
   noteMargin: { valueType: "size" },
   labelBackground: { valueType: "color" },
-  labelTextColor: { valueType: "color" },
-  fontSize: { valueType: "size" },
-  fontFamily: { valueType: "string" }
+  labelTextColor: { valueType: "color" }
 };
 var configKey4 = "activity";
 var configurator4 = makeConfigurator({
@@ -30446,7 +31154,7 @@ var getConf4 = configurator4.getConfig;
 var model2;
 var activityDraw;
 function calcTextDims(text, attrs = {}) {
-  const _attrs = Object.assign(getFontConfig3(model2.conf), attrs);
+  const _attrs = Object.assign(getFontConfig(model2.conf), attrs);
   return calculateTextDimensions(text, _attrs);
 }
 function isDetachAlikeKeyword(keyword) {
@@ -30459,6 +31167,7 @@ var erArtist2 = {
   draw(ir, config2, opts) {
     const conf5 = getConf4(ir, config2);
     model2 = new ArtistModel(ir, conf5);
+    const fontConfig2 = getFontConfig(conf5);
     const rootMark = makeEmptyGroup();
     const g = createLayoutGraph({
       multigraph: true,
@@ -30476,6 +31185,7 @@ var erArtist2 = {
     model2.preProcess();
     const dagreWrapper = new DagreWrapper(g);
     activityDraw = new ActivityDraw(model2, g);
+    activityDraw.fontConfig = fontConfig2;
     if (isDev) {
       ;
       window.activityDraw = activityDraw;
@@ -30490,18 +31200,14 @@ var erArtist2 = {
     dagreWrapper.callNodeOnLayout();
     const { bounds: edgeBounds } = drawEdges(rootMark, g);
     const bounds = floorValues(tryExpandBounds(dagreWrapper.getGraphBounds(), edgeBounds));
-    const { title } = ir;
-    let titleSize = void 0;
-    let titleMark = void 0;
-    if (title) {
-      const titleFont = { fontSize: conf5.fontSize, fontFamily: conf5.fontFamily };
-      const titleResult = makeTitleMark(title, titleFont, { fill: conf5.textColor });
-      titleSize = titleResult.titleSize;
-      titleMark = titleResult.mark;
-      titleMark.class = "activity__title";
-      rootMark.children.push(titleMark);
-      titleSize.height += conf5.fontSize;
-    }
+    const titleFont = fontConfig2;
+    const titleMaker = new DiagramTitleMaker({
+      title: ir.title,
+      titleFont,
+      fill: conf5.textColor,
+      className: "activity__title"
+    });
+    const titleResult = titleMaker.appendTitleMark(rootMark);
     const { width: width2, height } = adjustRootMarkBounds({
       rootMark,
       gBounds: bounds,
@@ -30509,8 +31215,7 @@ var erArtist2 = {
       padY: conf5.diagramPadding,
       useMaxWidth: conf5.useMaxWidth,
       containerSize: opts === null || opts === void 0 ? void 0 : opts.containerSize,
-      titleSize,
-      titleMark
+      ...titleResult
     });
     return {
       mark: rootMark,
@@ -30850,10 +31555,10 @@ var ActivityDraw = class {
         positionGroupContents(group, { ...data, x: data.x - data.width / 2, y: data.y - data.height / 2 });
       }
     });
-    const id9 = condition.id;
+    const id10 = condition.id;
     const endId = stepModel.endId;
     const result = {
-      id: id9,
+      id: id10,
       startMark: group,
       stepModel,
       endId
@@ -30872,7 +31577,7 @@ var ActivityDraw = class {
             hasEnded = true;
           }
           if (i2 === 0) {
-            this.linkResult(id9, childResult, label);
+            this.linkResult(id10, childResult, label);
           }
           return childResult;
         }));
@@ -30884,13 +31589,13 @@ var ActivityDraw = class {
         }
       } else {
         const dummyNode = {
-          id: `${id9}-condition-dummy`
+          id: `${id10}-condition-dummy`
         };
         this.g.setNode(dummyNode.id, {
           width: 1,
           height: 1
         });
-        this.g.setEdge(id9, dummyNode.id, { label });
+        this.g.setEdge(id10, dummyNode.id, { label });
         this.g.setEdge(dummyNode.id, endId, { label: "" });
         if (stepModel.parentId) {
           const parentStepModel = this.model.stepModelMap.get(stepModel.parentId);
@@ -30937,10 +31642,11 @@ var ActivityDraw = class {
       ]
     }, { class: "activity__decision-bg" });
     const textDims = calcTextDims(message);
+    const fontConfig2 = this.fontConfig;
     const textMark = makeTextMark(conf5, message, textDims, {
       y: rectHeight / 2,
       x: rectWidth / 2,
-      fontSize: conf5.fontSize,
+      ...fontConfig2,
       textBaseline: "middle",
       textAlign: "center"
     });
@@ -30951,7 +31657,7 @@ var ActivityDraw = class {
       rectHeight
     };
   }
-  drawDiamondMark(id9, attrs = {}, opts = {}) {
+  drawDiamondMark(id10, attrs = {}, opts = {}) {
     const conf5 = model2.conf;
     const diamondSide = 10;
     const diamondMark = makeMark("path", {
@@ -30973,8 +31679,8 @@ var ActivityDraw = class {
       firstCommand[1] = x2 - diamondSide;
       firstCommand[2] = y2;
     };
-    this.g.setNode(id9, {
-      id: id9,
+    this.g.setNode(id10, {
+      id: id10,
       mark: diamondMark,
       width: diamondSide * 2,
       height: diamondSide * 2,
@@ -30989,12 +31695,12 @@ var ActivityDraw = class {
     };
   }
   drawWhile(parentMark, wh) {
-    const { message, id: id9 } = wh;
+    const { message, id: id10 } = wh;
     const group = makeEmptyGroup();
     const stepModel = model2.stepModelMap.get(wh.id);
     const { bgMark: decisionBg, textMark, rectWidth, rectHeight } = this.drawDecisionMarks(message);
-    this.g.setNode(id9, {
-      id: id9,
+    this.g.setNode(id10, {
+      id: id10,
       mark: group,
       width: rectWidth,
       height: rectHeight,
@@ -31004,7 +31710,7 @@ var ActivityDraw = class {
     });
     const endId = stepModel.endId;
     const result = {
-      id: id9,
+      id: id10,
       startMark: group,
       stepModel,
       endId
@@ -31015,25 +31721,25 @@ var ActivityDraw = class {
     const lastChildResult = last(wh.children.map((s, i2) => {
       const childResult = this.drawStep(parentMark, s);
       if (i2 === 0) {
-        this.linkResult(id9, childResult, wh.confirmLabel || "");
+        this.linkResult(id10, childResult, wh.confirmLabel || "");
       }
       return childResult;
     }));
     if (lastChildResult) {
-      this.g.setEdge(lastChildResult.endId || lastChildResult.id, id9, { label: "" });
+      this.g.setEdge(lastChildResult.endId || lastChildResult.id, id10, { label: "" });
       this.g.setEdge(lastChildResult.endId || lastChildResult.id, endId, { label: "", isDummyEdge: true });
     }
-    this.g.setEdge(id9, endId, { label: wh.denyLabel || "" });
+    this.g.setEdge(id10, endId, { label: wh.denyLabel || "" });
     return result;
   }
   drawGroup(parentMark, aGroup) {
     const conf5 = model2.conf;
-    const { id: id9 } = aGroup;
+    const { id: id10 } = aGroup;
     const group = makeEmptyGroup();
-    const stepModel = model2.stepModelMap.get(id9);
+    const stepModel = model2.stepModelMap.get(id10);
     const endId = stepModel.endId;
     const result = {
-      id: id9,
+      id: id10,
       startMark: group,
       stepModel,
       endId
@@ -31045,33 +31751,33 @@ var ActivityDraw = class {
       radius: 2
     }, { class: "activity__group-rect" });
     const groupLabel = aGroup.label || aGroup.name;
-    const fontConfig = getFontConfig3(conf5);
+    const fontConfig2 = getFontConfig(conf5);
     const labelMark = makeMark("text", {
       text: groupLabel,
       fill: conf5.textColor,
-      ...fontConfig,
+      ...fontConfig2,
       fontWeight: "bold",
       textBaseline: "top"
     }, { class: "activity__group-rect" });
-    const labelTextDims = calcTextDims(groupLabel, fontConfig);
-    const labelId = `${id9}-label`;
+    const labelTextDims = calcTextDims(groupLabel, fontConfig2);
+    const labelId = `${id10}-label`;
     this.g.setNode(labelId, {
       id: labelId,
       mark: labelMark,
       width: labelTextDims.width,
       height: labelTextDims.height
     });
-    this.g.setNode(id9, {
-      id: id9,
+    this.g.setNode(id10, {
+      id: id10,
       mark: group,
       onLayout: (data) => {
         const { x: x2, y: y2, width: width2, height } = data;
         const containerWidth = Math.max(width2, labelTextDims.width + 10);
         safeAssign(bgMark.attrs, { x: x2 - containerWidth / 2, y: y2 - height / 2, width: containerWidth, height });
-        safeAssign(labelMark.attrs, { x: x2 - containerWidth / 2 + fontConfig.fontSize / 2, y: y2 - height / 2 });
+        safeAssign(labelMark.attrs, { x: x2 - containerWidth / 2 + fontConfig2.fontSize / 2, y: y2 - height / 2 });
       }
     });
-    this.g.setParent(labelId, id9);
+    this.g.setParent(labelId, id10);
     group.children.push(bgMark, labelMark);
     parentMark.children.push(group);
     const setParentRecursive = (m) => {
@@ -31079,10 +31785,10 @@ var ActivityDraw = class {
         return;
       unique(compact([m.id, m.startId, m.endId])).forEach((modelId) => {
         if (modelId)
-          this.g.setParent(modelId, id9);
+          this.g.setParent(modelId, id10);
       });
       if (m.innerFrameId) {
-        this.g.setParent(m.innerFrameId, id9);
+        this.g.setParent(m.innerFrameId, id10);
       } else {
         this.traverseStep(m, (child) => {
           const childStepModel = this.model.stepModelMap.get(child.value.id);
@@ -31093,19 +31799,19 @@ var ActivityDraw = class {
     };
     aGroup.children.map((s) => {
       const childResult = this.drawStep(parentMark, s);
-      this.g.setParent(childResult.id, id9);
+      this.g.setParent(childResult.id, id10);
       setParentRecursive(childResult.stepModel);
       return childResult;
     });
     return result;
   }
   drawSwitch(parentMark, s) {
-    const { id: id9, message } = s;
+    const { id: id10, message } = s;
     const group = makeEmptyGroup();
-    const stepModel = model2.stepModelMap.get(id9);
+    const stepModel = model2.stepModelMap.get(id10);
     const { bgMark: decisionBg, textMark, rectWidth, rectHeight } = this.drawDecisionMarks(message);
-    this.g.setNode(id9, {
-      id: id9,
+    this.g.setNode(id10, {
+      id: id10,
       mark: group,
       width: rectWidth,
       height: rectHeight,
@@ -31115,7 +31821,7 @@ var ActivityDraw = class {
     });
     const endId = stepModel.endId;
     const result = {
-      id: id9,
+      id: id10,
       startMark: group,
       stepModel,
       endId
@@ -31125,7 +31831,7 @@ var ActivityDraw = class {
     parentMark.children.push(group, diamondMark);
     s.children.map((caseStep) => {
       const childResult = this.drawStep(parentMark, caseStep);
-      this.g.setEdge(id9, childResult.stepModel.startId || childResult.id, {
+      this.g.setEdge(id10, childResult.stepModel.startId || childResult.id, {
         label: caseStep.value.confirmLabel,
         simplifyStartEdge: true
       });
@@ -31137,12 +31843,12 @@ var ActivityDraw = class {
     return result;
   }
   drawCase(parentMark, c) {
-    const { id: id9 } = c;
+    const { id: id10 } = c;
     const group = makeEmptyGroup();
-    const stepModel = model2.stepModelMap.get(id9);
+    const stepModel = model2.stepModelMap.get(id10);
     const endId = stepModel.endId;
     const result = {
-      id: id9,
+      id: id10,
       startMark: group,
       stepModel,
       endId,
@@ -31172,15 +31878,15 @@ var ActivityDraw = class {
     return result;
   }
   drawRepeat(parentMark, repeat) {
-    const { message, id: id9 } = repeat;
+    const { message, id: id10 } = repeat;
     const denyLabel = repeat.denyLabel || "no";
     const group = makeEmptyGroup();
-    const stepModel = model2.stepModelMap.get(id9);
+    const stepModel = model2.stepModelMap.get(id10);
     const { bgMark: decisionBg, textMark, rectWidth, rectHeight } = this.drawDecisionMarks(message);
     const endId = stepModel.endId;
     const startId = stepModel.id;
     const result = {
-      id: id9,
+      id: id10,
       startMark: group,
       stepModel,
       endId,
@@ -31250,7 +31956,7 @@ var ActivityDraw = class {
     const stepModel = model2.stepModelMap.get(keyword.id);
     const group = makeEmptyGroup();
     group.class = "activity__keyword";
-    const { label, id: id9 } = keyword;
+    const { label, id: id10 } = keyword;
     const r = 10;
     const stroke = conf5.keywordBackground;
     const fill = conf5.keywordBackground;
@@ -31272,8 +31978,8 @@ var ActivityDraw = class {
       group.children.push(bgMark, centerCircle);
     }
     parentMark.children.push(group);
-    this.g.setNode(id9, {
-      id: id9,
+    this.g.setNode(id10, {
+      id: id10,
       mark: group,
       width: r * 2,
       height: r * 2,
@@ -31283,7 +31989,7 @@ var ActivityDraw = class {
     });
     const hasDetached = isDetachAlikeKeyword(keyword);
     const result = {
-      id: id9,
+      id: id10,
       startMark: group,
       stepModel,
       hasEnded: isEndAlikeKeyword(keyword),
@@ -31293,9 +31999,9 @@ var ActivityDraw = class {
   }
   drawFork(parentMark, fork) {
     const conf5 = model2.conf;
-    const { id: id9 } = fork;
+    const { id: id10 } = fork;
     const group = makeEmptyGroup();
-    const stepModel = model2.stepModelMap.get(id9);
+    const stepModel = model2.stepModelMap.get(id10);
     const startMark = makeMark("rect", {
       width: 100,
       height: 4,
@@ -31315,8 +32021,8 @@ var ActivityDraw = class {
       const x2 = bounds.x;
       return { ...bounds, width: shrinkedWidth, x: x2 };
     };
-    this.g.setNode(id9, {
-      id: id9,
+    this.g.setNode(id10, {
+      id: id10,
       mark: startMark,
       width: startMark.attrs.width,
       height: startMark.attrs.height,
@@ -31330,7 +32036,7 @@ var ActivityDraw = class {
     });
     const endId = stepModel.endId;
     const result = {
-      id: id9,
+      id: id10,
       startMark,
       stepModel,
       endId
@@ -31384,7 +32090,7 @@ var ActivityDraw = class {
       const childResult = this.drawStep(group, branch);
       const firstChildId = (_a = branch.value.children[0]) === null || _a === void 0 ? void 0 : _a.value.id;
       if (firstChildId) {
-        this.g.setEdge(id9, firstChildId, {
+        this.g.setEdge(id10, firstChildId, {
           label: "",
           isForkStartStraightLine: true
         });
@@ -31410,11 +32116,11 @@ var ActivityDraw = class {
     return result;
   }
   drawForkBranch(parentMark, branch) {
-    const { id: id9 } = branch;
+    const { id: id10 } = branch;
     const group = makeEmptyGroup();
-    const stepModel = model2.stepModelMap.get(id9);
+    const stepModel = model2.stepModelMap.get(id10);
     const result = {
-      id: id9,
+      id: id10,
       startMark: group,
       stepModel,
       endId: ""
@@ -31432,15 +32138,15 @@ var ActivityDraw = class {
     return result;
   }
   drawNote(parentMark, note) {
-    const { id: id9, text } = note;
+    const { id: id10, text } = note;
     const conf5 = model2.conf;
     const group = makeMark("group", {
       x: 0,
       y: 0
     }, { children: [], class: "activity__note" });
     parentMark.children.push(group);
-    const fontConfig = { fontSize: conf5.fontSize, fontFamily: conf5.fontFamily };
-    const textDims = calcTextDims(text, fontConfig);
+    const fontConfig2 = { fontSize: conf5.fontSize, fontFamily: conf5.fontFamily };
+    const textDims = calcTextDims(text, fontConfig2);
     const rectAttrs = getBaseNote(conf5.themeConfig.themeVariables);
     const noteModel = {
       width: textDims.width + 2 * conf5.noteMargin,
@@ -31453,15 +32159,15 @@ var ActivityDraw = class {
     };
     const textMark = {
       type: "text",
-      attrs: { fill: conf5.noteTextColor, text, textBaseline: "middle", ...fontConfig }
+      attrs: { fill: conf5.noteTextColor, text, textBaseline: "middle", ...fontConfig2 }
     };
     const targetStepModel = this.model.stepModelMap.get(note.target);
     if (targetStepModel) {
       if (targetStepModel.parentId) {
-        this.g.setParent(targetStepModel.parentId, id9);
+        this.g.setParent(targetStepModel.parentId, id10);
       }
     }
-    this.g.setNode(id9, {
+    this.g.setNode(id10, {
       mark: group,
       width: noteModel.width,
       height: noteModel.height,
@@ -31485,7 +32191,7 @@ var ActivityDraw = class {
           width: noteModel.width,
           height: noteModel.height
         });
-        const node2 = this.g.node(id9);
+        const node2 = this.g.node(id10);
         node2.outerLeft = x2;
         node2.outerRight = x2 + noteModel.width;
       }
@@ -31516,8 +32222,8 @@ function drawAction(parentMark, action, g) {
   };
 }
 function drawActionMarks({ message, conf: conf5 }) {
-  const fontConfig = getFontConfig3(conf5);
-  const textDims = getTextDimensionsInPresicion(message, fontConfig);
+  const fontConfig2 = getFontConfig(conf5);
+  const textDims = getTextDimensionsInPresicion(message, fontConfig2);
   const actionInfo = getActionRectSize(message);
   const rectMark = makeMark("rect", {
     width: actionInfo.rectWidth,
@@ -31530,7 +32236,7 @@ function drawActionMarks({ message, conf: conf5 }) {
   const textMark = makeTextMark(conf5, message, textDims, {
     y: actionInfo.rectHeight / 2,
     x: actionInfo.rectWidth / 2,
-    ...fontConfig,
+    ...fontConfig2,
     textBaseline: "middle",
     textAlign: "center"
   });
@@ -31586,8 +32292,8 @@ function drawEdges(parent, g) {
     let labelMark = null;
     let labelBgMark = null;
     if (edge.label) {
-      const fontConfig = getFontConfig3(conf5);
-      const labelDims = calcTextDims(edge.label, fontConfig);
+      const fontConfig2 = getFontConfig(conf5);
+      const labelDims = calcTextDims(edge.label, fontConfig2);
       labelBgMark = makeLabelBg(labelDims, { x: labelX, y: labelY }, { fill: conf5.labelBackground }, model2.conf.themeConfig.themeVariables);
       labelMark = makeMark("text", {
         text: edge.label,
@@ -31597,7 +32303,7 @@ function drawEdges(parent, g) {
         x: labelX,
         y: labelY,
         fill: conf5.labelTextColor,
-        ...fontConfig
+        ...fontConfig2
       }, { class: "activity__edge-label" });
       const labelBounds = calcBound([labelBgMark]);
       tryExpandBounds(bounds, labelBounds);
@@ -31607,33 +32313,27 @@ function drawEdges(parent, g) {
   parent.children.push(edgeGroup);
   return { bounds };
 }
-function getFontConfig3(conf5) {
-  return {
-    fontSize: conf5.fontSize,
-    fontFamily: conf5.fontFamily
-  };
-}
 var artist_default4 = erArtist2;
 
 // ../pintora-diagrams/lib/activity/parser/activityDiagram.js
-var moo4 = __toESM(require_moo());
-function id4(d) {
+var moo5 = __toESM(require_moo());
+function id5(d) {
   return d[0];
 }
-var COLOR4 = /#[a-zA-Z0-9]+/;
-var PARAM_DIRECTIVE4 = /@param/;
-var CONFIG_DIRECTIVE5 = /@config/;
-var L_PAREN4 = /\(/;
-var R_PAREN4 = /\)/;
-function getTokenValue4(token) {
+var _COLOR5 = /#[a-zA-Z0-9]+/;
+var PARAM_DIRECTIVE5 = /@param/;
+var CONFIG_DIRECTIVE6 = /@config/;
+var L_PAREN5 = /\(/;
+var R_PAREN5 = /\)/;
+function getTokenValue5(token) {
   if (token && "value" in token)
     return token.value;
   return token;
 }
-function handleConfigOpenCloseStatement4(d) {
+function handleConfigOpenCloseStatement5(d) {
   const text = d[2].map((v) => {
     if (v.type)
-      return getTokenValue4(v);
+      return getTokenValue5(v);
     return v;
   }).join("");
   try {
@@ -31643,11 +32343,12 @@ function handleConfigOpenCloseStatement4(d) {
     return { type: "overrideConfig", error };
   }
 }
-var COMMENT_LINE4 = /%%.*/;
-var COMMON_TOKEN_RULES = {
+var COMMENT_LINE5 = /%%.*/;
+var BIND_CLASS4 = /@bindClass/;
+var COMMON_TOKEN_RULES2 = {
   VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
 };
-var lexer4 = moo4.states({
+var lexer5 = moo5.states({
   main: {
     NL: MOO_NEWLINE,
     WS: { match: / +/, lineBreaks: false },
@@ -31667,11 +32368,12 @@ var lexer4 = moo4.states({
     },
     COMMENT_LINE: COMMENT_LINE_REGEXP,
     ...configLexerMainState,
+    ...BIND_REGEXPS,
     VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
   },
   configStatement: {
     ...configLexerconfigStatementState,
-    ...COMMON_TOKEN_RULES
+    ...COMMON_TOKEN_RULES2
   },
   noteState: {
     END_NOTE: {
@@ -31683,15 +32385,11 @@ var lexer4 = moo4.states({
     WORD: { match: VALID_TEXT_REGEXP, fallback: true }
   }
 });
-var yy4;
-function setYY4(v) {
-  yy4 = v;
-}
 function extractChildren(o) {
   return Array.isArray(o) ? o[0] : o;
 }
-var grammar4 = {
-  Lexer: lexer4,
+var grammar5 = {
+  Lexer: lexer5,
   ParserRules: [
     { "name": "_$ebnf$1", "symbols": [] },
     { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", "wschar"], "postprocess": (d) => d[0].concat([d[1]]) },
@@ -31703,11 +32401,11 @@ var grammar4 = {
     { "name": "__", "symbols": ["__$ebnf$1"], "postprocess": function(d) {
       return null;
     } },
-    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id4 },
-    { "name": "color", "symbols": [COLOR4], "postprocess": (d) => tv(d[0]) },
+    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id5 },
+    { "name": "color", "symbols": [_COLOR5], "postprocess": (d) => tv(d[0]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE4, "__", "paramPart"],
+      "symbols": [PARAM_DIRECTIVE5, "__", "paramPart"],
       "postprocess": function(d) {
         return d[2];
       }
@@ -31717,7 +32415,7 @@ var grammar4 = {
     { "name": "paramStatement$ebnf$1", "symbols": ["paramStatement$ebnf$1", "paramStatement$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE4, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
+      "symbols": [PARAM_DIRECTIVE5, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
       "postprocess": function(d) {
         const params = [];
         d[4].forEach((seg) => {
@@ -31739,15 +32437,42 @@ var grammar4 = {
     } },
     { "name": "configStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configStatement$ebnf$1", "symbols": ["configStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE5, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement4 },
+    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE6, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement5 },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": ["configOpenCloseStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE5, L_PAREN4, "configOpenCloseStatement$ebnf$1", R_PAREN4], "postprocess": handleConfigOpenCloseStatement4 },
-    { "name": "comment", "symbols": [COMMENT_LINE4], "postprocess": (d) => null },
+    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE6, L_PAREN5, "configOpenCloseStatement$ebnf$1", R_PAREN5], "postprocess": handleConfigOpenCloseStatement5 },
+    { "name": "comment", "symbols": [COMMENT_LINE5], "postprocess": (d) => null },
+    { "name": "bindClassStatement$ebnf$1", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS] },
+    { "name": "bindClassStatement$ebnf$1", "symbols": ["bindClassStatement$ebnf$1", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "bindClassStatement$ebnf$2", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS] },
+    { "name": "bindClassStatement$ebnf$2", "symbols": ["bindClassStatement$ebnf$2", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "bindClassStatement$ebnf$3", "symbols": [] },
+    { "name": "bindClassStatement$ebnf$3", "symbols": ["bindClassStatement$ebnf$3", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "bindClassStatement",
+      "symbols": [lexer5.has("BIND_CLASS") ? { type: "BIND_CLASS" } : BIND_CLASS4, "bindClassStatement$ebnf$1", "nodeList", "bindClassStatement$ebnf$2", lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "bindClassStatement$ebnf$3", lexer5.has("NL") ? { type: "NL" } : NL],
+      "postprocess": (d) => ({
+        type: "bindClass",
+        nodes: d[2],
+        className: tv(d[4])
+      })
+    },
+    { "name": "nodeList", "symbols": [lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => [tv(d[0])] },
+    { "name": "nodeList$ebnf$1", "symbols": [] },
+    { "name": "nodeList$ebnf$1", "symbols": ["nodeList$ebnf$1", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "nodeList",
+      "symbols": ["nodeList", lexer5.has("COMMA") ? { type: "COMMA" } : COMMA, "nodeList$ebnf$1", lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT],
+      "postprocess": (d) => {
+        const list = d[0];
+        list.push(tv(d[3]));
+        return list;
+      }
+    },
     { "name": "start", "symbols": ["__", "start"], "postprocess": (d) => d[1] },
     {
       "name": "start",
-      "symbols": [lexer4.has("ACTIVITY_DIAGRAM") ? { type: "ACTIVITY_DIAGRAM" } : ACTIVITY_DIAGRAM, "document"],
+      "symbols": [lexer5.has("ACTIVITY_DIAGRAM") ? { type: "ACTIVITY_DIAGRAM" } : ACTIVITY_DIAGRAM, "document"],
       "postprocess": function(d) {
         return d[1];
       }
@@ -31762,13 +32487,13 @@ var grammar4 = {
       }
     },
     { "name": "line$ebnf$1", "symbols": [] },
-    { "name": "line$ebnf$1", "symbols": ["line$ebnf$1", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "line$ebnf$1", "symbols": ["line$ebnf$1", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "line", "symbols": ["line$ebnf$1", "statement"], "postprocess": (d) => {
       return d[1];
     } },
-    { "name": "line$ebnf$2", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
+    { "name": "line$ebnf$2", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": id5 },
     { "name": "line$ebnf$2", "symbols": [], "postprocess": () => null },
-    { "name": "line", "symbols": ["line$ebnf$2", lexer4.has("NL") ? { type: "NL" } : NL], "postprocess": null },
+    { "name": "line", "symbols": ["line$ebnf$2", lexer5.has("NL") ? { type: "NL" } : NL], "postprocess": null },
     { "name": "statement", "symbols": ["action"] },
     { "name": "statement$subexpression$1", "symbols": [{ "literal": "start" }] },
     { "name": "statement$subexpression$1", "symbols": [{ "literal": "stop" }] },
@@ -31777,7 +32502,7 @@ var grammar4 = {
     { "name": "statement$subexpression$1", "symbols": [{ "literal": "kill" }] },
     {
       "name": "statement",
-      "symbols": ["statement$subexpression$1", lexer4.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["statement$subexpression$1", lexer5.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const keyword = tv(d[0][0]);
         return {
@@ -31795,19 +32520,20 @@ var grammar4 = {
     { "name": "statement", "symbols": ["noteStatement"] },
     { "name": "statement", "symbols": ["arrowLabelStatement"] },
     { "name": "statement", "symbols": ["titleStatement"] },
-    { "name": "statement", "symbols": ["paramStatement", "_", lexer4.has("NL") ? { type: "NL" } : NL] },
-    { "name": "statement", "symbols": ["configStatement", "_", lexer4.has("NL") ? { type: "NL" } : NL] },
-    { "name": "statement", "symbols": ["comment", "_", lexer4.has("NL") ? { type: "NL" } : NL], "postprocess": null },
+    { "name": "statement", "symbols": ["paramStatement", "_", lexer5.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["configStatement", "_", lexer5.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["bindClassStatement"] },
+    { "name": "statement", "symbols": ["comment", "_", lexer5.has("NL") ? { type: "NL" } : NL], "postprocess": null },
     { "name": "conditionSentence$ebnf$1$subexpression$1", "symbols": ["_", "wordsInParens"] },
-    { "name": "conditionSentence$ebnf$1", "symbols": ["conditionSentence$ebnf$1$subexpression$1"], "postprocess": id4 },
+    { "name": "conditionSentence$ebnf$1", "symbols": ["conditionSentence$ebnf$1$subexpression$1"], "postprocess": id5 },
     { "name": "conditionSentence$ebnf$1", "symbols": [], "postprocess": () => null },
     { "name": "conditionSentence$ebnf$2", "symbols": [] },
     { "name": "conditionSentence$ebnf$2", "symbols": ["conditionSentence$ebnf$2", "line"], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "conditionSentence$ebnf$3", "symbols": ["elseClause"], "postprocess": id4 },
+    { "name": "conditionSentence$ebnf$3", "symbols": ["elseClause"], "postprocess": id5 },
     { "name": "conditionSentence$ebnf$3", "symbols": [], "postprocess": () => null },
     {
       "name": "conditionSentence",
-      "symbols": [{ "literal": "if" }, "wordsInParens", { "literal": "then" }, "conditionSentence$ebnf$1", lexer4.has("NL") ? { type: "NL" } : NL, "conditionSentence$ebnf$2", "conditionSentence$ebnf$3", "_", { "literal": "endif" }, "_", lexer4.has("NL") ? { type: "NL" } : NL],
+      "symbols": [{ "literal": "if" }, "wordsInParens", { "literal": "then" }, "conditionSentence$ebnf$1", lexer5.has("NL") ? { type: "NL" } : NL, "conditionSentence$ebnf$2", "conditionSentence$ebnf$3", "_", { "literal": "endif" }, "_", lexer5.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const thenLabel = (d[3] ? d[3][1] : null) || "";
         const elseResult = d[6];
@@ -31820,33 +32546,33 @@ var grammar4 = {
       }
     },
     { "name": "elseClause$ebnf$1", "symbols": [] },
-    { "name": "elseClause$ebnf$1", "symbols": ["elseClause$ebnf$1", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "elseClause$ebnf$2", "symbols": ["wordsInParens"], "postprocess": id4 },
+    { "name": "elseClause$ebnf$1", "symbols": ["elseClause$ebnf$1", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "elseClause$ebnf$2", "symbols": ["wordsInParens"], "postprocess": id5 },
     { "name": "elseClause$ebnf$2", "symbols": [], "postprocess": () => null },
     { "name": "elseClause$ebnf$3", "symbols": [] },
     { "name": "elseClause$ebnf$3", "symbols": ["elseClause$ebnf$3", "line"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "elseClause",
-      "symbols": ["elseClause$ebnf$1", { "literal": "else" }, "elseClause$ebnf$2", lexer4.has("NL") ? { type: "NL" } : NL, "elseClause$ebnf$3"],
+      "symbols": ["elseClause$ebnf$1", { "literal": "else" }, "elseClause$ebnf$2", lexer5.has("NL") ? { type: "NL" } : NL, "elseClause$ebnf$3"],
       "postprocess": function(d) {
         return { label: d[2], children: d[4].map((o) => Array.isArray(o) ? o[0] : o) };
       }
     },
-    { "name": "whileSentence$ebnf$1$subexpression$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS, { "literal": "is" }, lexer4.has("WS") ? { type: "WS" } : WS, "wordsInParens"] },
-    { "name": "whileSentence$ebnf$1", "symbols": ["whileSentence$ebnf$1$subexpression$1"], "postprocess": id4 },
+    { "name": "whileSentence$ebnf$1$subexpression$1", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS, { "literal": "is" }, lexer5.has("WS") ? { type: "WS" } : WS, "wordsInParens"] },
+    { "name": "whileSentence$ebnf$1", "symbols": ["whileSentence$ebnf$1$subexpression$1"], "postprocess": id5 },
     { "name": "whileSentence$ebnf$1", "symbols": [], "postprocess": () => null },
     { "name": "whileSentence$ebnf$2", "symbols": [] },
     { "name": "whileSentence$ebnf$2", "symbols": ["whileSentence$ebnf$2", "line"], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "whileSentence$ebnf$3", "symbols": [] },
-    { "name": "whileSentence$ebnf$3", "symbols": ["whileSentence$ebnf$3", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "whileSentence$ebnf$3", "symbols": ["whileSentence$ebnf$3", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "whileSentence$ebnf$4$subexpression$1", "symbols": ["_", "wordsInParens"] },
-    { "name": "whileSentence$ebnf$4", "symbols": ["whileSentence$ebnf$4$subexpression$1"], "postprocess": id4 },
+    { "name": "whileSentence$ebnf$4", "symbols": ["whileSentence$ebnf$4$subexpression$1"], "postprocess": id5 },
     { "name": "whileSentence$ebnf$4", "symbols": [], "postprocess": () => null },
-    { "name": "whileSentence$ebnf$5", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
+    { "name": "whileSentence$ebnf$5", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": id5 },
     { "name": "whileSentence$ebnf$5", "symbols": [], "postprocess": () => null },
     {
       "name": "whileSentence",
-      "symbols": [{ "literal": "while" }, "wordsInParens", "whileSentence$ebnf$1", "_", lexer4.has("NL") ? { type: "NL" } : NL, "whileSentence$ebnf$2", "whileSentence$ebnf$3", { "literal": "endwhile" }, "whileSentence$ebnf$4", "whileSentence$ebnf$5", lexer4.has("NL") ? { type: "NL" } : NL],
+      "symbols": [{ "literal": "while" }, "wordsInParens", "whileSentence$ebnf$1", "_", lexer5.has("NL") ? { type: "NL" } : NL, "whileSentence$ebnf$2", "whileSentence$ebnf$3", { "literal": "endwhile" }, "whileSentence$ebnf$4", "whileSentence$ebnf$5", lexer5.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const confirmLabel = d[2] ? d[2][3] : void 0;
         const denyLabel = d[8] ? d[8][1] : void 0;
@@ -31861,7 +32587,7 @@ var grammar4 = {
     },
     {
       "name": "repeatSentence",
-      "symbols": [{ "literal": "repeat" }, lexer4.has("WS") ? { type: "WS" } : WS, "oneLineAction", "repeatBodyAndEnd"],
+      "symbols": [{ "literal": "repeat" }, lexer5.has("WS") ? { type: "WS" } : WS, "oneLineAction", "repeatBodyAndEnd"],
       "postprocess": function(d) {
         const firstAction = d[2].action;
         const bodyAndEnd = d[3];
@@ -31872,11 +32598,11 @@ var grammar4 = {
         };
       }
     },
-    { "name": "repeatSentence$ebnf$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
+    { "name": "repeatSentence$ebnf$1", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": id5 },
     { "name": "repeatSentence$ebnf$1", "symbols": [], "postprocess": () => null },
     {
       "name": "repeatSentence",
-      "symbols": [{ "literal": "repeat" }, "repeatSentence$ebnf$1", lexer4.has("NL") ? { type: "NL" } : NL, "repeatBodyAndEnd"],
+      "symbols": [{ "literal": "repeat" }, "repeatSentence$ebnf$1", lexer5.has("NL") ? { type: "NL" } : NL, "repeatBodyAndEnd"],
       "postprocess": function(d) {
         const bodyAndEnd = d[3];
         return {
@@ -31888,18 +32614,18 @@ var grammar4 = {
     { "name": "repeatBodyAndEnd$ebnf$1", "symbols": [] },
     { "name": "repeatBodyAndEnd$ebnf$1", "symbols": ["repeatBodyAndEnd$ebnf$1", "line"], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "repeatBodyAndEnd$ebnf$2", "symbols": [] },
-    { "name": "repeatBodyAndEnd$ebnf$2", "symbols": ["repeatBodyAndEnd$ebnf$2", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "repeatBodyAndEnd$ebnf$3$subexpression$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS, { "literal": "is" }, lexer4.has("WS") ? { type: "WS" } : WS, "wordsInParens"] },
-    { "name": "repeatBodyAndEnd$ebnf$3", "symbols": ["repeatBodyAndEnd$ebnf$3$subexpression$1"], "postprocess": id4 },
+    { "name": "repeatBodyAndEnd$ebnf$2", "symbols": ["repeatBodyAndEnd$ebnf$2", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "repeatBodyAndEnd$ebnf$3$subexpression$1", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS, { "literal": "is" }, lexer5.has("WS") ? { type: "WS" } : WS, "wordsInParens"] },
+    { "name": "repeatBodyAndEnd$ebnf$3", "symbols": ["repeatBodyAndEnd$ebnf$3$subexpression$1"], "postprocess": id5 },
     { "name": "repeatBodyAndEnd$ebnf$3", "symbols": [], "postprocess": () => null },
-    { "name": "repeatBodyAndEnd$ebnf$4$subexpression$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS, { "literal": "not" }, lexer4.has("WS") ? { type: "WS" } : WS, "wordsInParens"] },
-    { "name": "repeatBodyAndEnd$ebnf$4", "symbols": ["repeatBodyAndEnd$ebnf$4$subexpression$1"], "postprocess": id4 },
+    { "name": "repeatBodyAndEnd$ebnf$4$subexpression$1", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS, { "literal": "not" }, lexer5.has("WS") ? { type: "WS" } : WS, "wordsInParens"] },
+    { "name": "repeatBodyAndEnd$ebnf$4", "symbols": ["repeatBodyAndEnd$ebnf$4$subexpression$1"], "postprocess": id5 },
     { "name": "repeatBodyAndEnd$ebnf$4", "symbols": [], "postprocess": () => null },
-    { "name": "repeatBodyAndEnd$ebnf$5", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": id4 },
+    { "name": "repeatBodyAndEnd$ebnf$5", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": id5 },
     { "name": "repeatBodyAndEnd$ebnf$5", "symbols": [], "postprocess": () => null },
     {
       "name": "repeatBodyAndEnd",
-      "symbols": ["repeatBodyAndEnd$ebnf$1", "repeatBodyAndEnd$ebnf$2", { "literal": "repeatwhile" }, "wordsInParens", "repeatBodyAndEnd$ebnf$3", "repeatBodyAndEnd$ebnf$4", "repeatBodyAndEnd$ebnf$5", lexer4.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["repeatBodyAndEnd$ebnf$1", "repeatBodyAndEnd$ebnf$2", { "literal": "repeatwhile" }, "wordsInParens", "repeatBodyAndEnd$ebnf$3", "repeatBodyAndEnd$ebnf$4", "repeatBodyAndEnd$ebnf$5", lexer5.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const message = d[3];
         const confirmLabel = d[4] ? d[4][3] : void 0;
@@ -31913,19 +32639,19 @@ var grammar4 = {
       }
     },
     { "name": "switchSentence$ebnf$1", "symbols": [] },
-    { "name": "switchSentence$ebnf$1", "symbols": ["switchSentence$ebnf$1", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "switchSentence$ebnf$1", "symbols": ["switchSentence$ebnf$1", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "switchSentence$ebnf$2", "symbols": [] },
     { "name": "switchSentence$ebnf$2$subexpression$1$ebnf$1", "symbols": [] },
-    { "name": "switchSentence$ebnf$2$subexpression$1$ebnf$1", "symbols": ["switchSentence$ebnf$2$subexpression$1$ebnf$1", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "switchSentence$ebnf$2$subexpression$1$ebnf$1", "symbols": ["switchSentence$ebnf$2$subexpression$1$ebnf$1", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "switchSentence$ebnf$2$subexpression$1", "symbols": ["switchSentence$ebnf$2$subexpression$1$ebnf$1", "caseClause"] },
     { "name": "switchSentence$ebnf$2", "symbols": ["switchSentence$ebnf$2", "switchSentence$ebnf$2$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "switchSentence$ebnf$3", "symbols": [] },
-    { "name": "switchSentence$ebnf$3", "symbols": ["switchSentence$ebnf$3", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "switchSentence$ebnf$3", "symbols": ["switchSentence$ebnf$3", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "switchSentence$ebnf$4", "symbols": [] },
-    { "name": "switchSentence$ebnf$4", "symbols": ["switchSentence$ebnf$4", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "switchSentence$ebnf$4", "symbols": ["switchSentence$ebnf$4", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "switchSentence",
-      "symbols": [{ "literal": "switch" }, "wordsInParens", "switchSentence$ebnf$1", lexer4.has("NL") ? { type: "NL" } : NL, "switchSentence$ebnf$2", "switchSentence$ebnf$3", { "literal": "endswitch" }, "switchSentence$ebnf$4", lexer4.has("NL") ? { type: "NL" } : NL],
+      "symbols": [{ "literal": "switch" }, "wordsInParens", "switchSentence$ebnf$1", lexer5.has("NL") ? { type: "NL" } : NL, "switchSentence$ebnf$2", "switchSentence$ebnf$3", { "literal": "endswitch" }, "switchSentence$ebnf$4", lexer5.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const message = d[1];
         const children = d[4].map((o) => o[1]);
@@ -31933,12 +32659,12 @@ var grammar4 = {
       }
     },
     { "name": "caseClause$ebnf$1", "symbols": [] },
-    { "name": "caseClause$ebnf$1", "symbols": ["caseClause$ebnf$1", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "caseClause$ebnf$1", "symbols": ["caseClause$ebnf$1", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "caseClause$ebnf$2", "symbols": [] },
     { "name": "caseClause$ebnf$2", "symbols": ["caseClause$ebnf$2", "line"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "caseClause",
-      "symbols": [{ "literal": "case" }, "wordsInParens", "caseClause$ebnf$1", lexer4.has("NL") ? { type: "NL" } : NL, "caseClause$ebnf$2"],
+      "symbols": [{ "literal": "case" }, "wordsInParens", "caseClause$ebnf$1", lexer5.has("NL") ? { type: "NL" } : NL, "caseClause$ebnf$2"],
       "postprocess": function(d) {
         const confirmLabel = d[1].trim();
         const children = d[4].map((o) => Array.isArray(o) ? o[0] : o);
@@ -31946,10 +32672,10 @@ var grammar4 = {
       }
     },
     { "name": "forkSentence$ebnf$1", "symbols": [] },
-    { "name": "forkSentence$ebnf$1", "symbols": ["forkSentence$ebnf$1", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "forkSentence$ebnf$2$subexpression$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS, "statement"] },
+    { "name": "forkSentence$ebnf$1", "symbols": ["forkSentence$ebnf$1", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "forkSentence$ebnf$2$subexpression$1", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS, "statement"] },
     { "name": "forkSentence$ebnf$2", "symbols": ["forkSentence$ebnf$2$subexpression$1"] },
-    { "name": "forkSentence$ebnf$2$subexpression$2", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS, "statement"] },
+    { "name": "forkSentence$ebnf$2$subexpression$2", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS, "statement"] },
     { "name": "forkSentence$ebnf$2", "symbols": ["forkSentence$ebnf$2", "forkSentence$ebnf$2$subexpression$2"], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "forkSentence$ebnf$3", "symbols": [] },
     { "name": "forkSentence$ebnf$3$subexpression$1", "symbols": ["_", "forkAgainClause"] },
@@ -31958,7 +32684,7 @@ var grammar4 = {
     { "name": "forkSentence$subexpression$1", "symbols": [{ "literal": "endmerge" }] },
     {
       "name": "forkSentence",
-      "symbols": [{ "literal": "fork" }, "forkSentence$ebnf$1", lexer4.has("NL") ? { type: "NL" } : NL, "forkSentence$ebnf$2", "forkSentence$ebnf$3", "_", "forkSentence$subexpression$1", lexer4.has("NL") ? { type: "NL" } : NL],
+      "symbols": [{ "literal": "fork" }, "forkSentence$ebnf$1", lexer5.has("NL") ? { type: "NL" } : NL, "forkSentence$ebnf$2", "forkSentence$ebnf$3", "_", "forkSentence$subexpression$1", lexer5.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const firstActions = d[3].map((a) => extractChildren(a[1]));
         const forkAgains = d[4].map((a) => a[1]);
@@ -31969,25 +32695,27 @@ var grammar4 = {
       }
     },
     { "name": "forkAgainClause$ebnf$1", "symbols": [] },
-    { "name": "forkAgainClause$ebnf$1", "symbols": ["forkAgainClause$ebnf$1", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "forkAgainClause$ebnf$2$subexpression$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS, "statement"] },
+    { "name": "forkAgainClause$ebnf$1", "symbols": ["forkAgainClause$ebnf$1", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "forkAgainClause$ebnf$2$subexpression$1", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS, "statement"] },
     { "name": "forkAgainClause$ebnf$2", "symbols": ["forkAgainClause$ebnf$2$subexpression$1"] },
-    { "name": "forkAgainClause$ebnf$2$subexpression$2", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS, "statement"] },
+    { "name": "forkAgainClause$ebnf$2$subexpression$2", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS, "statement"] },
     { "name": "forkAgainClause$ebnf$2", "symbols": ["forkAgainClause$ebnf$2", "forkAgainClause$ebnf$2$subexpression$2"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "forkAgainClause",
-      "symbols": [{ "literal": "forkagain" }, "forkAgainClause$ebnf$1", lexer4.has("NL") ? { type: "NL" } : NL, "forkAgainClause$ebnf$2"],
+      "symbols": [{ "literal": "forkagain" }, "forkAgainClause$ebnf$1", lexer5.has("NL") ? { type: "NL" } : NL, "forkAgainClause$ebnf$2"],
       "postprocess": function(d) {
         const statements = d[3].map((a) => extractChildren(a[1]));
         return { type: "forkBranch", children: statements };
       }
     },
-    { "name": "wordsInParens", "symbols": [lexer4.has("L_PAREN") ? { type: "L_PAREN" } : L_PAREN4, "words", lexer4.has("R_PAREN") ? { type: "R_PAREN" } : R_PAREN4], "postprocess": (d) => d[1] },
-    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS] },
+    { "name": "wordsInParens", "symbols": [lexer5.has("L_PAREN") ? { type: "L_PAREN" } : L_PAREN5, "words", lexer5.has("R_PAREN") ? { type: "R_PAREN" } : R_PAREN5], "postprocess": (d) => d[1] },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer5.has("COLOR") ? { type: "COLOR" } : COLOR] },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS] },
     { "name": "words$ebnf$1", "symbols": ["words$ebnf$1$subexpression$1"] },
-    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS] },
+    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer5.has("COLOR") ? { type: "COLOR" } : COLOR] },
+    { "name": "words$ebnf$1$subexpression$2", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS] },
     { "name": "words$ebnf$1", "symbols": ["words$ebnf$1", "words$ebnf$1$subexpression$2"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "words",
@@ -31998,27 +32726,36 @@ var grammar4 = {
     },
     {
       "name": "action",
-      "symbols": [lexer4.has("COLON") ? { type: "COLON" } : COLON, "multilineText", lexer4.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON, lexer4.has("NL") ? { type: "NL" } : NL],
+      "symbols": [lexer5.has("COLON") ? { type: "COLON" } : COLON, "multilineText", lexer5.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON, lexer5.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         return { type: "addAction", action: { actionType: "normal", message: d[1] } };
       }
     },
     {
       "name": "oneLineAction",
-      "symbols": [lexer4.has("COLON") ? { type: "COLON" } : COLON, "words", lexer4.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON, lexer4.has("NL") ? { type: "NL" } : NL],
+      "symbols": [lexer5.has("COLON") ? { type: "COLON" } : COLON, "words", lexer5.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON, lexer5.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         return { type: "addAction", action: { actionType: "normal", message: d[1] } };
       }
     },
+    {
+      "name": "multilineText",
+      "symbols": [lexer5.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD],
+      "postprocess": function(d) {
+        const ele = d[0];
+        return getQuotedWord(ele);
+      }
+    },
     { "name": "multilineText$ebnf$1", "symbols": [] },
-    { "name": "multilineText$ebnf$1$subexpression$1", "symbols": [lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "multilineText$ebnf$1$subexpression$1", "symbols": [lexer4.has("WS") ? { type: "WS" } : WS] },
-    { "name": "multilineText$ebnf$1$subexpression$1", "symbols": [lexer4.has("NL") ? { type: "NL" } : NL] },
+    { "name": "multilineText$ebnf$1$subexpression$1", "symbols": [lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "multilineText$ebnf$1$subexpression$1", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS] },
+    { "name": "multilineText$ebnf$1$subexpression$1", "symbols": [lexer5.has("NL") ? { type: "NL" } : NL] },
     { "name": "multilineText$ebnf$1", "symbols": ["multilineText$ebnf$1", "multilineText$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "multilineText",
       "symbols": ["multilineText$ebnf$1"],
       "postprocess": function(d) {
+        const ele = d[0];
         const v = d[0].map((l) => {
           return l.map((o) => tv(o));
         }).join("");
@@ -32027,22 +32764,22 @@ var grammar4 = {
     },
     { "name": "groupType", "symbols": [{ "literal": "group" }] },
     { "name": "groupType", "symbols": [{ "literal": "partition" }] },
-    { "name": "group$ebnf$1$subexpression$1", "symbols": ["color", lexer4.has("WS") ? { type: "WS" } : WS] },
-    { "name": "group$ebnf$1", "symbols": ["group$ebnf$1$subexpression$1"], "postprocess": id4 },
+    { "name": "group$ebnf$1$subexpression$1", "symbols": ["color", lexer5.has("WS") ? { type: "WS" } : WS] },
+    { "name": "group$ebnf$1", "symbols": ["group$ebnf$1$subexpression$1"], "postprocess": id5 },
     { "name": "group$ebnf$1", "symbols": [], "postprocess": () => null },
-    { "name": "group$subexpression$1", "symbols": [lexer4.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD] },
-    { "name": "group$subexpression$1", "symbols": [lexer4.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "group$subexpression$1", "symbols": [lexer5.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD] },
+    { "name": "group$subexpression$1", "symbols": [lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
     { "name": "group$ebnf$2$subexpression$1", "symbols": ["__", "statement"] },
     { "name": "group$ebnf$2", "symbols": ["group$ebnf$2$subexpression$1"] },
     { "name": "group$ebnf$2$subexpression$2", "symbols": ["__", "statement"] },
     { "name": "group$ebnf$2", "symbols": ["group$ebnf$2", "group$ebnf$2$subexpression$2"], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "group$ebnf$3", "symbols": [] },
-    { "name": "group$ebnf$3", "symbols": ["group$ebnf$3", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "group$ebnf$3", "symbols": ["group$ebnf$3", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "group$ebnf$4", "symbols": [] },
-    { "name": "group$ebnf$4", "symbols": ["group$ebnf$4", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "group$ebnf$4", "symbols": ["group$ebnf$4", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "group",
-      "symbols": ["groupType", "__", "group$ebnf$1", "group$subexpression$1", "_", lexer4.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "group$ebnf$2", "group$ebnf$3", lexer4.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET, "group$ebnf$4", lexer4.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["groupType", "__", "group$ebnf$1", "group$subexpression$1", "_", lexer5.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "group$ebnf$2", "group$ebnf$3", lexer5.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET, "group$ebnf$4", lexer5.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const groupType = tv(d[0][0]);
         const background = d[2] ? d[2][0] : null;
@@ -32058,13 +32795,13 @@ var grammar4 = {
     { "name": "placement", "symbols": [{ "literal": "left" }], "postprocess": (d) => "left" },
     { "name": "placement", "symbols": [{ "literal": "right" }], "postprocess": (d) => "right" },
     { "name": "multilineNoteText$ebnf$1", "symbols": [] },
-    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer4.has("COMMA") ? { type: "COMMA" } : COMMA] },
-    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer4.has("WORD") ? { type: "WORD" } : WORD] },
-    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer4.has("NL") ? { type: "NL" } : NL] },
+    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer5.has("COMMA") ? { type: "COMMA" } : COMMA] },
+    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer5.has("WORD") ? { type: "WORD" } : WORD] },
+    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer5.has("NL") ? { type: "NL" } : NL] },
     { "name": "multilineNoteText$ebnf$1", "symbols": ["multilineNoteText$ebnf$1", "multilineNoteText$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "multilineNoteText",
-      "symbols": ["multilineNoteText$ebnf$1", lexer4.has("END_NOTE") ? { type: "END_NOTE" } : END_NOTE],
+      "symbols": ["multilineNoteText$ebnf$1", lexer5.has("END_NOTE") ? { type: "END_NOTE" } : END_NOTE],
       "postprocess": function(d) {
         const v = d[0].map((l) => {
           return l.map((o) => tv(o));
@@ -32077,28 +32814,28 @@ var grammar4 = {
       }
     },
     { "name": "noteStatement$subexpression$1", "symbols": [{ "literal": "note" }] },
-    { "name": "noteStatement$subexpression$1", "symbols": [lexer4.has("NOTE") ? { type: "NOTE" } : NOTE] },
+    { "name": "noteStatement$subexpression$1", "symbols": [lexer5.has("NOTE") ? { type: "NOTE" } : NOTE] },
     { "name": "noteStatement$ebnf$1", "symbols": [] },
-    { "name": "noteStatement$ebnf$1", "symbols": ["noteStatement$ebnf$1", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "noteStatement$ebnf$1", "symbols": ["noteStatement$ebnf$1", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "noteStatement$ebnf$2", "symbols": [] },
-    { "name": "noteStatement$ebnf$2", "symbols": ["noteStatement$ebnf$2", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "noteStatement$ebnf$2", "symbols": ["noteStatement$ebnf$2", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "noteStatement",
-      "symbols": ["noteStatement$subexpression$1", "noteStatement$ebnf$1", "placement", "noteStatement$ebnf$2", lexer4.has("COLON") ? { type: "COLON" } : COLON, "words", lexer4.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["noteStatement$subexpression$1", "noteStatement$ebnf$1", "placement", "noteStatement$ebnf$2", lexer5.has("COLON") ? { type: "COLON" } : COLON, "words", lexer5.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const text = d[5].trim();
         return { type: "note", placement: d[2], text };
       }
     },
     { "name": "noteStatement$subexpression$2", "symbols": [{ "literal": "note" }] },
-    { "name": "noteStatement$subexpression$2", "symbols": [lexer4.has("START_NOTE") ? { type: "START_NOTE" } : START_NOTE] },
+    { "name": "noteStatement$subexpression$2", "symbols": [lexer5.has("START_NOTE") ? { type: "START_NOTE" } : START_NOTE] },
     { "name": "noteStatement$ebnf$3", "symbols": [] },
-    { "name": "noteStatement$ebnf$3", "symbols": ["noteStatement$ebnf$3", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "noteStatement$ebnf$3", "symbols": ["noteStatement$ebnf$3", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "noteStatement$ebnf$4", "symbols": [] },
-    { "name": "noteStatement$ebnf$4", "symbols": ["noteStatement$ebnf$4", lexer4.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "noteStatement$ebnf$4", "symbols": ["noteStatement$ebnf$4", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "noteStatement",
-      "symbols": ["noteStatement$subexpression$2", "noteStatement$ebnf$3", "placement", "noteStatement$ebnf$4", lexer4.has("NL") ? { type: "NL" } : NL, "multilineNoteText", lexer4.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["noteStatement$subexpression$2", "noteStatement$ebnf$3", "placement", "noteStatement$ebnf$4", lexer5.has("NL") ? { type: "NL" } : NL, "multilineNoteText", lexer5.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const text = d[5];
         return { type: "note", placement: d[2], text };
@@ -32106,20 +32843,19 @@ var grammar4 = {
     },
     {
       "name": "arrowLabelStatement",
-      "symbols": [{ "literal": "->" }, "__", "words", lexer4.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON, "_", lexer4.has("NL") ? { type: "NL" } : NL],
+      "symbols": [{ "literal": "->" }, "__", "words", lexer5.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON, "_", lexer5.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         return { type: "arrowLabel", text: d[2] };
       }
     },
-    { "name": "titleStatement", "symbols": [{ "literal": "title" }, lexer4.has("COLON") ? { type: "COLON" } : COLON, "words", lexer4.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => ({ type: "setTitle", text: d[2].trim() }) }
+    { "name": "titleStatement", "symbols": [{ "literal": "title" }, lexer5.has("COLON") ? { type: "COLON" } : COLON, "words", lexer5.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => ({ type: "setTitle", text: d[2].trim() }) }
   ],
   ParserStart: "start",
-  ParserOptions: { skipUnmatchSymbols: [lexer4.has("WS") ? { type: "WS" } : WS] }
+  ParserOptions: { skipUnmatchSymbols: [lexer5.has("WS") ? { type: "WS" } : WS] }
 };
-var activityDiagram_default = grammar4;
+var activityDiagram_default = grammar5;
 
 // ../pintora-diagrams/lib/activity/parser.js
-setYY4(db4);
 var parse4 = genParserWithRules(activityDiagram_default, {
   dedupeAmbigousResults: true,
   postProcess(results) {
@@ -32131,12 +32867,10 @@ var parse4 = genParserWithRules(activityDiagram_default, {
 // ../pintora-diagrams/lib/activity/index.js
 var activityDiagram = {
   pattern: /^\s*activityDiagram/,
-  parser: {
-    parse(text) {
-      parse4(text);
-      return db4.getDiagramIR();
-    }
-  },
+  parser: new ParserWithPreprocessor({
+    db: db4,
+    parse: parse4
+  }),
   artist: artist_default4,
   configKey: "activity",
   clear() {
@@ -32338,6 +33072,7 @@ var DOTTED_LINE_DASH = [2, 4];
 
 // ../pintora-diagrams/lib/dot/config.js
 var defaultConfig5 = {
+  ...defaultFontConfig,
   diagramPadding: 15,
   layoutDirection: "TB",
   ranksep: 20,
@@ -32349,13 +33084,11 @@ var defaultConfig5 = {
   backgroundColor: PALETTE.white,
   labelTextColor: PALETTE.normalDark,
   nodeBorderColor: PALETTE.normalDark,
-  edgeColor: PALETTE.normalDark,
-  fontSize: 14,
-  fontWeight: "normal",
-  fontFamily: DEFAULT_FONT_FAMILY
+  edgeColor: PALETTE.normalDark
 };
 var DOT_PARAM_DIRECTIVE_RULES = {
-  ...getParamRulesFromConfig(defaultConfig5)
+  ...getParamRulesFromConfig(defaultConfig5),
+  ...getFontConfigRules()
 };
 var configKey5 = "dot";
 var configurator5 = makeConfigurator({
@@ -32503,7 +33236,7 @@ var DOTDraw = class {
     }
     const conf5 = this.conf;
     const graphContext = parentInfo.styleContexts.graph;
-    const fontConfig = this.getFontConfig(graphContext);
+    const fontConfig2 = this.getFontConfig(graphContext);
     const graphAttrs2 = ((_a = irGraph.attrs) === null || _a === void 0 ? void 0 : _a.graph) || {};
     const graphLabel = graphAttrs2.label;
     if (parentInfo.isRoot) {
@@ -32512,8 +33245,8 @@ var DOTDraw = class {
       let minwidth = 0;
       let paddingt = 0;
       if (graphLabel) {
-        const dims = calculateTextDimensions(graphLabel, fontConfig);
-        minwidth = dims.width + fontConfig.fontSize;
+        const dims = calculateTextDimensions(graphLabel, fontConfig2);
+        minwidth = dims.width + fontConfig2.fontSize;
         paddingt = dims.height;
       }
       this.g.setNode(irGraph.id, {
@@ -32532,7 +33265,7 @@ var DOTDraw = class {
             const labelPoint = { x: data.x, y: data.y - data.height / 2 };
             const labelMark = makeTextAtPoint(graphLabel, labelPoint, {
               textBaseline: "hanging",
-              ...fontConfig,
+              ...fontConfig2,
               fill: conf5.labelTextColor,
               ...graphLabelAttrMapper(graphAttrs2, graphContext)
             });
@@ -32580,8 +33313,8 @@ var DOTDraw = class {
       return;
     const label = nodeAttrs.label || name;
     const nodeStyleContext = parentInfo.styleContexts.node;
-    const fontConfig = this.getFontConfig(nodeStyleContext);
-    const textDims = getTextDimensionsInPresicion(label, fontConfig);
+    const fontConfig2 = this.getFontConfig(nodeStyleContext);
+    const textDims = getTextDimensionsInPresicion(label, fontConfig2);
     const width2 = textDims.width + this.conf.nodePadding * 2;
     const height = textDims.height + this.conf.nodePadding * 2;
     const layoutAttrs = nodeLayoutAttrMapper(nodeAttrs, nodeStyleContext);
@@ -32618,7 +33351,7 @@ var DOTDraw = class {
           x: data.x,
           y: data.y,
           fill: this.conf.labelTextColor,
-          ...fontConfig,
+          ...fontConfig2,
           ...nodeAttrsToLabelStyle(nodeAttrs, nodeStyleContext),
           textAlign: "center",
           textBaseline: "middle"
@@ -32721,12 +33454,12 @@ var DOTDraw = class {
     const label = graphAttrs2.label;
     let labelHeight = 0;
     if (label) {
-      const fontConfig = this.getFontConfig(graphContext);
+      const fontConfig2 = this.getFontConfig(graphContext);
       const labelPoint = { x: bounds.left + bounds.width / 2, y: bounds.bottom };
-      labelHeight = calculateTextDimensions(label, fontConfig).height;
+      labelHeight = calculateTextDimensions(label, fontConfig2).height;
       const labelMark = makeTextAtPoint(label, labelPoint, {
         textBaseline: "hanging",
-        ...fontConfig,
+        ...fontConfig2,
         fill: conf5.labelTextColor,
         ...graphLabelAttrMapper(graphAttrs2, graphContext)
       });
@@ -32819,24 +33552,24 @@ var ARROW_TYPE_MAP = {
 var artist_default5 = artist;
 
 // ../pintora-diagrams/lib/dot/parser/dotDiagram.js
-var moo5 = __toESM(require_moo());
-function id5(d) {
+var moo6 = __toESM(require_moo());
+function id6(d) {
   return d[0];
 }
-var COLOR5 = /#[a-zA-Z0-9]+/;
-var PARAM_DIRECTIVE5 = /@param/;
-var CONFIG_DIRECTIVE6 = /@config/;
-var L_PAREN5 = /\(/;
-var R_PAREN5 = /\)/;
-function getTokenValue5(token) {
+var _COLOR6 = /#[a-zA-Z0-9]+/;
+var PARAM_DIRECTIVE6 = /@param/;
+var CONFIG_DIRECTIVE7 = /@config/;
+var L_PAREN6 = /\(/;
+var R_PAREN6 = /\)/;
+function getTokenValue6(token) {
   if (token && "value" in token)
     return token.value;
   return token;
 }
-function handleConfigOpenCloseStatement5(d) {
+function handleConfigOpenCloseStatement6(d) {
   const text = d[2].map((v) => {
     if (v.type)
-      return getTokenValue5(v);
+      return getTokenValue6(v);
     return v;
   }).join("");
   try {
@@ -32846,11 +33579,11 @@ function handleConfigOpenCloseStatement5(d) {
     return { type: "overrideConfig", error };
   }
 }
-var COMMENT_LINE5 = /%%.*/;
-var COMMON_TOKEN_RULES2 = {
+var COMMENT_LINE6 = /%%.*/;
+var COMMON_TOKEN_RULES3 = {
   VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
 };
-var lexer5 = moo5.states({
+var lexer6 = moo6.states({
   main: {
     NL: MOO_NEWLINE,
     WS: { match: /[ \t]+/, lineBreaks: false },
@@ -32876,7 +33609,7 @@ var lexer5 = moo5.states({
   },
   configStatement: {
     ...configLexerconfigStatementState,
-    ...COMMON_TOKEN_RULES2
+    ...COMMON_TOKEN_RULES3
   },
   blockComment: {
     DOT_BLOCK_COMMENT_END: { match: /\*\//, pop: 1 },
@@ -32886,8 +33619,8 @@ var lexer5 = moo5.states({
 function rNull() {
   return null;
 }
-var grammar5 = {
-  Lexer: lexer5,
+var grammar6 = {
+  Lexer: lexer6,
   ParserRules: [
     { "name": "_$ebnf$1", "symbols": [] },
     { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", "wschar"], "postprocess": (d) => d[0].concat([d[1]]) },
@@ -32899,11 +33632,11 @@ var grammar5 = {
     { "name": "__", "symbols": ["__$ebnf$1"], "postprocess": function(d) {
       return null;
     } },
-    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id5 },
-    { "name": "color", "symbols": [COLOR5], "postprocess": (d) => tv(d[0]) },
+    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id6 },
+    { "name": "color", "symbols": [_COLOR6], "postprocess": (d) => tv(d[0]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE5, "__", "paramPart"],
+      "symbols": [PARAM_DIRECTIVE6, "__", "paramPart"],
       "postprocess": function(d) {
         return d[2];
       }
@@ -32913,7 +33646,7 @@ var grammar5 = {
     { "name": "paramStatement$ebnf$1", "symbols": ["paramStatement$ebnf$1", "paramStatement$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE5, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
+      "symbols": [PARAM_DIRECTIVE6, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
       "postprocess": function(d) {
         const params = [];
         d[4].forEach((seg) => {
@@ -32935,15 +33668,15 @@ var grammar5 = {
     } },
     { "name": "configStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configStatement$ebnf$1", "symbols": ["configStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE6, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement5 },
+    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE7, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement6 },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": ["configOpenCloseStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE6, L_PAREN5, "configOpenCloseStatement$ebnf$1", R_PAREN5], "postprocess": handleConfigOpenCloseStatement5 },
-    { "name": "comment", "symbols": [COMMENT_LINE5], "postprocess": (d) => null },
+    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE7, L_PAREN6, "configOpenCloseStatement$ebnf$1", R_PAREN6], "postprocess": handleConfigOpenCloseStatement6 },
+    { "name": "comment", "symbols": [COMMENT_LINE6], "postprocess": (d) => null },
     { "name": "start", "symbols": ["__", "start"], "postprocess": (d) => d[1] },
     {
       "name": "start",
-      "symbols": [lexer5.has("DOT_DIAGRAM") ? { type: "DOT_DIAGRAM" } : DOT_DIAGRAM, "document"],
+      "symbols": [lexer6.has("DOT_DIAGRAM") ? { type: "DOT_DIAGRAM" } : DOT_DIAGRAM, "document"],
       "postprocess": function(d) {
         return d[1];
       }
@@ -32961,49 +33694,49 @@ var grammar5 = {
       }
     },
     { "name": "statementWrap$ebnf$1", "symbols": [] },
-    { "name": "statementWrap$ebnf$1", "symbols": ["statementWrap$ebnf$1", lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "statementWrap$ebnf$1", "symbols": ["statementWrap$ebnf$1", lexer6.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "statementWrap", "symbols": ["statementWrap$ebnf$1", "statement"], "postprocess": (d) => {
       return d[1];
     } },
-    { "name": "statementWrap$ebnf$2", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": id5 },
+    { "name": "statementWrap$ebnf$2", "symbols": [lexer6.has("WS") ? { type: "WS" } : WS], "postprocess": id6 },
     { "name": "statementWrap$ebnf$2", "symbols": [], "postprocess": () => null },
-    { "name": "statementWrap", "symbols": ["statementWrap$ebnf$2", "dotCommentSegment", lexer5.has("NL") ? { type: "NL" } : NL], "postprocess": null },
-    { "name": "statementWrap$ebnf$3", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": id5 },
+    { "name": "statementWrap", "symbols": ["statementWrap$ebnf$2", "dotCommentSegment", lexer6.has("NL") ? { type: "NL" } : NL], "postprocess": null },
+    { "name": "statementWrap$ebnf$3", "symbols": [lexer6.has("WS") ? { type: "WS" } : WS], "postprocess": id6 },
     { "name": "statementWrap$ebnf$3", "symbols": [], "postprocess": () => null },
-    { "name": "statementWrap", "symbols": ["statementWrap$ebnf$3", lexer5.has("NL") ? { type: "NL" } : NL], "postprocess": null },
+    { "name": "statementWrap", "symbols": ["statementWrap$ebnf$3", lexer6.has("NL") ? { type: "NL" } : NL], "postprocess": null },
     { "name": "statement$subexpression$1", "symbols": [{ "literal": "graph" }] },
     { "name": "statement$subexpression$1", "symbols": [{ "literal": "digraph" }] },
-    { "name": "statement$ebnf$1", "symbols": [lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": id5 },
+    { "name": "statement$ebnf$1", "symbols": [lexer6.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": id6 },
     { "name": "statement$ebnf$1", "symbols": [], "postprocess": () => null },
-    { "name": "statement$ebnf$2", "symbols": [lexer5.has("NL") ? { type: "NL" } : NL], "postprocess": id5 },
+    { "name": "statement$ebnf$2", "symbols": [lexer6.has("NL") ? { type: "NL" } : NL], "postprocess": id6 },
     { "name": "statement$ebnf$2", "symbols": [], "postprocess": () => null },
     {
       "name": "statement",
-      "symbols": ["statement$subexpression$1", "statement$ebnf$1", lexer5.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "statement$ebnf$2", "stmtList", lexer5.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET],
+      "symbols": ["statement$subexpression$1", "statement$ebnf$1", lexer6.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "statement$ebnf$2", "stmtList", lexer6.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET],
       "postprocess": function(d) {
         const children = d[4];
-        const id9 = d[1] ? tv(d[1]) : "";
+        const id10 = d[1] ? tv(d[1]) : "";
         const action = {
           type: "addGraph",
           graph: {
             type: tv(d[0][0]),
-            id: id9,
+            id: id10,
             children
           }
         };
         return action;
       }
     },
-    { "name": "statement", "symbols": ["paramStatement", lexer5.has("NL") ? { type: "NL" } : NL] },
-    { "name": "statement", "symbols": ["configOpenCloseStatement", lexer5.has("NL") ? { type: "NL" } : NL] },
-    { "name": "statement", "symbols": ["comment", lexer5.has("NL") ? { type: "NL" } : NL] },
-    { "name": "dotCommentSegment", "symbols": [lexer5.has("DOT_SLASH_COMMENT") ? { type: "DOT_SLASH_COMMENT" } : DOT_SLASH_COMMENT], "postprocess": rNull },
+    { "name": "statement", "symbols": ["paramStatement", lexer6.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["configOpenCloseStatement", lexer6.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["comment", lexer6.has("NL") ? { type: "NL" } : NL] },
+    { "name": "dotCommentSegment", "symbols": [lexer6.has("DOT_SLASH_COMMENT") ? { type: "DOT_SLASH_COMMENT" } : DOT_SLASH_COMMENT], "postprocess": rNull },
     { "name": "dotCommentSegment$ebnf$1", "symbols": [] },
-    { "name": "dotCommentSegment$ebnf$1", "symbols": ["dotCommentSegment$ebnf$1", lexer5.has("ANY_COMMENT_TEXT") ? { type: "ANY_COMMENT_TEXT" } : ANY_COMMENT_TEXT], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "dotCommentSegment", "symbols": [lexer5.has("DOT_BLOCK_COMMENT_START") ? { type: "DOT_BLOCK_COMMENT_START" } : DOT_BLOCK_COMMENT_START, "dotCommentSegment$ebnf$1", lexer5.has("DOT_BLOCK_COMMENT_END") ? { type: "DOT_BLOCK_COMMENT_END" } : DOT_BLOCK_COMMENT_END], "postprocess": rNull },
-    { "name": "stmtList$subexpression$1", "symbols": [lexer5.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON] },
-    { "name": "stmtList$subexpression$1", "symbols": [lexer5.has("NL") ? { type: "NL" } : NL] },
-    { "name": "stmtList$ebnf$1", "symbols": ["stmtList"], "postprocess": id5 },
+    { "name": "dotCommentSegment$ebnf$1", "symbols": ["dotCommentSegment$ebnf$1", lexer6.has("ANY_COMMENT_TEXT") ? { type: "ANY_COMMENT_TEXT" } : ANY_COMMENT_TEXT], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "dotCommentSegment", "symbols": [lexer6.has("DOT_BLOCK_COMMENT_START") ? { type: "DOT_BLOCK_COMMENT_START" } : DOT_BLOCK_COMMENT_START, "dotCommentSegment$ebnf$1", lexer6.has("DOT_BLOCK_COMMENT_END") ? { type: "DOT_BLOCK_COMMENT_END" } : DOT_BLOCK_COMMENT_END], "postprocess": rNull },
+    { "name": "stmtList$subexpression$1", "symbols": [lexer6.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON] },
+    { "name": "stmtList$subexpression$1", "symbols": [lexer6.has("NL") ? { type: "NL" } : NL] },
+    { "name": "stmtList$ebnf$1", "symbols": ["stmtList"], "postprocess": id6 },
     { "name": "stmtList$ebnf$1", "symbols": [], "postprocess": () => null },
     {
       "name": "stmtList",
@@ -33039,28 +33772,28 @@ var grammar5 = {
         };
       }
     },
-    { "name": "singleAttrStmt$subexpression$1", "symbols": [lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "singleAttrStmt$subexpression$1", "symbols": [lexer5.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD] },
-    { "name": "singleAttrStmt$ebnf$1$subexpression$1", "symbols": [lexer5.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON] },
-    { "name": "singleAttrStmt$ebnf$1$subexpression$1", "symbols": [lexer5.has("COMMA") ? { type: "COMMA" } : COMMA] },
-    { "name": "singleAttrStmt$ebnf$1", "symbols": ["singleAttrStmt$ebnf$1$subexpression$1"], "postprocess": id5 },
+    { "name": "singleAttrStmt$subexpression$1", "symbols": [lexer6.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "singleAttrStmt$subexpression$1", "symbols": [lexer6.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD] },
+    { "name": "singleAttrStmt$ebnf$1$subexpression$1", "symbols": [lexer6.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON] },
+    { "name": "singleAttrStmt$ebnf$1$subexpression$1", "symbols": [lexer6.has("COMMA") ? { type: "COMMA" } : COMMA] },
+    { "name": "singleAttrStmt$ebnf$1", "symbols": ["singleAttrStmt$ebnf$1$subexpression$1"], "postprocess": id6 },
     { "name": "singleAttrStmt$ebnf$1", "symbols": [], "postprocess": () => null },
     {
       "name": "singleAttrStmt",
-      "symbols": [lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer5.has("EQ") ? { type: "EQ" } : EQ, "singleAttrStmt$subexpression$1", "singleAttrStmt$ebnf$1"],
+      "symbols": [lexer6.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer6.has("EQ") ? { type: "EQ" } : EQ, "singleAttrStmt$subexpression$1", "singleAttrStmt$ebnf$1"],
       "postprocess": function(d) {
-        const id9 = tv(d[0]);
+        const id10 = tv(d[0]);
         const eqValToken = d[2][0];
         const eq4 = eqValToken.type === "QUOTED_WORD" ? getQuotedWord(eqValToken) : tv(eqValToken);
         const attr = {
           type: "attr",
-          id: id9,
+          id: id10,
           eq: eq4
         };
         return attr;
       }
     },
-    { "name": "nodeStmt$ebnf$1", "symbols": ["attrList"], "postprocess": id5 },
+    { "name": "nodeStmt$ebnf$1", "symbols": ["attrList"], "postprocess": id6 },
     { "name": "nodeStmt$ebnf$1", "symbols": [], "postprocess": () => null },
     {
       "name": "nodeStmt",
@@ -33078,7 +33811,7 @@ var grammar5 = {
     },
     {
       "name": "nodeStmt",
-      "symbols": ["nodeId", lexer5.has("L_SQ_BRACKET") ? { type: "L_SQ_BRACKET" } : L_SQ_BRACKET, lexer5.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD, lexer5.has("R_SQ_BRACKET") ? { type: "R_SQ_BRACKET" } : R_SQ_BRACKET],
+      "symbols": ["nodeId", lexer6.has("L_SQ_BRACKET") ? { type: "L_SQ_BRACKET" } : L_SQ_BRACKET, lexer6.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD, lexer6.has("R_SQ_BRACKET") ? { type: "R_SQ_BRACKET" } : R_SQ_BRACKET],
       "postprocess": function(d) {
         const nodeId = d[0];
         const label = getQuotedWord(d[2]);
@@ -33102,7 +33835,7 @@ var grammar5 = {
         };
       }
     },
-    { "name": "edgeStmt$ebnf$1", "symbols": ["attrList"], "postprocess": id5 },
+    { "name": "edgeStmt$ebnf$1", "symbols": ["attrList"], "postprocess": id6 },
     { "name": "edgeStmt$ebnf$1", "symbols": [], "postprocess": () => null },
     {
       "name": "edgeStmt",
@@ -33120,9 +33853,9 @@ var grammar5 = {
         return edgeStmt;
       }
     },
-    { "name": "edgeRHS$ebnf$1", "symbols": [lexer5.has("WS") ? { type: "WS" } : WS], "postprocess": id5 },
+    { "name": "edgeRHS$ebnf$1", "symbols": [lexer6.has("WS") ? { type: "WS" } : WS], "postprocess": id6 },
     { "name": "edgeRHS$ebnf$1", "symbols": [], "postprocess": () => null },
-    { "name": "edgeRHS$ebnf$2", "symbols": ["edgeRHS"], "postprocess": id5 },
+    { "name": "edgeRHS$ebnf$2", "symbols": ["edgeRHS"], "postprocess": id6 },
     { "name": "edgeRHS$ebnf$2", "symbols": [], "postprocess": () => null },
     {
       "name": "edgeRHS",
@@ -33135,36 +33868,36 @@ var grammar5 = {
     },
     { "name": "edgeop", "symbols": [{ "literal": "->" }] },
     { "name": "edgeop", "symbols": [{ "literal": "--" }] },
-    { "name": "attrList$ebnf$1", "symbols": ["attrList"], "postprocess": id5 },
+    { "name": "attrList$ebnf$1", "symbols": ["attrList"], "postprocess": id6 },
     { "name": "attrList$ebnf$1", "symbols": [], "postprocess": () => null },
     {
       "name": "attrList",
-      "symbols": [lexer5.has("L_SQ_BRACKET") ? { type: "L_SQ_BRACKET" } : L_SQ_BRACKET, "attrItems", lexer5.has("R_SQ_BRACKET") ? { type: "R_SQ_BRACKET" } : R_SQ_BRACKET, "attrList$ebnf$1"],
+      "symbols": [lexer6.has("L_SQ_BRACKET") ? { type: "L_SQ_BRACKET" } : L_SQ_BRACKET, "attrItems", lexer6.has("R_SQ_BRACKET") ? { type: "R_SQ_BRACKET" } : R_SQ_BRACKET, "attrList$ebnf$1"],
       "postprocess": function(d) {
         const attrList = d[3] ? d[3][0] : [];
         const attrItems = d[1];
         return d[1];
       }
     },
-    { "name": "attrItems$subexpression$1", "symbols": [lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "attrItems$subexpression$1", "symbols": [lexer5.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD] },
-    { "name": "attrItems$ebnf$1$subexpression$1", "symbols": [lexer5.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON] },
-    { "name": "attrItems$ebnf$1$subexpression$1", "symbols": [lexer5.has("COMMA") ? { type: "COMMA" } : COMMA] },
-    { "name": "attrItems$ebnf$1", "symbols": ["attrItems$ebnf$1$subexpression$1"], "postprocess": id5 },
+    { "name": "attrItems$subexpression$1", "symbols": [lexer6.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "attrItems$subexpression$1", "symbols": [lexer6.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD] },
+    { "name": "attrItems$ebnf$1$subexpression$1", "symbols": [lexer6.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON] },
+    { "name": "attrItems$ebnf$1$subexpression$1", "symbols": [lexer6.has("COMMA") ? { type: "COMMA" } : COMMA] },
+    { "name": "attrItems$ebnf$1", "symbols": ["attrItems$ebnf$1$subexpression$1"], "postprocess": id6 },
     { "name": "attrItems$ebnf$1", "symbols": [], "postprocess": () => null },
-    { "name": "attrItems$ebnf$2", "symbols": ["attrItems"], "postprocess": id5 },
+    { "name": "attrItems$ebnf$2", "symbols": ["attrItems"], "postprocess": id6 },
     { "name": "attrItems$ebnf$2", "symbols": [], "postprocess": () => null },
     {
       "name": "attrItems",
-      "symbols": [lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer5.has("EQ") ? { type: "EQ" } : EQ, "attrItems$subexpression$1", "attrItems$ebnf$1", "attrItems$ebnf$2"],
+      "symbols": [lexer6.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer6.has("EQ") ? { type: "EQ" } : EQ, "attrItems$subexpression$1", "attrItems$ebnf$1", "attrItems$ebnf$2"],
       "postprocess": function(d) {
         const attrItems = d[4] ? d[4] : [];
-        const id9 = tv(d[0]);
+        const id10 = tv(d[0]);
         const eqValToken = d[2][0];
         const eq4 = eqValToken.type === "QUOTED_WORD" ? getQuotedWord(eqValToken) : tv(eqValToken);
         const attr = {
           type: "attr",
-          id: id9,
+          id: id10,
           eq: eq4
         };
         return [attr, ...attrItems];
@@ -33172,7 +33905,7 @@ var grammar5 = {
     },
     {
       "name": "nodeId",
-      "symbols": [lexer5.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD],
+      "symbols": [lexer6.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD],
       "postprocess": function(d) {
         return {
           type: "node_id",
@@ -33182,7 +33915,7 @@ var grammar5 = {
     },
     {
       "name": "nodeId",
-      "symbols": [lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT],
+      "symbols": [lexer6.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT],
       "postprocess": function(d) {
         return {
           type: "node_id",
@@ -33190,11 +33923,11 @@ var grammar5 = {
         };
       }
     },
-    { "name": "subgraph$ebnf$1", "symbols": [lexer5.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": id5 },
+    { "name": "subgraph$ebnf$1", "symbols": [lexer6.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": id6 },
     { "name": "subgraph$ebnf$1", "symbols": [], "postprocess": () => null },
     {
       "name": "subgraph",
-      "symbols": [lexer5.has("SUBGRAPH") ? { type: "SUBGRAPH" } : SUBGRAPH, "subgraph$ebnf$1", lexer5.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "_", "stmtList", "_", lexer5.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET],
+      "symbols": [lexer6.has("SUBGRAPH") ? { type: "SUBGRAPH" } : SUBGRAPH, "subgraph$ebnf$1", lexer6.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "_", "stmtList", "_", lexer6.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET],
       "postprocess": function(d) {
         const children = d[4];
         const subgraph = {
@@ -33209,9 +33942,9 @@ var grammar5 = {
     }
   ],
   ParserStart: "start",
-  ParserOptions: { skipUnmatchSymbols: [lexer5.has("WS") ? { type: "WS" } : WS] }
+  ParserOptions: { skipUnmatchSymbols: [lexer6.has("WS") ? { type: "WS" } : WS] }
 };
-var dotDiagram_default = grammar5;
+var dotDiagram_default = grammar6;
 
 // ../pintora-diagrams/lib/dot/parser.js
 var parse5 = genParserWithRules(dotDiagram_default, {
@@ -33225,12 +33958,10 @@ var parse5 = genParserWithRules(dotDiagram_default, {
 // ../pintora-diagrams/lib/dot/index.js
 var dotDiagram = {
   pattern: /^\s*dotDiagram/,
-  parser: {
-    parse(text) {
-      parse5(text);
-      return db_default4.getDiagramIR();
-    }
-  },
+  parser: new ParserWithPreprocessor({
+    db: db_default4,
+    parse: parse5
+  }),
   artist: artist_default5,
   configKey: "dot",
   clear() {
@@ -33269,8 +34000,8 @@ var MMTree = class _MMTree {
       this.current = newNode;
     }
   }
-  getNode(id9) {
-    return this.nodes.get(id9);
+  getNode(id10) {
+    return this.nodes.get(id10);
   }
   addChild(parent, child) {
     parent.children.push(child.id);
@@ -33327,6 +34058,7 @@ var MindmapDb = class extends BaseDb {
     };
   }
   addItem(item) {
+    item.itemId = `node-${item.label}`;
     if (!this.currentTree || item.depth === 1) {
       this.currentTree = MMTree.fromRootItem(item);
       this.trees.push(this.currentTree);
@@ -33358,6 +34090,10 @@ var MindmapDb = class extends BaseDb {
         this.addOverrideConfig(part);
         break;
       }
+      case "bindClass": {
+        STYLE_ACTION_HANDLERS.bindClass.call(this, part);
+        break;
+      }
     }
   }
   getTreeByData(data) {
@@ -33375,15 +34111,10 @@ var db6 = new MindmapDb();
 var db_default5 = db6;
 
 // ../pintora-diagrams/lib/mindmap/config.js
-function getColorsByPrimary(c, isDark = false) {
+function getColorsByPrimary(c) {
   const primaryColor = (0, import_tinycolor2.default)(c);
   const hslColor = primaryColor.toHsl();
-  let primaryLight1;
-  if (isDark) {
-    primaryLight1 = primaryColor.clone().brighten(15);
-  } else {
-    primaryLight1 = primaryColor.clone().brighten(15);
-  }
+  const primaryLight1 = primaryColor.clone().brighten(15);
   const primaryLight2 = (0, import_tinycolor2.default)({ h: hslColor.h, s: 20, l: 90 });
   return {
     nodeBgColor: primaryLight2.toHexString(),
@@ -33393,6 +34124,7 @@ function getColorsByPrimary(c, isDark = false) {
 }
 var DEFAULT_COLORS = getColorsByPrimary(PALETTE.orange);
 var defaultConfig6 = {
+  ...defaultFontConfig,
   diagramPadding: 15,
   layoutDirection: "LR",
   useMaxWidth: false,
@@ -33402,7 +34134,6 @@ var defaultConfig6 = {
   nodeFontWeight: "normal",
   textColor: PALETTE.normalDark,
   edgeColor: PALETTE.normalDark,
-  fontFamily: DEFAULT_FONT_FAMILY,
   maxFontSize: 18,
   minFontSize: 12,
   levelDistance: 40,
@@ -33413,6 +34144,7 @@ var defaultConfig6 = {
 };
 var MINDMAP_PARAM_DIRECTIVE_RULES = {
   ...getParamRulesFromConfig(defaultConfig6),
+  ...getFontConfigRules(),
   useMaxWidth: { valueType: "boolean" },
   diagramPadding: { valueType: "size" },
   layoutDirection: { valueType: "layoutDirection" },
@@ -33423,7 +34155,6 @@ var MINDMAP_PARAM_DIRECTIVE_RULES = {
   edgeColor: { valueType: "color" },
   maxFontSize: { valueType: "size" },
   minFontSize: { valueType: "size" },
-  fontFamily: { valueType: "string" },
   levelDistance: { valueType: "size" },
   l1NodeBgColor: { valueType: "color" },
   l1NodeTextColor: { valueType: "color" },
@@ -33438,7 +34169,7 @@ var configurator6 = makeConfigurator({
     return interpreteConfigs(MINDMAP_PARAM_DIRECTIVE_RULES, configParams);
   },
   getConfigFromTheme(t) {
-    const { nodeBgColor, l1NodeBgColor, l2NodeBgColor } = getColorsByPrimary(t.primaryColor, t.isDark);
+    const { nodeBgColor, l1NodeBgColor, l2NodeBgColor } = getColorsByPrimary(t.primaryColor);
     const nodeBgColorInstance = (0, import_tinycolor2.default)(nodeBgColor);
     const bgIsLight = nodeBgColorInstance.isLight();
     const textColorIsLight = (0, import_tinycolor2.default)(t.textColor).isLight();
@@ -33459,10 +34190,12 @@ var getConf6 = configurator6.getConfig;
 // ../pintora-diagrams/lib/mindmap/artist.js
 var conf4;
 var mmDraw;
-var mmArtist = {
-  draw(ir, config2, opts) {
+var MindmapArtist = class extends BaseArtist {
+  customDraw(ir, config2, opts) {
     conf4 = Object.assign(getConf6(ir), config2 || {});
     mmDraw = new MMDraw(ir);
+    const fontConfig2 = getFontConfig(conf4);
+    mmDraw.fontConfig = fontConfig2;
     if (isDev) {
       ;
       window.mmDraw = mmDraw;
@@ -33474,18 +34207,17 @@ var mmArtist = {
     };
     mmDraw.drawTo(rootMark);
     const bounds = mmDraw.dagreWrapper.getGraphBounds();
-    const { title } = ir;
-    let titleSize = void 0;
-    let titleMark = void 0;
-    if (title) {
-      const titleFont = { fontSize: conf4.maxFontSize, fontFamily: conf4.fontFamily };
-      const titleResult = makeTitleMark(title, titleFont, { fill: conf4.textColor });
-      titleSize = titleResult.titleSize;
-      titleMark = titleResult.mark;
-      titleMark.class = "mindmap__title";
-      rootMark.children.push(titleMark);
-      titleSize.height += conf4.maxFontSize;
-    }
+    const titleFont = {
+      ...fontConfig2,
+      fontSize: conf4.maxFontSize
+    };
+    const titleMaker = new DiagramTitleMaker({
+      title: ir.title,
+      titleFont,
+      fill: conf4.textColor,
+      className: "mindmap__title"
+    });
+    const titleResult = titleMaker.appendTitleMark(rootMark);
     const { width: width2, height } = adjustRootMarkBounds({
       rootMark,
       gBounds: bounds,
@@ -33493,8 +34225,7 @@ var mmArtist = {
       padY: conf4.diagramPadding,
       useMaxWidth: conf4.useMaxWidth,
       containerSize: opts === null || opts === void 0 ? void 0 : opts.containerSize,
-      titleSize,
-      titleMark
+      ...titleResult
     });
     return {
       width: width2,
@@ -33503,6 +34234,7 @@ var mmArtist = {
     };
   }
 };
+var mmArtist = new MindmapArtist();
 var MMDraw = class {
   constructor(ir) {
     this.ir = ir;
@@ -33541,10 +34273,11 @@ var MMDraw = class {
   }
   drawNode(rootMark, tree, node2) {
     const fontSize2 = Math.max(conf4.minFontSize, conf4.maxFontSize - (node2.depth - 1) * 2);
-    const fontConfig = getFontConfig4(conf4, { fontSize: fontSize2, fontWeight: conf4.nodeFontWeight });
-    const labelDim = calculateTextDimensions(node2.label, fontConfig);
+    const fontConfig2 = getFontConfig(conf4, { fontSize: fontSize2, fontWeight: conf4.nodeFontWeight });
+    const labelDim = calculateTextDimensions(node2.label, fontConfig2);
     const group = makeEmptyGroup();
     group.class = "mindmap__node";
+    group.itemId = node2.itemId;
     const padding = Math.ceil(fontSize2 * 0.75);
     const rectWidth = labelDim.width + padding * 2;
     const rectHeight = labelDim.height + padding * 2;
@@ -33562,7 +34295,7 @@ var MMDraw = class {
       fill: nodeStyle.textColor,
       textBaseline: "middle",
       textAlign: "center",
-      ...fontConfig
+      ...fontConfig2
     });
     group.children.push(bgMark, textMark);
     this.g.setNode(node2.id, {
@@ -33603,8 +34336,8 @@ var MMDraw = class {
         toInPoint = getPositionOfRect(TRANSFORM_GRAPH.graphNodeToRectStart(isReverse ? fromNode : toNode), (isReverse ? PositionH.RIGHT : PositionH.LEFT) | PositionV.CENTER);
       }
       const nextLevelIds = isReverse ? g.predecessors(e.w) : g.successors(e.v);
-      const nextLevelBounds = nextLevelIds.reduce((acc, id9) => {
-        const nodeData = TRANSFORM_GRAPH.graphNodeToRectStart(g.node(id9));
+      const nextLevelBounds = nextLevelIds.reduce((acc, id10) => {
+        const nodeData = TRANSFORM_GRAPH.graphNodeToRectStart(g.node(id10));
         if (nodeData.x < acc.left)
           acc.left = nodeData.x;
         const right = nodeData.x + nodeData.width;
@@ -33633,33 +34366,27 @@ var MMDraw = class {
     rootMark.children.push(edgeGroup);
   }
 };
-function getFontConfig4(conf5, f) {
-  return {
-    fontFamily: conf5.fontFamily,
-    ...f
-  };
-}
 var artist_default6 = mmArtist;
 
 // ../pintora-diagrams/lib/mindmap/parser/mindmap.js
-var moo6 = __toESM(require_moo());
-function id6(d) {
+var moo7 = __toESM(require_moo());
+function id7(d) {
   return d[0];
 }
-var COLOR6 = /#[a-zA-Z0-9]+/;
-var PARAM_DIRECTIVE6 = /@param/;
-var CONFIG_DIRECTIVE7 = /@config/;
-var L_PAREN6 = /\(/;
-var R_PAREN6 = /\)/;
-function getTokenValue6(token) {
+var _COLOR7 = /#[a-zA-Z0-9]+/;
+var PARAM_DIRECTIVE7 = /@param/;
+var CONFIG_DIRECTIVE8 = /@config/;
+var L_PAREN7 = /\(/;
+var R_PAREN7 = /\)/;
+function getTokenValue7(token) {
   if (token && "value" in token)
     return token.value;
   return token;
 }
-function handleConfigOpenCloseStatement6(d) {
+function handleConfigOpenCloseStatement7(d) {
   const text = d[2].map((v) => {
     if (v.type)
-      return getTokenValue6(v);
+      return getTokenValue7(v);
     return v;
   }).join("");
   try {
@@ -33669,37 +34396,48 @@ function handleConfigOpenCloseStatement6(d) {
     return { type: "overrideConfig", error };
   }
 }
-var COMMENT_LINE6 = /%%.*/;
-var COMMON_TOKEN_RULES3 = {
+var COMMENT_LINE7 = /%%.*/;
+var BIND_CLASS5 = /@bindClass/;
+var COMMON_TOKEN_RULES4 = {
   VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
 };
-var lexer6 = moo6.states({
+var lexer7 = moo7.states({
   main: {
     NL: MOO_NEWLINE,
     WS: { match: / +/, lineBreaks: false },
-    ASTERISKS: /\*+/,
-    PLUS: /\++/,
-    MINUS: /\-+/,
     SEMICOLON: /;/,
     COLON: /:/,
-    PARAM_DIRECTIVE: PARAM_DIRECTIVE6,
+    PARAM_DIRECTIVE: PARAM_DIRECTIVE7,
     ...configLexerMainState,
     L_PAREN: L_PAREN_REGEXP,
     R_PAREN: R_PAREN_REGEXP,
     COMMENT_LINE: COMMENT_LINE_REGEXP,
-    ...COMMON_TOKEN_RULES3
+    ...BIND_REGEXPS,
+    ...COMMON_TOKEN_RULES4
   },
   configStatement: {
     ...configLexerconfigStatementState,
-    ...COMMON_TOKEN_RULES3
+    ...COMMON_TOKEN_RULES4
   }
 });
-var yy5;
-function setYY5(v) {
-  yy5 = v;
-}
-var grammar6 = {
-  Lexer: lexer6,
+var parseNotation = (text) => {
+  let char = text[0];
+  const isReverse = char === "-";
+  if (char === "+" || char === "*" || char === "-") {
+    let i2 = 1;
+    let depth = 1;
+    while (i2 < text.length && text[i2] === char) {
+      i2 += 1;
+      depth += 1;
+    }
+    if (i2 < text.length && text[i2] !== " ") {
+      throw new Error(`Unrecognized notation: ${text}`);
+    }
+    return { depth, text: text.slice(0, depth), isReverse };
+  }
+};
+var grammar7 = {
+  Lexer: lexer7,
   ParserRules: [
     { "name": "_$ebnf$1", "symbols": [] },
     { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", "wschar"], "postprocess": (d) => d[0].concat([d[1]]) },
@@ -33711,11 +34449,11 @@ var grammar6 = {
     { "name": "__", "symbols": ["__$ebnf$1"], "postprocess": function(d) {
       return null;
     } },
-    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id6 },
-    { "name": "color", "symbols": [COLOR6], "postprocess": (d) => tv(d[0]) },
+    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id7 },
+    { "name": "color", "symbols": [_COLOR7], "postprocess": (d) => tv(d[0]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE6, "__", "paramPart"],
+      "symbols": [PARAM_DIRECTIVE7, "__", "paramPart"],
       "postprocess": function(d) {
         return d[2];
       }
@@ -33725,7 +34463,7 @@ var grammar6 = {
     { "name": "paramStatement$ebnf$1", "symbols": ["paramStatement$ebnf$1", "paramStatement$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE6, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
+      "symbols": [PARAM_DIRECTIVE7, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
       "postprocess": function(d) {
         const params = [];
         d[4].forEach((seg) => {
@@ -33747,11 +34485,38 @@ var grammar6 = {
     } },
     { "name": "configStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configStatement$ebnf$1", "symbols": ["configStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE7, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement6 },
+    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE8, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement7 },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": ["configOpenCloseStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE7, L_PAREN6, "configOpenCloseStatement$ebnf$1", R_PAREN6], "postprocess": handleConfigOpenCloseStatement6 },
-    { "name": "comment", "symbols": [COMMENT_LINE6], "postprocess": (d) => null },
+    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE8, L_PAREN7, "configOpenCloseStatement$ebnf$1", R_PAREN7], "postprocess": handleConfigOpenCloseStatement7 },
+    { "name": "comment", "symbols": [COMMENT_LINE7], "postprocess": (d) => null },
+    { "name": "bindClassStatement$ebnf$1", "symbols": [lexer7.has("WS") ? { type: "WS" } : WS] },
+    { "name": "bindClassStatement$ebnf$1", "symbols": ["bindClassStatement$ebnf$1", lexer7.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "bindClassStatement$ebnf$2", "symbols": [lexer7.has("WS") ? { type: "WS" } : WS] },
+    { "name": "bindClassStatement$ebnf$2", "symbols": ["bindClassStatement$ebnf$2", lexer7.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "bindClassStatement$ebnf$3", "symbols": [] },
+    { "name": "bindClassStatement$ebnf$3", "symbols": ["bindClassStatement$ebnf$3", lexer7.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "bindClassStatement",
+      "symbols": [lexer7.has("BIND_CLASS") ? { type: "BIND_CLASS" } : BIND_CLASS5, "bindClassStatement$ebnf$1", "nodeList", "bindClassStatement$ebnf$2", lexer7.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "bindClassStatement$ebnf$3", lexer7.has("NL") ? { type: "NL" } : NL],
+      "postprocess": (d) => ({
+        type: "bindClass",
+        nodes: d[2],
+        className: tv(d[4])
+      })
+    },
+    { "name": "nodeList", "symbols": [lexer7.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => [tv(d[0])] },
+    { "name": "nodeList$ebnf$1", "symbols": [] },
+    { "name": "nodeList$ebnf$1", "symbols": ["nodeList$ebnf$1", lexer7.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "nodeList",
+      "symbols": ["nodeList", lexer7.has("COMMA") ? { type: "COMMA" } : COMMA, "nodeList$ebnf$1", lexer7.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT],
+      "postprocess": (d) => {
+        const list = d[0];
+        list.push(tv(d[3]));
+        return list;
+      }
+    },
     { "name": "start", "symbols": ["__", "start"] },
     { "name": "start", "symbols": [{ "literal": "mindmap" }, "document"] },
     { "name": "document", "symbols": [] },
@@ -33764,67 +34529,40 @@ var grammar6 = {
       }
     },
     { "name": "line$ebnf$1", "symbols": [] },
-    { "name": "line$ebnf$1", "symbols": ["line$ebnf$1", lexer6.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "line$ebnf$1", "symbols": ["line$ebnf$1", lexer7.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "line", "symbols": ["line$ebnf$1", "statement"] },
     { "name": "line$ebnf$2", "symbols": [] },
-    { "name": "line$ebnf$2", "symbols": ["line$ebnf$2", lexer6.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "line", "symbols": ["line$ebnf$2", lexer6.has("NL") ? { type: "NL" } : NL] },
+    { "name": "line$ebnf$2", "symbols": ["line$ebnf$2", lexer7.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "line", "symbols": ["line$ebnf$2", lexer7.has("NL") ? { type: "NL" } : NL] },
     {
       "name": "statement",
-      "symbols": ["levelNotation", lexer6.has("WS") ? { type: "WS" } : WS, "words", lexer6.has("NL") ? { type: "NL" } : NL],
+      "symbols": [lexer7.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer7.has("WS") ? { type: "WS" } : WS, "words", lexer7.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const label = d[2];
-        const notation = d[0];
-        return { type: "addItem", label, depth: d[0].depth, isReverse: notation.isReverse };
-      }
-    },
-    { "name": "statement$ebnf$1", "symbols": [lexer6.has("WS") ? { type: "WS" } : WS], "postprocess": id6 },
-    { "name": "statement$ebnf$1", "symbols": [], "postprocess": () => null },
-    {
-      "name": "statement",
-      "symbols": ["levelNotation", lexer6.has("WS") ? { type: "WS" } : WS, lexer6.has("COLON") ? { type: "COLON" } : COLON, "multilineText", lexer6.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON, "statement$ebnf$1", lexer6.has("NL") ? { type: "NL" } : NL],
-      "postprocess": function(d) {
-        const label = d[3];
-        const notation = d[0];
+        const notation = parseNotation(tv(d[0]));
         return { type: "addItem", label, depth: notation.depth, isReverse: notation.isReverse };
       }
     },
-    { "name": "statement", "symbols": ["paramStatement", "_", lexer6.has("NL") ? { type: "NL" } : NL] },
-    { "name": "statement", "symbols": ["configOpenCloseStatement", "_", lexer6.has("NL") ? { type: "NL" } : NL] },
-    { "name": "statement", "symbols": [{ "literal": "title" }, lexer6.has("COLON") ? { type: "COLON" } : COLON, "words", lexer6.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => ({ type: "setTitle", text: d[2].trim() }) },
-    { "name": "statement", "symbols": ["comment", "_", lexer6.has("NL") ? { type: "NL" } : NL] },
-    { "name": "levelNotation$subexpression$1", "symbols": [lexer6.has("ASTERISKS") ? { type: "ASTERISKS" } : ASTERISKS] },
-    { "name": "levelNotation$subexpression$1", "symbols": [lexer6.has("PLUS") ? { type: "PLUS" } : PLUS] },
+    { "name": "statement$ebnf$1", "symbols": [lexer7.has("WS") ? { type: "WS" } : WS], "postprocess": id7 },
+    { "name": "statement$ebnf$1", "symbols": [], "postprocess": () => null },
     {
-      "name": "levelNotation",
-      "symbols": ["levelNotation$subexpression$1"],
+      "name": "statement",
+      "symbols": [lexer7.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer7.has("WS") ? { type: "WS" } : WS, lexer7.has("COLON") ? { type: "COLON" } : COLON, "multilineText", lexer7.has("SEMICOLON") ? { type: "SEMICOLON" } : SEMICOLON, "statement$ebnf$1", lexer7.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
-        const text = tv(d[0][0]);
-        return {
-          depth: text.length,
-          text
-        };
+        const label = d[3];
+        const notation = parseNotation(tv(d[0]));
+        return { type: "addItem", label, depth: notation.depth, isReverse: notation.isReverse };
       }
     },
-    {
-      "name": "levelNotation",
-      "symbols": [lexer6.has("MINUS") ? { type: "MINUS" } : MINUS],
-      "postprocess": function(d) {
-        const text = tv(d[0]);
-        return {
-          depth: text.length,
-          text,
-          isReverse: true
-        };
-      }
-    },
-    { "name": "textSegment", "symbols": [lexer6.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "textSegment", "symbols": [lexer6.has("ASTERISKS") ? { type: "ASTERISKS" } : ASTERISKS] },
-    { "name": "textSegment", "symbols": [lexer6.has("PLUS") ? { type: "PLUS" } : PLUS] },
-    { "name": "textSegment", "symbols": [lexer6.has("MINUS") ? { type: "MINUS" } : MINUS] },
+    { "name": "statement", "symbols": ["paramStatement", "_", lexer7.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["configOpenCloseStatement", "_", lexer7.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": [{ "literal": "title" }, lexer7.has("COLON") ? { type: "COLON" } : COLON, "words", lexer7.has("NL") ? { type: "NL" } : NL], "postprocess": (d) => ({ type: "setTitle", text: d[2].trim() }) },
+    { "name": "statement", "symbols": ["bindClassStatement"] },
+    { "name": "statement", "symbols": ["comment", "_", lexer7.has("NL") ? { type: "NL" } : NL] },
+    { "name": "textSegment", "symbols": [lexer7.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
     {
       "name": "textSegment",
-      "symbols": [lexer6.has("WS") ? { type: "WS" } : WS],
+      "symbols": [lexer7.has("WS") ? { type: "WS" } : WS],
       "postprocess": function(d) {
         const c = d[0];
         return typeof c === "string" ? c : tv(c);
@@ -33842,7 +34580,7 @@ var grammar6 = {
     },
     { "name": "multilineText$ebnf$1", "symbols": [] },
     { "name": "multilineText$ebnf$1$subexpression$1", "symbols": ["textSegment"] },
-    { "name": "multilineText$ebnf$1$subexpression$1", "symbols": [lexer6.has("NL") ? { type: "NL" } : NL] },
+    { "name": "multilineText$ebnf$1$subexpression$1", "symbols": [lexer7.has("NL") ? { type: "NL" } : NL] },
     { "name": "multilineText$ebnf$1", "symbols": ["multilineText$ebnf$1", "multilineText$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "multilineText",
@@ -33858,26 +34596,24 @@ var grammar6 = {
   ParserStart: "start",
   ParserOptions: { skipUnmatchSymbols: [] }
 };
-var mindmap_default = grammar6;
+var mindmap_default = grammar7;
 
 // ../pintora-diagrams/lib/mindmap/parser.js
-setYY5(db_default5);
 var parse6 = genParserWithRules(mindmap_default, {
   postProcess(results) {
     db_default5.apply(results);
     return results;
   }
 });
+var parser = new ParserWithPreprocessor({
+  db: db_default5,
+  parse: parse6
+});
 
 // ../pintora-diagrams/lib/mindmap/index.js
 var mindmap = {
   pattern: /^\s*mindmap/,
-  parser: {
-    parse(text) {
-      parse6(text);
-      return db_default5.getDiagramIR();
-    }
-  },
+  parser,
   artist: artist_default6,
   configKey: configKey6,
   clear() {
@@ -34417,8 +35153,8 @@ var GanttDb = class extends BaseDb {
       task.prevTaskId = prevTaskId;
       endTimeData = end;
     } else if (segsLen === 3) {
-      const [id9, start, end] = segs;
-      task.id = this.makeTaskId(id9);
+      const [id10, start, end] = segs;
+      task.id = this.makeTaskId(id10);
       const { date: date2, prevTaskId } = this.getStartOfTask(start);
       task.startTime = date2;
       task.prevTaskId = prevTaskId;
@@ -34431,8 +35167,8 @@ var GanttDb = class extends BaseDb {
     }
     return task;
   }
-  findTaskById(id9) {
-    return this.tasks[id9];
+  findTaskById(id10) {
+    return this.tasks[id10];
   }
   getStartOfTask(str3) {
     str3 = str3.trim();
@@ -34440,8 +35176,8 @@ var GanttDb = class extends BaseDb {
     const afterStatement = AFTER_TASK_REGEXP.exec(str3.trim());
     if (afterStatement !== null) {
       let latestEndingTask = null;
-      afterStatement[1].split(" ").forEach((id9) => {
-        const task = this.findTaskById(id9);
+      afterStatement[1].split(" ").forEach((id10) => {
+        const task = this.findTaskById(id10);
         if (typeof task !== "undefined") {
           prevTaskId = task.id;
           if (!latestEndingTask) {
@@ -35911,6 +36647,7 @@ var import_dayjs2 = __toESM(require_dayjs_min());
 
 // ../pintora-diagrams/lib/gantt/config.js
 var defaultConfig7 = {
+  ...defaultFontConfig,
   barHeight: 20,
   barGap: 2,
   topPadding: 30,
@@ -35928,12 +36665,11 @@ var defaultConfig7 = {
   barBorderRadius: 2,
   sectionBackgrounds: ["#fff0da", void 0],
   sectionLabelColor: PALETTE.normalDark,
-  fontColor: PALETTE.normalDark,
-  fontSize: 14,
-  fontFamily: DEFAULT_FONT_FAMILY
+  fontColor: PALETTE.normalDark
 };
 var GANTT_PARAM_DIRECTIVE_RULES = {
   ...getParamRulesFromConfig(defaultConfig7),
+  ...getFontConfigRules(),
   axisFormat: { valueType: "string" }
 };
 var configKey7 = "gantt";
@@ -36019,10 +36755,7 @@ var GanttDraw = class {
     this.endDate = new Date(max(taskArray, function(d) {
       return Number(d.renderEndTime || d.endTime);
     }));
-    this.fontConfig = {
-      fontSize: conf5.fontSize,
-      fontFamily: conf5.fontFamily
-    };
+    this.fontConfig = getFontConfig(conf5);
     const categories = taskArray.map((task) => task.section);
     this.categories = categories;
     const sectionLabelWidths = categories.reduce((acc, section) => {
@@ -36380,8 +37113,8 @@ function getTaskAppearanceInfo(opts) {
 var artist_default7 = artist2;
 
 // ../pintora-diagrams/lib/gantt/parser/gantt.js
-var moo7 = __toESM(require_moo());
-function id7(d) {
+var moo8 = __toESM(require_moo());
+function id8(d) {
   return d[0];
 }
 function nth2(n2) {
@@ -36389,20 +37122,20 @@ function nth2(n2) {
     return d[n2];
   };
 }
-var COLOR7 = /#[a-zA-Z0-9]+/;
-var PARAM_DIRECTIVE7 = /@param/;
-var CONFIG_DIRECTIVE8 = /@config/;
-var L_PAREN7 = /\(/;
-var R_PAREN7 = /\)/;
-function getTokenValue7(token) {
+var _COLOR8 = /#[a-zA-Z0-9]+/;
+var PARAM_DIRECTIVE8 = /@param/;
+var CONFIG_DIRECTIVE9 = /@config/;
+var L_PAREN8 = /\(/;
+var R_PAREN8 = /\)/;
+function getTokenValue8(token) {
   if (token && "value" in token)
     return token.value;
   return token;
 }
-function handleConfigOpenCloseStatement7(d) {
+function handleConfigOpenCloseStatement8(d) {
   const text = d[2].map((v) => {
     if (v.type)
-      return getTokenValue7(v);
+      return getTokenValue8(v);
     return v;
   }).join("");
   try {
@@ -36412,7 +37145,7 @@ function handleConfigOpenCloseStatement7(d) {
     return { type: "overrideConfig", error };
   }
 }
-var COMMENT_LINE7 = /%%.*/;
+var COMMENT_LINE8 = /%%.*/;
 var ATTR_KEYWORDS = ["title", "dateFormat", "axisFormat", "axisInterval"];
 var OTHER_KEYWORDS = ["section", "markDate", "excludes", "includes"];
 var keywordRules = [...ATTR_KEYWORDS, ...OTHER_KEYWORDS].reduce((acc, text) => {
@@ -36426,7 +37159,7 @@ var keywordRules = [...ATTR_KEYWORDS, ...OTHER_KEYWORDS].reduce((acc, text) => {
 var commonTextRules2 = {
   QUOTED_WORD: QUOTED_WORD_REGEXP
 };
-var lexer7 = moo7.states({
+var lexer8 = moo8.states({
   main: {
     NL: MOO_NEWLINE,
     WS: { match: / +/, lineBreaks: false },
@@ -36437,7 +37170,7 @@ var lexer7 = moo7.states({
     RIGHT_BRACE: /\}/,
     PARAM_DIRECTIVE: /@param/,
     COMMENT_LINE: COMMENT_LINE_REGEXP,
-    CONFIG_DIRECTIVE: CONFIG_DIRECTIVE8,
+    CONFIG_DIRECTIVE: CONFIG_DIRECTIVE9,
     VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
   },
   attr: {
@@ -36445,8 +37178,8 @@ var lexer7 = moo7.states({
     VALID_TEXT: { match: /[^\n]+/, pop: 1 }
   }
 });
-var grammar7 = {
-  Lexer: lexer7,
+var grammar8 = {
+  Lexer: lexer8,
   ParserRules: [
     { "name": "_$ebnf$1", "symbols": [] },
     { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", "wschar"], "postprocess": (d) => d[0].concat([d[1]]) },
@@ -36458,11 +37191,11 @@ var grammar7 = {
     { "name": "__", "symbols": ["__$ebnf$1"], "postprocess": function(d) {
       return null;
     } },
-    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id7 },
-    { "name": "color", "symbols": [COLOR7], "postprocess": (d) => tv(d[0]) },
+    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id8 },
+    { "name": "color", "symbols": [_COLOR8], "postprocess": (d) => tv(d[0]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE7, "__", "paramPart"],
+      "symbols": [PARAM_DIRECTIVE8, "__", "paramPart"],
       "postprocess": function(d) {
         return d[2];
       }
@@ -36472,7 +37205,7 @@ var grammar7 = {
     { "name": "paramStatement$ebnf$1", "symbols": ["paramStatement$ebnf$1", "paramStatement$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE7, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
+      "symbols": [PARAM_DIRECTIVE8, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
       "postprocess": function(d) {
         const params = [];
         d[4].forEach((seg) => {
@@ -36494,11 +37227,11 @@ var grammar7 = {
     } },
     { "name": "configStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configStatement$ebnf$1", "symbols": ["configStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE8, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement7 },
+    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE9, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement8 },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": ["configOpenCloseStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE8, L_PAREN7, "configOpenCloseStatement$ebnf$1", R_PAREN7], "postprocess": handleConfigOpenCloseStatement7 },
-    { "name": "comment", "symbols": [COMMENT_LINE7], "postprocess": (d) => null },
+    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE9, L_PAREN8, "configOpenCloseStatement$ebnf$1", R_PAREN8], "postprocess": handleConfigOpenCloseStatement8 },
+    { "name": "comment", "symbols": [COMMENT_LINE8], "postprocess": (d) => null },
     { "name": "start", "symbols": ["__", "start"] },
     { "name": "start", "symbols": [{ "literal": "gantt" }, "document"] },
     { "name": "document", "symbols": [] },
@@ -36509,17 +37242,17 @@ var grammar7 = {
       }
       return r;
     } },
-    { "name": "line$ebnf$1", "symbols": [lexer7.has("WS") ? { type: "WS" } : WS], "postprocess": id7 },
+    { "name": "line$ebnf$1", "symbols": [lexer8.has("WS") ? { type: "WS" } : WS], "postprocess": id8 },
     { "name": "line$ebnf$1", "symbols": [], "postprocess": () => null },
     { "name": "line", "symbols": ["line$ebnf$1", "statement"], "postprocess": nth2(1) },
-    { "name": "line$ebnf$2", "symbols": [lexer7.has("WS") ? { type: "WS" } : WS], "postprocess": id7 },
+    { "name": "line$ebnf$2", "symbols": [lexer8.has("WS") ? { type: "WS" } : WS], "postprocess": id8 },
     { "name": "line$ebnf$2", "symbols": [], "postprocess": () => null },
-    { "name": "line", "symbols": ["line$ebnf$2", lexer7.has("NL") ? { type: "NL" } : NL], "postprocess": null },
-    { "name": "statement$ebnf$1", "symbols": [lexer7.has("WS") ? { type: "WS" } : WS], "postprocess": id7 },
+    { "name": "line", "symbols": ["line$ebnf$2", lexer8.has("NL") ? { type: "NL" } : NL], "postprocess": null },
+    { "name": "statement$ebnf$1", "symbols": [lexer8.has("WS") ? { type: "WS" } : WS], "postprocess": id8 },
     { "name": "statement$ebnf$1", "symbols": [], "postprocess": () => null },
     {
       "name": "statement",
-      "symbols": ["attrKey", "statement$ebnf$1", "words", lexer7.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["attrKey", "statement$ebnf$1", "words", lexer8.has("NL") ? { type: "NL" } : NL],
       "postprocess": (d) => {
         const value = d[2].trim();
         return { type: "addAttr", key: d[0], value };
@@ -36527,51 +37260,51 @@ var grammar7 = {
     },
     {
       "name": "statement",
-      "symbols": [lexer7.has("SECTION") ? { type: "SECTION" } : SECTION, "words", lexer7.has("NL") ? { type: "NL" } : NL],
+      "symbols": [lexer8.has("SECTION") ? { type: "SECTION" } : SECTION, "words", lexer8.has("NL") ? { type: "NL" } : NL],
       "postprocess": (d) => {
         return { type: "addSection", label: d[1].trim() };
       }
     },
     {
       "name": "statement",
-      "symbols": [lexer7.has("MARKDATE") ? { type: "MARKDATE" } : MARKDATE, "words", lexer7.has("NL") ? { type: "NL" } : NL],
+      "symbols": [lexer8.has("MARKDATE") ? { type: "MARKDATE" } : MARKDATE, "words", lexer8.has("NL") ? { type: "NL" } : NL],
       "postprocess": (d) => {
         return { type: "markDate", value: d[1].trim() };
       }
     },
     {
       "name": "statement",
-      "symbols": ["words", lexer7.has("COLON") ? { type: "COLON" } : COLON, "words", lexer7.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["words", lexer8.has("COLON") ? { type: "COLON" } : COLON, "words", lexer8.has("NL") ? { type: "NL" } : NL],
       "postprocess": (d) => {
         return { type: "addTask", label: d[0], extraValue: d[2] };
       }
     },
-    { "name": "statement", "symbols": ["paramStatement", lexer7.has("NL") ? { type: "NL" } : NL], "postprocess": nth2(0) },
-    { "name": "statement", "symbols": ["configOpenCloseStatement", lexer7.has("NL") ? { type: "NL" } : NL], "postprocess": nth2(0) },
-    { "name": "statement", "symbols": ["comment", lexer7.has("NL") ? { type: "NL" } : NL], "postprocess": null },
-    { "name": "attrKey$subexpression$1", "symbols": [lexer7.has("TITLE") ? { type: "TITLE" } : TITLE] },
-    { "name": "attrKey$subexpression$1", "symbols": [lexer7.has("DATEFORMAT") ? { type: "DATEFORMAT" } : DATEFORMAT] },
-    { "name": "attrKey$subexpression$1", "symbols": [lexer7.has("AXISFORMAT") ? { type: "AXISFORMAT" } : AXISFORMAT] },
-    { "name": "attrKey$subexpression$1", "symbols": [lexer7.has("AXISINTERVAL") ? { type: "AXISINTERVAL" } : AXISINTERVAL] },
-    { "name": "attrKey$subexpression$1", "symbols": [lexer7.has("EXCLUDES") ? { type: "EXCLUDES" } : EXCLUDES] },
-    { "name": "attrKey$subexpression$1", "symbols": [lexer7.has("INCLUDES") ? { type: "INCLUDES" } : INCLUDES] },
+    { "name": "statement", "symbols": ["paramStatement", lexer8.has("NL") ? { type: "NL" } : NL], "postprocess": nth2(0) },
+    { "name": "statement", "symbols": ["configOpenCloseStatement", lexer8.has("NL") ? { type: "NL" } : NL], "postprocess": nth2(0) },
+    { "name": "statement", "symbols": ["comment", lexer8.has("NL") ? { type: "NL" } : NL], "postprocess": null },
+    { "name": "attrKey$subexpression$1", "symbols": [lexer8.has("TITLE") ? { type: "TITLE" } : TITLE] },
+    { "name": "attrKey$subexpression$1", "symbols": [lexer8.has("DATEFORMAT") ? { type: "DATEFORMAT" } : DATEFORMAT] },
+    { "name": "attrKey$subexpression$1", "symbols": [lexer8.has("AXISFORMAT") ? { type: "AXISFORMAT" } : AXISFORMAT] },
+    { "name": "attrKey$subexpression$1", "symbols": [lexer8.has("AXISINTERVAL") ? { type: "AXISINTERVAL" } : AXISINTERVAL] },
+    { "name": "attrKey$subexpression$1", "symbols": [lexer8.has("EXCLUDES") ? { type: "EXCLUDES" } : EXCLUDES] },
+    { "name": "attrKey$subexpression$1", "symbols": [lexer8.has("INCLUDES") ? { type: "INCLUDES" } : INCLUDES] },
     { "name": "attrKey", "symbols": ["attrKey$subexpression$1"], "postprocess": (d) => {
       return tv(d[0][0]);
     } },
     { "name": "words$ebnf$1", "symbols": [] },
-    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer7.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer7.has("WS") ? { type: "WS" } : WS] },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer8.has("WS") ? { type: "WS" } : WS] },
     { "name": "words$ebnf$1", "symbols": ["words$ebnf$1", "words$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "words",
-      "symbols": [lexer7.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "words$ebnf$1"],
+      "symbols": [lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "words$ebnf$1"],
       "postprocess": function(d) {
         return tv(d[0]) + d[1].map((o) => tv(o[0])).join("");
       }
     },
     {
       "name": "words",
-      "symbols": [lexer7.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD],
+      "symbols": [lexer8.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD],
       "postprocess": function(d) {
         const vWithQuotes = tv(d[0]);
         return vWithQuotes.slice(1, vWithQuotes.length - 1);
@@ -36579,9 +37312,9 @@ var grammar7 = {
     }
   ],
   ParserStart: "start",
-  ParserOptions: { skipUnmatchSymbols: [lexer7.has("WS") ? { type: "WS" } : WS] }
+  ParserOptions: { skipUnmatchSymbols: [lexer8.has("WS") ? { type: "WS" } : WS] }
 };
-var gantt_default = grammar7;
+var gantt_default = grammar8;
 
 // ../pintora-diagrams/lib/gantt/parser.js
 var parse7 = genParserWithRules(gantt_default, {
@@ -36595,12 +37328,10 @@ var parse7 = genParserWithRules(gantt_default, {
 // ../pintora-diagrams/lib/gantt/index.js
 var gantt = {
   pattern: /^\s*gantt/,
-  parser: {
-    parse(text) {
-      parse7(text);
-      return db_default6.getDiagramIR();
-    }
-  },
+  parser: new ParserWithPreprocessor({
+    db: db_default6,
+    parse: parse7
+  }),
   artist: artist_default7,
   configKey: configKey7,
   clear() {
@@ -36672,8 +37403,8 @@ var ClassDb = class extends BaseDb {
         classObj.annotation = action.annotation;
       },
       note(action) {
-        const id9 = `note-${action.target}-${action.placement}`;
-        const value = { ...action, id: id9, text: dedent_default(action.text) };
+        const id10 = `note-${action.target}-${action.placement}`;
+        const value = { ...action, id: id10, text: dedent_default(action.text) };
         this.notes.push(value);
       },
       overrideConfig(action) {
@@ -36681,7 +37412,11 @@ var ClassDb = class extends BaseDb {
       },
       addParam(action) {
         this.configParams.push(action);
-      }
+      },
+      setTitle(action) {
+        this.title = action.text;
+      },
+      ...STYLE_ACTION_HANDLERS
     };
   }
   parseClassAction(payload) {
@@ -36707,6 +37442,7 @@ var ClassDb = class extends BaseDb {
       }
     }
     const label = payload.label || name;
+    const itemId = `class-${fullName}`;
     return {
       ...payload,
       name,
@@ -36714,7 +37450,8 @@ var ClassDb = class extends BaseDb {
       fullName,
       members,
       annotation,
-      label
+      label,
+      itemId
     };
   }
   parseMemberLabel(raw) {
@@ -36769,6 +37506,7 @@ var db_default7 = db8;
 
 // ../pintora-diagrams/lib/class/config.js
 var defaultConfig8 = {
+  ...defaultFontConfig,
   diagramPadding: 15,
   layoutDirection: "TB",
   ranksep: 20,
@@ -36784,13 +37522,11 @@ var defaultConfig8 = {
   relationTextColor: PALETTE.normalDark,
   entityRadius: 2,
   noteMargin: 10,
-  noteTextColor: PALETTE.normalDark,
-  fontSize: 14,
-  fontWeight: "normal",
-  fontFamily: DEFAULT_FONT_FAMILY
+  noteTextColor: PALETTE.normalDark
 };
 var CLASS_PARAM_DIRECTIVE_RULES = {
-  ...getParamRulesFromConfig(defaultConfig8)
+  ...getParamRulesFromConfig(defaultConfig8),
+  ...getFontConfigRules()
 };
 var configKey8 = "class";
 var configurator8 = makeConfigurator({
@@ -36820,8 +37556,8 @@ var configurator8 = makeConfigurator({
 var getConf8 = configurator8.getConfig;
 
 // ../pintora-diagrams/lib/class/artist.js
-var artist3 = makeArtist({
-  draw(ir, config2, opts) {
+var ClassArtist = class extends BaseArtist {
+  customDraw(ir, config2, opts) {
     const rootMark = makeEmptyGroup();
     const conf5 = getConf8(ir, config2);
     const draw = new ClassDiagramDraw(ir, conf5);
@@ -36830,11 +37566,20 @@ var artist3 = makeArtist({
       window.classDraw = draw;
     }
     const { gBounds } = draw.drawTo(rootMark);
+    const titleMaker = new DiagramTitleMaker({
+      title: ir.title,
+      titleFont: draw.fontConfig,
+      fill: conf5.noteTextColor,
+      className: "class__title"
+    });
+    const titleResult = titleMaker.appendTitleMark(rootMark);
     const { width: width2, height } = adjustRootMarkBounds({
       rootMark,
       gBounds,
       padX: conf5.diagramPadding,
-      padY: conf5.diagramPadding
+      padY: conf5.diagramPadding,
+      titleMark: titleResult.titleMark,
+      titleSize: titleResult.titleSize
     });
     return {
       mark: rootMark,
@@ -36842,7 +37587,8 @@ var artist3 = makeArtist({
       height
     };
   }
-});
+};
+var artist3 = new ClassArtist();
 var ClassDiagramDraw = class {
   constructor(ir, conf5) {
     this.ir = ir;
@@ -36862,6 +37608,7 @@ var ClassDiagramDraw = class {
     });
     this.dagreWrapper = new DagreWrapper(g);
     this.theme = this.conf.themeConfig.themeVariables;
+    this.fontConfig = getFontConfig(this.conf);
   }
   drawTo(rootMark) {
     this.rootMark = rootMark;
@@ -36890,6 +37637,7 @@ var ClassDiagramDraw = class {
     const markBuilder = new EntityMarkBuilder(this.dagreWrapper.g, this.conf);
     markBuilder.addHeader(classObj.fullName, classObj.annotation);
     this.markBuilder = markBuilder;
+    markBuilder.group.itemId = classObj.itemId;
     const fields = classObj.members.filter((m) => !m.isMethod);
     const methods = classObj.members.filter((m) => m.isMethod);
     for (const memberList of [fields, methods]) {
@@ -36922,17 +37670,13 @@ var ClassDiagramDraw = class {
   }
   drawRelation(r) {
     const g = this.dagreWrapper.g;
-    const { conf: conf5, relationGroupMark } = this;
+    const { conf: conf5, relationGroupMark, fontConfig: fontConfig2 } = this;
     let labelDims;
-    const fontConfig = {
-      fontSize: conf5.fontSize,
-      fontFamily: conf5.fontFamily
-    };
     const startNodeId = r.reversed ? r.right : r.left;
     const ednNodeId = r.reversed ? r.left : r.right;
     let minlen = 1;
     if (r.label) {
-      labelDims = calculateTextDimensions(r.label, fontConfig);
+      labelDims = calculateTextDimensions(r.label, fontConfig2);
       minlen = Math.ceil(labelDims.height / conf5.ranksep) + 1;
       const startNode = g.node(startNodeId);
       const extraPad = (labelDims.width - startNode.width) / 2;
@@ -36941,8 +37685,8 @@ var ClassDiagramDraw = class {
         startNode.marginl = extraPad;
       }
     }
-    const leftLabelDims = r.labelLeft ? calculateTextDimensions(r.labelLeft, fontConfig) : null;
-    const rightLabelDims = r.labelRight ? calculateTextDimensions(r.labelRight, fontConfig) : null;
+    const leftLabelDims = r.labelLeft ? calculateTextDimensions(r.labelLeft, fontConfig2) : null;
+    const rightLabelDims = r.labelRight ? calculateTextDimensions(r.labelRight, fontConfig2) : null;
     let leftLabelMark;
     let rightLabelMark;
     if (r.labelLeft) {
@@ -36951,7 +37695,7 @@ var ClassDiagramDraw = class {
         text: r.labelLeft,
         fill: conf5.relationLineColor,
         class: "class__label",
-        ...fontConfig
+        ...fontConfig2
       });
       relationGroupMark.children.push(leftLabelMark);
     }
@@ -36961,7 +37705,7 @@ var ClassDiagramDraw = class {
         text: r.labelRight,
         fill: conf5.relationLineColor,
         class: "class__label",
-        ...fontConfig
+        ...fontConfig2
       });
       relationGroupMark.children.push(rightLabelMark);
     }
@@ -36987,7 +37731,7 @@ var ClassDiagramDraw = class {
             textAlign: "center",
             textBaseline: "middle",
             ...anchorPoint,
-            ...fontConfig
+            ...fontConfig2
           }, { class: "class__rel-text" });
           const relTextBg = makeLabelBg(labelDims, anchorPoint, {
             fill: conf5.labelBackground
@@ -37019,7 +37763,7 @@ var ClassDiagramDraw = class {
     });
   }
   drawNote(note) {
-    const { id: id9, text } = note;
+    const { id: id10, text } = note;
     const g = this.dagreWrapper.g;
     const targetNodeOption = g.node(note.target);
     if (!targetNodeOption) {
@@ -37031,8 +37775,8 @@ var ClassDiagramDraw = class {
     }, { children: [], class: "activity__note" });
     const { rootMark, conf: conf5, theme: theme2 } = this;
     rootMark.children.push(group);
-    const fontConfig = { fontSize: conf5.fontSize, fontFamily: conf5.fontFamily };
-    const textDims = calculateTextDimensions(text, fontConfig);
+    const fontConfig2 = { fontSize: conf5.fontSize, fontFamily: conf5.fontFamily };
+    const textDims = calculateTextDimensions(text, fontConfig2);
     const rectAttrs = getBaseNote(theme2);
     const noteModel = {
       width: textDims.width + 2 * conf5.noteMargin,
@@ -37045,7 +37789,7 @@ var ClassDiagramDraw = class {
     };
     const textMark = {
       type: "text",
-      attrs: { fill: conf5.noteTextColor, text, textBaseline: "middle", ...fontConfig }
+      attrs: { fill: conf5.noteTextColor, text, textBaseline: "middle", ...fontConfig2 }
     };
     let isHorizontal = false;
     if (note.placement === "LEFT_OF") {
@@ -37069,7 +37813,7 @@ var ClassDiagramDraw = class {
         targetNodeOption.width = noteModel.width;
       }
     }
-    g.setNode(id9, {
+    g.setNode(id10, {
       mark: group,
       width: noteModel.width,
       height: noteModel.height,
@@ -37100,7 +37844,7 @@ var ClassDiagramDraw = class {
           width: noteModel.width,
           height: noteModel.height
         });
-        const node2 = g.node(id9);
+        const node2 = g.node(id10);
         if (isHorizontal) {
         } else {
           node2.outerTop = y2;
@@ -37121,7 +37865,9 @@ var EntityMarkBuilder = class {
   constructor(g, conf5) {
     this.g = g;
     this.conf = conf5;
-    this.group = makeEmptyGroup();
+    this.group = Object.assign(makeEmptyGroup(), {
+      class: "class__entity"
+    });
     this.rowPadding = 8;
     this.curY = 0;
     this.curContentHeight = 0;
@@ -37152,8 +37898,8 @@ var EntityMarkBuilder = class {
     for (const _l of labels) {
       const labelConfig = typeof _l === "string" ? { label: _l } : _l;
       const label = labelConfig.label;
-      const fontConfig = this.getFontConfig();
-      const dims = calculateTextDimensions(label, fontConfig);
+      const fontConfig2 = this.getFontConfig();
+      const dims = calculateTextDimensions(label, fontConfig2);
       const textY = this.curY + labelYOffset + rowPadding;
       const textAttrs = {
         text: label,
@@ -37299,33 +38045,30 @@ var EntityMarkBuilder = class {
     positionGroupContents(this.group, data);
   }
   getFontConfig() {
-    return {
-      fontFamily: this.conf.fontFamily,
-      fontSize: this.conf.fontSize
-    };
+    return getFontConfig(this.conf);
   }
 };
 var artist_default8 = artist3;
 
 // ../pintora-diagrams/lib/class/parser/classDiagram.js
-var moo8 = __toESM(require_moo());
-function id8(d) {
+var moo9 = __toESM(require_moo());
+function id9(d) {
   return d[0];
 }
-var COLOR8 = /#[a-zA-Z0-9]+/;
-var PARAM_DIRECTIVE8 = /@param/;
-var CONFIG_DIRECTIVE9 = /@config/;
-var L_PAREN8 = /\(/;
-var R_PAREN8 = /\)/;
-function getTokenValue8(token) {
+var _COLOR9 = /#[a-zA-Z0-9]+/;
+var PARAM_DIRECTIVE9 = /@param/;
+var CONFIG_DIRECTIVE10 = /@config/;
+var L_PAREN9 = /\(/;
+var R_PAREN9 = /\)/;
+function getTokenValue9(token) {
   if (token && "value" in token)
     return token.value;
   return token;
 }
-function handleConfigOpenCloseStatement8(d) {
+function handleConfigOpenCloseStatement9(d) {
   const text = d[2].map((v) => {
     if (v.type)
-      return getTokenValue8(v);
+      return getTokenValue9(v);
     return v;
   }).join("");
   try {
@@ -37335,8 +38078,9 @@ function handleConfigOpenCloseStatement8(d) {
     return { type: "overrideConfig", error };
   }
 }
-var COMMENT_LINE8 = /%%.*/;
-var COMMON_TOKEN_RULES4 = {
+var COMMENT_LINE9 = /%%.*/;
+var BIND_CLASS6 = /@bindClass/;
+var COMMON_TOKEN_RULES5 = {
   VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
 };
 var _PLACEMENT2 = [
@@ -37345,7 +38089,7 @@ var _PLACEMENT2 = [
   { match: /top\sof/, type: () => "TOP_OF" },
   { match: /bottom\sof/, type: () => "BOTTOM_OF" }
 ];
-var lexer8 = moo8.states({
+var lexer9 = moo9.states({
   main: {
     NL: MOO_NEWLINE,
     WS: { match: /[ \t]+/, lineBreaks: false },
@@ -37369,11 +38113,12 @@ var lexer8 = moo8.states({
     _PLACEMENT: _PLACEMENT2,
     COMMENT_LINE: COMMENT_LINE_REGEXP,
     ...configLexerMainState,
+    ...BIND_REGEXPS,
     VALID_TEXT: { match: VALID_TEXT_REGEXP, fallback: true }
   },
   configStatement: {
     ...configLexerconfigStatementState,
-    ...COMMON_TOKEN_RULES4
+    ...COMMON_TOKEN_RULES5
   },
   noteState: {
     END_NOTE: {
@@ -37387,8 +38132,8 @@ var lexer8 = moo8.states({
 });
 var nth0 = makeNth(0);
 var nth1 = makeNth(1);
-var grammar8 = {
-  Lexer: lexer8,
+var grammar9 = {
+  Lexer: lexer9,
   ParserRules: [
     { "name": "_$ebnf$1", "symbols": [] },
     { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", "wschar"], "postprocess": (d) => d[0].concat([d[1]]) },
@@ -37400,11 +38145,11 @@ var grammar8 = {
     { "name": "__", "symbols": ["__$ebnf$1"], "postprocess": function(d) {
       return null;
     } },
-    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id8 },
-    { "name": "color", "symbols": [COLOR8], "postprocess": (d) => tv(d[0]) },
+    { "name": "wschar", "symbols": [/[ \t\n\v\f\r]/], "postprocess": id9 },
+    { "name": "color", "symbols": [_COLOR9], "postprocess": (d) => tv(d[0]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE8, "__", "paramPart"],
+      "symbols": [PARAM_DIRECTIVE9, "__", "paramPart"],
       "postprocess": function(d) {
         return d[2];
       }
@@ -37414,7 +38159,7 @@ var grammar8 = {
     { "name": "paramStatement$ebnf$1", "symbols": ["paramStatement$ebnf$1", "paramStatement$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "paramStatement",
-      "symbols": [PARAM_DIRECTIVE8, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
+      "symbols": [PARAM_DIRECTIVE9, "__", { "literal": "{" }, "_", "paramStatement$ebnf$1", /[\n]/, "_", { "literal": "}" }],
       "postprocess": function(d) {
         const params = [];
         d[4].forEach((seg) => {
@@ -37436,15 +38181,42 @@ var grammar8 = {
     } },
     { "name": "configStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configStatement$ebnf$1", "symbols": ["configStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE9, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement8 },
+    { "name": "configStatement", "symbols": [CONFIG_DIRECTIVE10, { "literal": "(" }, "configStatement$ebnf$1", { "literal": ")" }], "postprocess": handleConfigOpenCloseStatement9 },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": [/[^\)]/] },
     { "name": "configOpenCloseStatement$ebnf$1", "symbols": ["configOpenCloseStatement$ebnf$1", /[^\)]/], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE9, L_PAREN8, "configOpenCloseStatement$ebnf$1", R_PAREN8], "postprocess": handleConfigOpenCloseStatement8 },
-    { "name": "comment", "symbols": [COMMENT_LINE8], "postprocess": (d) => null },
+    { "name": "configOpenCloseStatement", "symbols": [CONFIG_DIRECTIVE10, L_PAREN9, "configOpenCloseStatement$ebnf$1", R_PAREN9], "postprocess": handleConfigOpenCloseStatement9 },
+    { "name": "comment", "symbols": [COMMENT_LINE9], "postprocess": (d) => null },
+    { "name": "bindClassStatement$ebnf$1", "symbols": [lexer9.has("WS") ? { type: "WS" } : WS] },
+    { "name": "bindClassStatement$ebnf$1", "symbols": ["bindClassStatement$ebnf$1", lexer9.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "bindClassStatement$ebnf$2", "symbols": [lexer9.has("WS") ? { type: "WS" } : WS] },
+    { "name": "bindClassStatement$ebnf$2", "symbols": ["bindClassStatement$ebnf$2", lexer9.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "bindClassStatement$ebnf$3", "symbols": [] },
+    { "name": "bindClassStatement$ebnf$3", "symbols": ["bindClassStatement$ebnf$3", lexer9.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "bindClassStatement",
+      "symbols": [lexer9.has("BIND_CLASS") ? { type: "BIND_CLASS" } : BIND_CLASS6, "bindClassStatement$ebnf$1", "nodeList", "bindClassStatement$ebnf$2", lexer9.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "bindClassStatement$ebnf$3", lexer9.has("NL") ? { type: "NL" } : NL],
+      "postprocess": (d) => ({
+        type: "bindClass",
+        nodes: d[2],
+        className: tv(d[4])
+      })
+    },
+    { "name": "nodeList", "symbols": [lexer9.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => [tv(d[0])] },
+    { "name": "nodeList$ebnf$1", "symbols": [] },
+    { "name": "nodeList$ebnf$1", "symbols": ["nodeList$ebnf$1", lexer9.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "nodeList",
+      "symbols": ["nodeList", lexer9.has("COMMA") ? { type: "COMMA" } : COMMA, "nodeList$ebnf$1", lexer9.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT],
+      "postprocess": (d) => {
+        const list = d[0];
+        list.push(tv(d[3]));
+        return list;
+      }
+    },
     { "name": "start", "symbols": ["__", "start"], "postprocess": nth1 },
     {
       "name": "start",
-      "symbols": [lexer8.has("CLASS_DIAGRAM") ? { type: "CLASS_DIAGRAM" } : CLASS_DIAGRAM, "document"],
+      "symbols": [lexer9.has("CLASS_DIAGRAM") ? { type: "CLASS_DIAGRAM" } : CLASS_DIAGRAM, "document"],
       "postprocess": function(d) {
         return d[1];
       }
@@ -37462,42 +38234,43 @@ var grammar8 = {
       }
     },
     { "name": "statementWrap$ebnf$1", "symbols": [] },
-    { "name": "statementWrap$ebnf$1", "symbols": ["statementWrap$ebnf$1", lexer8.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "statementWrap$ebnf$1", "symbols": ["statementWrap$ebnf$1", lexer9.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "statementWrap", "symbols": ["statementWrap$ebnf$1", "statement"], "postprocess": (d) => {
       return d[1];
     } },
-    { "name": "statementWrap$ebnf$2", "symbols": [lexer8.has("WS") ? { type: "WS" } : WS], "postprocess": id8 },
+    { "name": "statementWrap$ebnf$2", "symbols": [lexer9.has("WS") ? { type: "WS" } : WS], "postprocess": id9 },
     { "name": "statementWrap$ebnf$2", "symbols": [], "postprocess": () => null },
-    { "name": "statementWrap", "symbols": ["statementWrap$ebnf$2", lexer8.has("NL") ? { type: "NL" } : NL], "postprocess": null },
+    { "name": "statementWrap", "symbols": ["statementWrap$ebnf$2", lexer9.has("NL") ? { type: "NL" } : NL], "postprocess": null },
     { "name": "statement", "symbols": ["classStatement"] },
     { "name": "statement", "symbols": ["memberLabelStatement"] },
     { "name": "statement", "symbols": ["relationStatement"] },
     { "name": "statement", "symbols": ["classAnnotationStatement"] },
     { "name": "statement", "symbols": ["noteStatement"] },
-    { "name": "statement", "symbols": ["paramStatement", lexer8.has("NL") ? { type: "NL" } : NL] },
-    { "name": "statement", "symbols": ["configOpenCloseStatement", lexer8.has("NL") ? { type: "NL" } : NL] },
-    { "name": "statement", "symbols": ["comment", lexer8.has("NL") ? { type: "NL" } : NL] },
-    { "name": "classStatement$ebnf$1", "symbols": [lexer8.has("NL") ? { type: "NL" } : NL], "postprocess": id8 },
+    { "name": "statement", "symbols": ["paramStatement", lexer9.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["configOpenCloseStatement", lexer9.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["comment", lexer9.has("NL") ? { type: "NL" } : NL] },
+    { "name": "statement", "symbols": ["bindClassStatement"] },
+    { "name": "classStatement$ebnf$1", "symbols": [lexer9.has("NL") ? { type: "NL" } : NL], "postprocess": id9 },
     { "name": "classStatement$ebnf$1", "symbols": [], "postprocess": () => null },
-    { "name": "classStatement$ebnf$2", "symbols": ["classMembers"], "postprocess": id8 },
+    { "name": "classStatement$ebnf$2", "symbols": ["classMembers"], "postprocess": id9 },
     { "name": "classStatement$ebnf$2", "symbols": [], "postprocess": () => null },
-    { "name": "classStatement$ebnf$3", "symbols": [lexer8.has("NL") ? { type: "NL" } : NL], "postprocess": id8 },
+    { "name": "classStatement$ebnf$3", "symbols": [lexer9.has("NL") ? { type: "NL" } : NL], "postprocess": id9 },
     { "name": "classStatement$ebnf$3", "symbols": [], "postprocess": () => null },
     {
       "name": "classStatement",
-      "symbols": [{ "literal": "class" }, lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer8.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "classStatement$ebnf$1", "classStatement$ebnf$2", "classStatement$ebnf$3", lexer8.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET, lexer8.has("NL") ? { type: "NL" } : NL],
+      "symbols": [{ "literal": "class" }, "memberOrClassName", lexer9.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "classStatement$ebnf$1", "classStatement$ebnf$2", "classStatement$ebnf$3", lexer9.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET, lexer9.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const members = d[4];
         return {
           type: "addClass",
-          name: tv(d[1]),
+          name: d[1],
           members
         };
       }
     },
     {
       "name": "classStatement",
-      "symbols": [{ "literal": "class" }, "textInQuote", { "literal": "as" }, lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer8.has("NL") ? { type: "NL" } : NL],
+      "symbols": [{ "literal": "class" }, "textInQuote", { "literal": "as" }, lexer9.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer9.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         return {
           type: "addClass",
@@ -37509,7 +38282,7 @@ var grammar8 = {
     },
     {
       "name": "classStatement",
-      "symbols": [{ "literal": "class" }, lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer8.has("NL") ? { type: "NL" } : NL],
+      "symbols": [{ "literal": "class" }, lexer9.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer9.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         return {
           type: "addClass",
@@ -37524,12 +38297,12 @@ var grammar8 = {
     { "name": "classMembers$subexpression$1", "symbols": ["classMember"] },
     {
       "name": "classMembers",
-      "symbols": ["classMembers", lexer8.has("NL") ? { type: "NL" } : NL, "classMembers$subexpression$1"],
+      "symbols": ["classMembers", lexer9.has("NL") ? { type: "NL" } : NL, "classMembers$subexpression$1"],
       "postprocess": function(d) {
         return [...d[0], ...d[2]];
       }
     },
-    { "name": "classMember$ebnf$1", "symbols": ["modifier"], "postprocess": id8 },
+    { "name": "classMember$ebnf$1", "symbols": ["modifier"], "postprocess": id9 },
     { "name": "classMember$ebnf$1", "symbols": [], "postprocess": () => null },
     {
       "name": "classMember",
@@ -37542,62 +38315,88 @@ var grammar8 = {
         };
       }
     },
+    { "name": "words$subexpression$1", "symbols": [lexer9.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "words$subexpression$1", "symbols": [lexer9.has("COLOR") ? { type: "COLOR" } : COLOR] },
     { "name": "words$ebnf$1", "symbols": [] },
-    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer8.has("WS") ? { type: "WS" } : WS] },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer9.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer9.has("COLOR") ? { type: "COLOR" } : COLOR] },
+    { "name": "words$ebnf$1$subexpression$1", "symbols": [lexer9.has("WS") ? { type: "WS" } : WS] },
     { "name": "words$ebnf$1", "symbols": ["words$ebnf$1", "words$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "words",
-      "symbols": [lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "words$ebnf$1"],
+      "symbols": ["words$subexpression$1", "words$ebnf$1"],
       "postprocess": function(d) {
-        return tv(d[0]) + d[1].map((o) => tv(o[0])).join("");
+        return tv(d[0][0]) + d[1].map((o) => tv(o[0])).join("");
       }
     },
     { "name": "memberLabel$ebnf$1", "symbols": [] },
-    { "name": "memberLabel$ebnf$1$subexpression$1", "symbols": [lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "memberLabel$ebnf$1$subexpression$1", "symbols": [lexer8.has("L_PAREN") ? { type: "L_PAREN" } : L_PAREN8] },
-    { "name": "memberLabel$ebnf$1$subexpression$1", "symbols": [lexer8.has("R_PAREN") ? { type: "R_PAREN" } : R_PAREN8] },
-    { "name": "memberLabel$ebnf$1$subexpression$1", "symbols": [lexer8.has("COLON") ? { type: "COLON" } : COLON] },
-    { "name": "memberLabel$ebnf$1$subexpression$1", "symbols": [lexer8.has("WS") ? { type: "WS" } : WS] },
+    { "name": "memberLabel$ebnf$1$subexpression$1", "symbols": [lexer9.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "memberLabel$ebnf$1$subexpression$1", "symbols": [lexer9.has("COLOR") ? { type: "COLOR" } : COLOR] },
+    { "name": "memberLabel$ebnf$1$subexpression$1", "symbols": [lexer9.has("L_PAREN") ? { type: "L_PAREN" } : L_PAREN9] },
+    { "name": "memberLabel$ebnf$1$subexpression$1", "symbols": [lexer9.has("R_PAREN") ? { type: "R_PAREN" } : R_PAREN9] },
+    { "name": "memberLabel$ebnf$1$subexpression$1", "symbols": [lexer9.has("COLON") ? { type: "COLON" } : COLON] },
+    { "name": "memberLabel$ebnf$1$subexpression$1", "symbols": [lexer9.has("WS") ? { type: "WS" } : WS] },
     { "name": "memberLabel$ebnf$1", "symbols": ["memberLabel$ebnf$1", "memberLabel$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "memberLabel",
-      "symbols": [lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "memberLabel$ebnf$1"],
+      "symbols": ["memberOrClassName", "memberLabel$ebnf$1"],
       "postprocess": function(d) {
-        return tv(d[0]) + d[1].map((o) => tv(o[0])).join("");
+        return d[0] + d[1].map((o) => tv(o[0])).join("");
+      }
+    },
+    { "name": "memberOrClassName$ebnf$1$subexpression$1", "symbols": [lexer9.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "memberOrClassName$ebnf$1$subexpression$1", "symbols": [lexer9.has("COLOR") ? { type: "COLOR" } : COLOR] },
+    { "name": "memberOrClassName$ebnf$1", "symbols": ["memberOrClassName$ebnf$1$subexpression$1"] },
+    { "name": "memberOrClassName$ebnf$1$subexpression$2", "symbols": [lexer9.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "memberOrClassName$ebnf$1$subexpression$2", "symbols": [lexer9.has("COLOR") ? { type: "COLOR" } : COLOR] },
+    { "name": "memberOrClassName$ebnf$1", "symbols": ["memberOrClassName$ebnf$1", "memberOrClassName$ebnf$1$subexpression$2"], "postprocess": (d) => d[0].concat([d[1]]) },
+    {
+      "name": "memberOrClassName",
+      "symbols": ["memberOrClassName$ebnf$1"],
+      "postprocess": function(d) {
+        const tokens = flatten(d);
+        const result = tokens.map((inner) => tv(inner)).join("");
+        return result;
       }
     },
     { "name": "modifier$subexpression$1", "symbols": [{ "literal": "static" }] },
     { "name": "modifier$subexpression$1", "symbols": [{ "literal": "abstract" }] },
     {
       "name": "modifier",
-      "symbols": [lexer8.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "modifier$subexpression$1", lexer8.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET],
+      "symbols": [lexer9.has("L_BRACKET") ? { type: "L_BRACKET" } : L_BRACKET, "modifier$subexpression$1", lexer9.has("R_BRACKET") ? { type: "R_BRACKET" } : R_BRACKET],
       "postprocess": function(d) {
         return tv(d[1][0]);
       }
     },
     {
       "name": "memberLabelStatement",
-      "symbols": [lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer8.has("COLON") ? { type: "COLON" } : COLON, "classMember", lexer8.has("NL") ? { type: "NL" } : NL],
+      "symbols": [lexer9.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, lexer9.has("COLON") ? { type: "COLON" } : COLON, "classMember", lexer9.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const className = tv(d[0]);
+        const member = d[2];
+        if (className === "title") {
+          return {
+            type: "setTitle",
+            text: member.raw
+          };
+        }
         return {
           type: "addClassMember",
           className,
-          member: d[2]
+          member
         };
       }
     },
-    { "name": "relationStatement$ebnf$1", "symbols": ["textInQuote"], "postprocess": id8 },
+    { "name": "relationStatement$ebnf$1", "symbols": ["textInQuote"], "postprocess": id9 },
     { "name": "relationStatement$ebnf$1", "symbols": [], "postprocess": () => null },
-    { "name": "relationStatement$ebnf$2", "symbols": ["textInQuote"], "postprocess": id8 },
+    { "name": "relationStatement$ebnf$2", "symbols": ["textInQuote"], "postprocess": id9 },
     { "name": "relationStatement$ebnf$2", "symbols": [], "postprocess": () => null },
     { "name": "relationStatement$ebnf$3$subexpression$1$ebnf$1", "symbols": [] },
-    { "name": "relationStatement$ebnf$3$subexpression$1$ebnf$1", "symbols": ["relationStatement$ebnf$3$subexpression$1$ebnf$1", lexer8.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "relationStatement$ebnf$3$subexpression$1$ebnf$1", "symbols": ["relationStatement$ebnf$3$subexpression$1$ebnf$1", lexer9.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "relationStatement$ebnf$3$subexpression$1$ebnf$2", "symbols": [] },
-    { "name": "relationStatement$ebnf$3$subexpression$1$ebnf$2", "symbols": ["relationStatement$ebnf$3$subexpression$1$ebnf$2", lexer8.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
-    { "name": "relationStatement$ebnf$3$subexpression$1", "symbols": ["relationStatement$ebnf$3$subexpression$1$ebnf$1", lexer8.has("COLON") ? { type: "COLON" } : COLON, "relationStatement$ebnf$3$subexpression$1$ebnf$2", "words"] },
-    { "name": "relationStatement$ebnf$3", "symbols": ["relationStatement$ebnf$3$subexpression$1"], "postprocess": id8 },
+    { "name": "relationStatement$ebnf$3$subexpression$1$ebnf$2", "symbols": ["relationStatement$ebnf$3$subexpression$1$ebnf$2", lexer9.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "relationStatement$ebnf$3$subexpression$1", "symbols": ["relationStatement$ebnf$3$subexpression$1$ebnf$1", lexer9.has("COLON") ? { type: "COLON" } : COLON, "relationStatement$ebnf$3$subexpression$1$ebnf$2", "words"] },
+    { "name": "relationStatement$ebnf$3", "symbols": ["relationStatement$ebnf$3$subexpression$1"], "postprocess": id9 },
     { "name": "relationStatement$ebnf$3", "symbols": [], "postprocess": () => null },
     {
       "name": "relationStatement",
@@ -37626,7 +38425,7 @@ var grammar8 = {
         };
       }
     },
-    { "name": "classInRelation", "symbols": [lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT], "postprocess": (d) => ({ name: tv(d[0]) }) },
+    { "name": "classInRelation", "symbols": ["memberOrClassName"], "postprocess": (d) => ({ name: d[0] }) },
     { "name": "relation", "symbols": [{ "literal": "<|--" }], "postprocess": (d) => {
       return { type: Relation.INHERITANCE, reversed: true };
     } },
@@ -37694,7 +38493,7 @@ var grammar8 = {
     },
     {
       "name": "annotation",
-      "symbols": [lexer8.has("TEXT_WITH_ANGLE_BRACKETS") ? { type: "TEXT_WITH_ANGLE_BRACKETS" } : TEXT_WITH_ANGLE_BRACKETS],
+      "symbols": [lexer9.has("TEXT_WITH_ANGLE_BRACKETS") ? { type: "TEXT_WITH_ANGLE_BRACKETS" } : TEXT_WITH_ANGLE_BRACKETS],
       "postprocess": function(d) {
         const v = tv(d[0]);
         return {
@@ -37705,23 +38504,23 @@ var grammar8 = {
     },
     {
       "name": "textInQuote",
-      "symbols": [lexer8.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD],
+      "symbols": [lexer9.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD],
       "postprocess": function(d) {
         return getQuotedWord(d[0]);
       }
     },
-    { "name": "placement", "symbols": [lexer8.has("LEFT_OF") ? { type: "LEFT_OF" } : LEFT_OF], "postprocess": (d) => "LEFT_OF" },
-    { "name": "placement", "symbols": [lexer8.has("RIGHT_OF") ? { type: "RIGHT_OF" } : RIGHT_OF], "postprocess": (d) => "RIGHT_OF" },
-    { "name": "placement", "symbols": [lexer8.has("TOP_OF") ? { type: "TOP_OF" } : TOP_OF], "postprocess": (d) => "TOP_OF" },
-    { "name": "placement", "symbols": [lexer8.has("BOTTOM_OF") ? { type: "BOTTOM_OF" } : BOTTOM_OF], "postprocess": (d) => "BOTTOM_OF" },
+    { "name": "placement", "symbols": [lexer9.has("LEFT_OF") ? { type: "LEFT_OF" } : LEFT_OF], "postprocess": (d) => "LEFT_OF" },
+    { "name": "placement", "symbols": [lexer9.has("RIGHT_OF") ? { type: "RIGHT_OF" } : RIGHT_OF], "postprocess": (d) => "RIGHT_OF" },
+    { "name": "placement", "symbols": [lexer9.has("TOP_OF") ? { type: "TOP_OF" } : TOP_OF], "postprocess": (d) => "TOP_OF" },
+    { "name": "placement", "symbols": [lexer9.has("BOTTOM_OF") ? { type: "BOTTOM_OF" } : BOTTOM_OF], "postprocess": (d) => "BOTTOM_OF" },
     { "name": "multilineNoteText$ebnf$1", "symbols": [] },
-    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
-    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer8.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD] },
-    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer8.has("NL") ? { type: "NL" } : NL] },
+    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer9.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT] },
+    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer9.has("QUOTED_WORD") ? { type: "QUOTED_WORD" } : QUOTED_WORD] },
+    { "name": "multilineNoteText$ebnf$1$subexpression$1", "symbols": [lexer9.has("NL") ? { type: "NL" } : NL] },
     { "name": "multilineNoteText$ebnf$1", "symbols": ["multilineNoteText$ebnf$1", "multilineNoteText$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "multilineNoteText",
-      "symbols": ["multilineNoteText$ebnf$1", lexer8.has("END_NOTE") ? { type: "END_NOTE" } : END_NOTE],
+      "symbols": ["multilineNoteText$ebnf$1", lexer9.has("END_NOTE") ? { type: "END_NOTE" } : END_NOTE],
       "postprocess": function(d) {
         const v = d[0].map((l) => {
           return l.map((o) => tv(o));
@@ -37730,40 +38529,40 @@ var grammar8 = {
       }
     },
     { "name": "noteStatement$subexpression$1", "symbols": [{ "literal": "note" }] },
-    { "name": "noteStatement$subexpression$1", "symbols": [lexer8.has("NOTE") ? { type: "NOTE" } : NOTE] },
+    { "name": "noteStatement$subexpression$1", "symbols": [lexer9.has("NOTE") ? { type: "NOTE" } : NOTE] },
     { "name": "noteStatement$ebnf$1", "symbols": [] },
-    { "name": "noteStatement$ebnf$1", "symbols": ["noteStatement$ebnf$1", lexer8.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "noteStatement$ebnf$1", "symbols": ["noteStatement$ebnf$1", lexer9.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "noteStatement$ebnf$2", "symbols": [] },
-    { "name": "noteStatement$ebnf$2", "symbols": ["noteStatement$ebnf$2", lexer8.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "noteStatement$ebnf$2", "symbols": ["noteStatement$ebnf$2", lexer9.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "noteStatement",
-      "symbols": ["noteStatement$subexpression$1", "noteStatement$ebnf$1", "placement", lexer8.has("WS") ? { type: "WS" } : WS, lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "noteStatement$ebnf$2", lexer8.has("COLON") ? { type: "COLON" } : COLON, "words", lexer8.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["noteStatement$subexpression$1", "noteStatement$ebnf$1", "placement", lexer9.has("WS") ? { type: "WS" } : WS, "memberOrClassName", "noteStatement$ebnf$2", lexer9.has("COLON") ? { type: "COLON" } : COLON, "words", lexer9.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const text = d[7].trim();
-        return { type: "note", placement: d[2], target: tv(d[4]).trim(), text };
+        return { type: "note", placement: d[2], target: d[4].trim(), text };
       }
     },
     { "name": "noteStatement$subexpression$2", "symbols": [{ "literal": "note" }] },
-    { "name": "noteStatement$subexpression$2", "symbols": [lexer8.has("START_NOTE") ? { type: "START_NOTE" } : START_NOTE] },
+    { "name": "noteStatement$subexpression$2", "symbols": [lexer9.has("START_NOTE") ? { type: "START_NOTE" } : START_NOTE] },
     { "name": "noteStatement$ebnf$3", "symbols": [] },
-    { "name": "noteStatement$ebnf$3", "symbols": ["noteStatement$ebnf$3", lexer8.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "noteStatement$ebnf$3", "symbols": ["noteStatement$ebnf$3", lexer9.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "noteStatement$ebnf$4", "symbols": [] },
-    { "name": "noteStatement$ebnf$4", "symbols": ["noteStatement$ebnf$4", lexer8.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "noteStatement$ebnf$4", "symbols": ["noteStatement$ebnf$4", lexer9.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     { "name": "noteStatement$ebnf$5", "symbols": [] },
-    { "name": "noteStatement$ebnf$5", "symbols": ["noteStatement$ebnf$5", lexer8.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
+    { "name": "noteStatement$ebnf$5", "symbols": ["noteStatement$ebnf$5", lexer9.has("WS") ? { type: "WS" } : WS], "postprocess": (d) => d[0].concat([d[1]]) },
     {
       "name": "noteStatement",
-      "symbols": ["noteStatement$subexpression$2", "noteStatement$ebnf$3", "placement", "noteStatement$ebnf$4", lexer8.has("VALID_TEXT") ? { type: "VALID_TEXT" } : VALID_TEXT, "noteStatement$ebnf$5", lexer8.has("NL") ? { type: "NL" } : NL, "multilineNoteText", lexer8.has("NL") ? { type: "NL" } : NL],
+      "symbols": ["noteStatement$subexpression$2", "noteStatement$ebnf$3", "placement", "noteStatement$ebnf$4", "memberOrClassName", "noteStatement$ebnf$5", lexer9.has("NL") ? { type: "NL" } : NL, "multilineNoteText", lexer9.has("NL") ? { type: "NL" } : NL],
       "postprocess": function(d) {
         const text = d[7];
-        return { type: "note", placement: d[2], target: tv(d[4]).trim(), text };
+        return { type: "note", placement: d[2], target: d[4].trim(), text };
       }
     }
   ],
   ParserStart: "start",
-  ParserOptions: { skipUnmatchSymbols: [lexer8.has("WS") ? { type: "WS" } : WS] }
+  ParserOptions: { skipUnmatchSymbols: [lexer9.has("WS") ? { type: "WS" } : WS] }
 };
-var classDiagram_default = grammar8;
+var classDiagram_default = grammar9;
 
 // ../pintora-diagrams/lib/class/parser.js
 var parse8 = genParserWithRules(classDiagram_default, {
@@ -37777,12 +38576,10 @@ var parse8 = genParserWithRules(classDiagram_default, {
 // ../pintora-diagrams/lib/class/index.js
 var classDiagram = {
   pattern: /^\s*classDiagram/,
-  parser: {
-    parse(text) {
-      parse8(text);
-      return db_default7.getDiagramIR();
-    }
-  },
+  parser: new ParserWithPreprocessor({
+    db: db_default7,
+    parse: parse8
+  }),
   artist: artist_default8,
   configKey: "class",
   clear() {
@@ -40559,9 +41356,9 @@ var Container = (
       });
       return rst;
     };
-    Container2.prototype.findById = function(id9) {
+    Container2.prototype.findById = function(id10) {
       return this.find(function(element) {
-        return element.get("id") === id9;
+        return element.get("id") === id10;
       });
     };
     Container2.prototype.findByClassName = function(className) {
@@ -43502,11 +44299,11 @@ function setShadow(model3, context) {
   if (!cfg.dx && !cfg.dy && !cfg.blur && !cfg.color) {
     el.removeAttribute("filter");
   } else {
-    var id9 = context.find("filter", cfg);
-    if (!id9) {
-      id9 = context.addShadow(cfg);
+    var id10 = context.find("filter", cfg);
+    if (!id10) {
+      id10 = context.addShadow(cfg);
     }
-    el.setAttribute("filter", "url(#" + id9 + ")");
+    el.setAttribute("filter", "url(#" + id10 + ")");
   }
 }
 function setTransform(model3) {
@@ -43533,8 +44330,8 @@ function setClip(model3, context) {
   } else if (clip && !el.hasAttribute("clip-path")) {
     createDom(clip);
     clip.createPath(context);
-    var id9 = context.addClip(clip);
-    el.setAttribute("clip-path", "url(#" + id9 + ")");
+    var id10 = context.addClip(clip);
+    el.setAttribute("clip-path", "url(#" + id10 + ")");
   }
 }
 
@@ -43808,17 +44605,17 @@ var ShapeBase = (
       }
       value = value.trim();
       if (/^[r,R,L,l]{1}[\s]*\(/.test(value)) {
-        var id9 = context.find("gradient", value);
-        if (!id9) {
-          id9 = context.addGradient(value);
+        var id10 = context.find("gradient", value);
+        if (!id10) {
+          id10 = context.addGradient(value);
         }
-        el.setAttribute(SVG_ATTR_MAP[attr], "url(#" + id9 + ")");
+        el.setAttribute(SVG_ATTR_MAP[attr], "url(#" + id10 + ")");
       } else if (/^[p,P]{1}[\s]*\(/.test(value)) {
-        var id9 = context.find("pattern", value);
-        if (!id9) {
-          id9 = context.addPattern(value);
+        var id10 = context.find("pattern", value);
+        if (!id10) {
+          id10 = context.addPattern(value);
         }
-        el.setAttribute(SVG_ATTR_MAP[attr], "url(#" + id9 + ")");
+        el.setAttribute(SVG_ATTR_MAP[attr], "url(#" + id10 + ")");
       } else {
         el.setAttribute(SVG_ATTR_MAP[attr], value);
       }
@@ -44062,8 +44859,8 @@ var Line = (
       each_default(targetAttrs || attrs, function(value, attr) {
         if (attr === "startArrow" || attr === "endArrow") {
           if (value) {
-            var id9 = is_object_default(value) ? context.addArrow(attrs, SVG_ATTR_MAP[attr]) : context.getDefaultArrow(attrs, SVG_ATTR_MAP[attr]);
-            el.setAttribute(SVG_ATTR_MAP[attr], "url(#" + id9 + ")");
+            var id10 = is_object_default(value) ? context.addArrow(attrs, SVG_ATTR_MAP[attr]) : context.getDefaultArrow(attrs, SVG_ATTR_MAP[attr]);
+            el.setAttribute(SVG_ATTR_MAP[attr], "url(#" + id10 + ")");
           } else {
             el.removeAttribute(SVG_ATTR_MAP[attr]);
           }
@@ -44203,8 +45000,8 @@ var Path2 = (
           el.setAttribute("d", _this._formatPath(value));
         } else if (attr === "startArrow" || attr === "endArrow") {
           if (value) {
-            var id9 = is_object_default(value) ? context.addArrow(attrs, SVG_ATTR_MAP[attr]) : context.getDefaultArrow(attrs, SVG_ATTR_MAP[attr]);
-            el.setAttribute(SVG_ATTR_MAP[attr], "url(#" + id9 + ")");
+            var id10 = is_object_default(value) ? context.addArrow(attrs, SVG_ATTR_MAP[attr]) : context.getDefaultArrow(attrs, SVG_ATTR_MAP[attr]);
+            el.setAttribute(SVG_ATTR_MAP[attr], "url(#" + id10 + ")");
           } else {
             el.removeAttribute(SVG_ATTR_MAP[attr]);
           }
@@ -44688,7 +45485,7 @@ var Gradient = (
     function Gradient2(cfg) {
       this.cfg = {};
       var el = null;
-      var id9 = unique_id_default("gradient_");
+      var id10 = unique_id_default("gradient_");
       if (cfg.toLowerCase()[0] === "l") {
         el = createSVGElement("linearGradient");
         parseLineGradient(cfg, el);
@@ -44696,9 +45493,9 @@ var Gradient = (
         el = createSVGElement("radialGradient");
         parseRadialGradient(cfg, el);
       }
-      el.setAttribute("id", id9);
+      el.setAttribute("id", id10);
       this.el = el;
-      this.id = id9;
+      this.id = id10;
       this.cfg = cfg;
       return this;
     }
@@ -44778,8 +45575,8 @@ var Arrow = (
     function Arrow2(attrs, type) {
       this.cfg = {};
       var el = createSVGElement("marker");
-      var id9 = unique_id_default("marker_");
-      el.setAttribute("id", id9);
+      var id10 = unique_id_default("marker_");
+      el.setAttribute("id", id10);
       var shape = createSVGElement("path");
       shape.setAttribute("stroke", attrs.stroke || "none");
       shape.setAttribute("fill", attrs.fill || "none");
@@ -44788,7 +45585,7 @@ var Arrow = (
       el.setAttribute("orient", "auto-start-reverse");
       this.el = el;
       this.child = shape;
-      this.id = id9;
+      this.id = id10;
       var cfg = attrs[type === "marker-start" ? "startArrow" : "endArrow"];
       this.stroke = attrs.stroke || "#000";
       if (cfg === true) {
@@ -44875,10 +45672,10 @@ var Pattern = (
       el.setAttribute("patternUnits", "userSpaceOnUse");
       var child = createSVGElement("image");
       el.appendChild(child);
-      var id9 = unique_id_default("pattern_");
-      el.id = id9;
+      var id10 = unique_id_default("pattern_");
+      el.id = id10;
       this.el = el;
-      this.id = id9;
+      this.id = id10;
       this.cfg = cfg;
       var arr2 = regexPR.exec(cfg);
       var source = arr2[2];
@@ -44914,8 +45711,8 @@ var Defs = (
   function() {
     function Defs2(canvas) {
       var el = createSVGElement("defs");
-      var id9 = unique_id_default("defs_");
-      el.id = id9;
+      var id10 = unique_id_default("defs_");
+      el.id = id10;
       canvas.appendChild(el);
       this.children = [];
       this.defaultArrow = {};
@@ -44933,11 +45730,11 @@ var Defs = (
       }
       return result;
     };
-    Defs2.prototype.findById = function(id9) {
+    Defs2.prototype.findById = function(id10) {
       var children = this.children;
       var flag = null;
       for (var i2 = 0; i2 < children.length; i2++) {
-        if (children[i2].id === id9) {
+        if (children[i2].id === id10) {
           flag = children[i2];
           break;
         }
@@ -45640,6 +46437,7 @@ var Node = class _Node extends EventTarget {
       case _Node.DOCUMENT_FRAGMENT_NODE:
       case _Node.DOCUMENT_TYPE_NODE:
         return null;
+      // type is unknown
       case _Node.ATTRIBUTE_NODE:
         if (this.ownerElement) {
           return this.ownerElement.lookupNamespacePrefix(namespaceURI);
@@ -46331,8 +47129,8 @@ Object.defineProperties(ParentNode, {
 
 // ../../node_modules/.pnpm/svgdom@0.1.19/node_modules/svgdom/src/dom/mixins/NonElementParentNode.js
 var NonElementParentNode = {
-  getElementById(id9) {
-    const iter = new NodeIterator(this, NodeFilter.SHOW_ELEMENT, (node2) => id9 === node2.id ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_IGNORE, false);
+  getElementById(id10) {
+    const iter = new NodeIterator(this, NodeFilter.SHOW_ELEMENT, (node2) => id10 === node2.id ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_IGNORE, false);
     for (const node2 of iter) {
       return node2;
     }
@@ -46362,23 +47160,23 @@ var HTMLParser = function(str3, el) {
   } else {
     document2 = el;
   }
-  const parser = import_sax.default.parser(true, {
+  const parser2 = import_sax.default.parser(true, {
     // lowercase: true,
     xmlns: true,
     strictEntities: true
   });
-  parser.onerror = (e) => {
+  parser2.onerror = (e) => {
     throw e;
   };
-  parser.ondoctype = (str4) => {
+  parser2.ondoctype = (str4) => {
     if (currentTag !== document2) {
       throw new Error("Doctype can only be appended to document");
     }
     currentTag.appendChild(document2.implementation.createDocumentType());
   };
-  parser.ontext = (str4) => currentTag.appendChild(document2.createTextNode(str4));
-  parser.oncomment = (str4) => currentTag.appendChild(document2.createComment(str4));
-  parser.onopentag = (node2) => {
+  parser2.ontext = (str4) => currentTag.appendChild(document2.createTextNode(str4));
+  parser2.oncomment = (str4) => currentTag.appendChild(document2.createComment(str4));
+  parser2.onopentag = (node2) => {
     if (node2.name === "svgdom:wrapper") return;
     const attrs = node2.attributes;
     const uri = node2.uri || currentTag.lookupNamespaceURI(node2.prefix || null);
@@ -46389,20 +47187,20 @@ var HTMLParser = function(str3, el) {
     currentTag.appendChild(newElement);
     currentTag = newElement;
   };
-  parser.onclosetag = (tagName) => {
+  parser2.onclosetag = (tagName) => {
     if (tagName === "svgdom:wrapper") return;
     currentTag = currentTag.parentNode;
   };
-  parser.onopencdata = () => {
+  parser2.onopencdata = () => {
     cdata2 = document2.createCDATASection("");
   };
-  parser.oncdata = (str4) => {
+  parser2.oncdata = (str4) => {
     cdata2.appendData(str4);
   };
-  parser.onclosecdata = () => {
+  parser2.onclosecdata = () => {
     currentTag.appendChild(cdata2);
   };
-  parser.write(str3);
+  parser2.write(str3);
 };
 
 // ../../node_modules/.pnpm/svgdom@0.1.19/node_modules/svgdom/src/utils/mapUtils.js
@@ -46614,8 +47412,8 @@ var Element3 = class extends Node {
   get id() {
     return this.getAttribute("id") || "";
   }
-  set id(id9) {
-    return this.setAttribute("id", id9);
+  set id(id10) {
+    return this.setAttribute("id", id10);
   }
   get innerHTML() {
     return this.childNodes.map((node2) => {
@@ -54231,6 +55029,7 @@ var $0a4bdfeb6dfd6f5e$export$2e2bcd8739ae039 = class {
       else if (codePoint === 3642) return "Below_Right";
     }
     switch (combiningClass) {
+      // Hebrew
       case "CCC10":
       case "CCC11":
       case "CCC12":
@@ -54254,6 +55053,7 @@ var $0a4bdfeb6dfd6f5e$export$2e2bcd8739ae039 = class {
         return "Above";
       case "CCC21":
         break;
+      // Arabic and Syriac
       case "CCC27":
       case "CCC28":
       case "CCC30":
@@ -54266,14 +55066,17 @@ var $0a4bdfeb6dfd6f5e$export$2e2bcd8739ae039 = class {
       case "CCC29":
       case "CCC32":
         return "Below";
+      // Thai
       case "CCC103":
         return "Below_Right";
       case "CCC107":
         return "Above_Right";
+      // Lao
       case "CCC118":
         return "Below";
       case "CCC122":
         return "Above";
+      // Tibetan
       case "CCC129":
       case "CCC132":
         return "Below";
@@ -56413,16 +57216,16 @@ var $10e7b257e1a9a756$export$2e2bcd8739ae039 = class _$10e7b257e1a9a756$export$2
   get id() {
     return this._id;
   }
-  set id(id9) {
-    this._id = id9;
+  set id(id10) {
+    this._id = id10;
     this.substituted = true;
     let GDEF = this._font.GDEF;
     if (GDEF && GDEF.glyphClassDef) {
-      let classID = (0, $a83b9c36aaa94fd3$export$2e2bcd8739ae039).prototype.getClassID(id9, GDEF.glyphClassDef);
+      let classID = (0, $a83b9c36aaa94fd3$export$2e2bcd8739ae039).prototype.getClassID(id10, GDEF.glyphClassDef);
       this.isBase = classID === 1;
       this.isLigature = classID === 2;
       this.isMark = classID === 3;
-      this.markAttachmentType = GDEF.markAttachClassDef ? (0, $a83b9c36aaa94fd3$export$2e2bcd8739ae039).prototype.getClassID(id9, GDEF.markAttachClassDef) : 0;
+      this.markAttachmentType = GDEF.markAttachClassDef ? (0, $a83b9c36aaa94fd3$export$2e2bcd8739ae039).prototype.getClassID(id10, GDEF.markAttachClassDef) : 0;
     } else {
       this.isMark = this.codePoints.length > 0 && this.codePoints.every((0, $747425b437e121da$export$e33ad6871e762338));
       this.isBase = !this.isMark;
@@ -56433,10 +57236,10 @@ var $10e7b257e1a9a756$export$2e2bcd8739ae039 = class _$10e7b257e1a9a756$export$2
   copy() {
     return new _$10e7b257e1a9a756$export$2e2bcd8739ae039(this._font, this.id, this.codePoints, this.features);
   }
-  constructor(font, id9, codePoints = [], features) {
+  constructor(font, id10, codePoints = [], features) {
     this._font = font;
     this.codePoints = codePoints;
-    this.id = id9;
+    this.id = id10;
     this.features = {};
     if (Array.isArray(features)) for (let i2 = 0; i2 < features.length; i2++) {
       let feature = features[i2];
@@ -58608,9 +59411,9 @@ var $f92906be28e61769$export$2e2bcd8739ae039 = class {
       case 1:
         return (0, $7713b9b7b438dff8$export$2e2bcd8739ae039)[this.id];
       case 2:
-        let id9 = post.glyphNameIndex[this.id];
-        if (id9 < (0, $7713b9b7b438dff8$export$2e2bcd8739ae039).length) return (0, $7713b9b7b438dff8$export$2e2bcd8739ae039)[id9];
-        return post.names[id9 - (0, $7713b9b7b438dff8$export$2e2bcd8739ae039).length];
+        let id10 = post.glyphNameIndex[this.id];
+        if (id10 < (0, $7713b9b7b438dff8$export$2e2bcd8739ae039).length) return (0, $7713b9b7b438dff8$export$2e2bcd8739ae039)[id10];
+        return post.names[id10 - (0, $7713b9b7b438dff8$export$2e2bcd8739ae039).length];
       case 2.5:
         return (0, $7713b9b7b438dff8$export$2e2bcd8739ae039)[this.id + post.offsets[this.id]];
       case 4:
@@ -58638,8 +59441,8 @@ var $f92906be28e61769$export$2e2bcd8739ae039 = class {
     ctx2.fill();
     ctx2.restore();
   }
-  constructor(id9, codePoints, font) {
-    this.id = id9;
+  constructor(id10, codePoints, font) {
+    this.id = id10;
     this.codePoints = codePoints;
     this._font = font;
     this.isMark = this.codePoints.length > 0 && this.codePoints.every((0, $747425b437e121da$export$e33ad6871e762338));
@@ -61099,6 +61902,9 @@ var getPathSegments2 = (node2, rbox) => {
       if (rbox) {
         return getPathSegments(pathFrom.rect(node2));
       }
+    // ATTENTION: FALL THROUGH
+    // Because normal bbox is calculated by the content of the element and not its width and height
+    // eslint-disable-next-line
     case "g":
     case "clipPath":
     case "a":
@@ -61847,9 +62653,9 @@ var fonts2 = {
 };
 var FontkitCalculator = class {
   name = "fontkit";
-  getLineMetric(text, fontConfig) {
-    const fontSize2 = fontConfig?.fontSize || 14;
-    const fontName = fontConfig?.fontFamily || "sans-serif";
+  getLineMetric(text, fontConfig2) {
+    const fontSize2 = fontConfig2?.fontSize || 14;
+    const fontName = fontConfig2?.fontFamily || "sans-serif";
     const font = fonts2[fontName] || defaultFont;
     const glyph = font.layout(text);
     const sizeUnit = fontSize2 / font.unitsPerEm;
